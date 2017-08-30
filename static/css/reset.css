@@ -1,0 +1,19 @@
+/* css reset */
+html, body, ul, li, ol, dl, dd, dt, p, h1, h2, h3, h4, h5, h6, form, fieldset, legend, img {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-size: 14px;
+  color: #666;
+  background: #fff;
+  font-family: 'HanHei SC', 'PingFang SC', '微软雅黑', sans-serif;
+  font-weight: 400;
+}
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, menu, nav, section {
+  display: block;
+}

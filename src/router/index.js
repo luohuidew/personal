@@ -21,6 +21,11 @@ export default new Router({
   routes: [
     // 权益管理
     {
+      path: '/',
+      name: 'EquityDashboard',
+      component: EquityDashboard,
+    },
+    {
       path: '/equity/dashboard',
       name: 'EquityDashboard',
       component: EquityDashboard,
