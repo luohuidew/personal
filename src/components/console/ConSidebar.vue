@@ -1,12 +1,12 @@
 <template>
-  <div class="sidebar">
-    我是sidebar组件。。。我是sidebar组件。。。
+  <div id="con-sidebar">
+
   </div>
 </template>
 
 <script>
 export default {
-  name: 'sidebar',
+  name: 'con-sidebar',
   data() {
     return {
     };
@@ -14,6 +14,6 @@ export default {
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
 </style>

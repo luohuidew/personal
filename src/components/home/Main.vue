@@ -1,5 +1,5 @@
 <template>
-  <div class="hm-home">
+  <div class="main">
     <br>
     <br>
     <br>
@@ -13,7 +13,7 @@
 
 <script>
 export default {
-  name: 'hm-home',
+  name: 'main',
   data() {
     return {
     };

@@ -1,6 +1,5 @@
 <template>
   <div id="index">
-    我是企业控制台
     <con-header></con-header>
     <router-view></router-view>
     <con-sidebar></con-sidebar>

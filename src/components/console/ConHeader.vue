@@ -1,12 +1,12 @@
 <template>
-  <div class="header">
+  <div class="con-header">
     我是header组件。。。我是header组件。。。
   </div>
 </template>
 
 <script>
 export default {
-  name: 'header',
+  name: 'con-header',
   data() {
     return {
     };

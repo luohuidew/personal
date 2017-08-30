@@ -1,15 +1,16 @@
 <template>
-  <div class="hm-footer">
-    我是footer组件。。。我是footer组件。。。
+  <div class="login">
   </div>
 </template>
 
 <script>
 export default {
-  name: 'hm-footer',
+  name: 'login',
   data() {
     return {
     };
+  },
+  methods: {
   },
 };
 </script>
