@@ -3,6 +3,7 @@
 import Vue from 'vue';
 import Home from './home.vue';
 import router from './router/home';
+import './styles/home.css';
 
 Vue.config.productionTip = false;
 
