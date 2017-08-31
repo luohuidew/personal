@@ -1,10 +1,11 @@
 <template>
   <div class="con-header">
     <span class="title"></span>
-    <!--<span class="user"><span class="cont">{{uusessions_name}}</span><i class="el-icon-caret-bottom"></i></span>-->
-    <el-menu theme="dark" class="el-menu-demo" mode="horizontal" @select="handleSelect">
+    <p class="user"><img class="u-img" src="../../assets/icon-toggle.png" alt=""><span>{{uusessions_name}}</span></p>
+    <p class="msg"><img v-if="!hasInfo" class="u-img" src="../../assets/icon-info.png" alt=""><img v-if="hasInfo" class="u-img" src="../../assets/icon-hasinfo.png" alt=""></p>
+    <el-menu theme="dark" class="el-menu-user" mode="horizontal" @select="handleSelect">
       <el-submenu index="1">
-        <template slot="title">abc</template>
+        <template slot="title">沙枫，你好 <span class="title-img"></span></template>
         <el-menu-item index="logout">退出</el-menu-item>
       </el-submenu>
     </el-menu>
@@ -15,6 +16,10 @@
 export default {
   name: 'con-header',
   data() {
+    return {
+      uusessions_name: '镜化论科技-境内有限责任公司',
+      hasInfo: true,
+    };
   },
   methods: {
     handleSelect() {
@@ -37,13 +42,49 @@ export default {
   .con-header .title {
     background: #243B5F url('../../assets/icon-logo.png') no-repeat center;
     width: 210px;
-    height: 100%;
+    height: 60px;
     line-height: 60px;
     text-align: center;
     font-size: 14px;
     letter-spacing: 2px;
     cursor: pointer;
     float: left;
+  }
+
+  .con-header .user {
+    position: absolute;
+    width: 500px;
+    height: 60px;
+    line-height: 60px;
+    left: 230px;
+    float: left;
+    color: #fff;
+    z-index: 1000;
+    cursor: pointer;
+  }
+
+  .u-img{
+    vertical-align: middle;
+    margin-right: 20px;
+  }
+
+  .msg {
+    position: absolute;
+    height: 30px;
+    line-height: 30px;
+    margin: 15px 0;
+    right: 200px;
+    z-index: 1000;
+    border-right: 1px solid #fff;
+  }
+
+  .title-img{
+    background: #fff;
+    width: 35px;
+    height: 35px;
+    display: inline-block;
+    border-radius: 18px;
+    margin: 0 10px;
   }
 
   /* element cover */

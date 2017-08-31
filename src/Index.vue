@@ -1,7 +1,7 @@
 <template>
   <div id="index">
     <con-header></con-header>
-    <router-view></router-view>
+    <router-view id="router-page"></router-view>
     <con-sidebar></con-sidebar>
   </div>
 </template>
@@ -19,5 +19,10 @@ export default {
 </script>
 
 <style>
-
+#router-page{
+  background: #eee;
+  overflow: hidden;
+  min-height: 550px;
+  padding: 80px 20px 20px 230px;
+}
 </style>
