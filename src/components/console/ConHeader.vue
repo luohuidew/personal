@@ -32,7 +32,6 @@ export default {
     right: 0;
     height: 60px;
     z-index: 1000;
-    box-shadow: 0 0 10px 0 rgba(224,224,224,0.10);
   }
 
   .con-header .title {
@@ -50,7 +49,6 @@ export default {
   /* element cover */
 
   .el-menu {
-    border-radius: 0!important;
     margin-left: 210px;
   }
 
@@ -59,7 +57,6 @@ export default {
   }
 
   .el-menu--dark{
-    background: #33457B;
+    background: #33457B!important;
   }
-
 </style>
