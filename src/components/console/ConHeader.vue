@@ -23,6 +23,7 @@ export default {
   },
   methods: {
     handleSelect() {
+      window.location.href = `http://${window.location.host}/home.html#/`;
     },
   },
 };
