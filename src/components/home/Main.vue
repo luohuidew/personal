@@ -3,108 +3,113 @@
     <hm-header></hm-header>
     <div class="main">
       <section class="part1">
-      <h2>实施股权激励的有效方式</h2>
-      <p>创造价值互联</p>
-      <div class="par1-links">
-        <div>
-          <a href="javascript:void(0);" class="a-1"><span>申请试用</span></a>
-          <a href="javascript:void(0);" class="a-2"><i></i><span>播放视频</span></a>
+        <h2 class="part">实施股权激励的有效方式</h2>
+        <p>创造价值互联</p>
+        <div class="par1-links">
+          <div>
+            <a href="javascript:void(0);" class="a-1"><span>申请试用</span></a>
+            <a href="javascript:void(0);" class="a-2"><i></i><span>播放视频</span></a>
+          </div>
         </div>
-      </div>
-    </section>
-    <!--产品功能-->
-    <section class="part2">
-      <h3 class="small-head"><i>.</i><span>产品功能</span><i>.</i></h3>
-      <h2 class="mid-head">一站式股权管理</h2>
-      <el-row type="flex" :gutter="20" class="part2-main" justify="space-between">
-        <el-col :span="6">
-          <div class="">
-            <i><img src="../../assets/index-1.png"/></i>
-            <h3>发行电子股票</h3>
-            <p>网上发行证书及无证书股份，淘汰纸质股票证书</p>
-            <a href="javascript:void(0);">了解更多</a>
-          </div>
-        </el-col>
-        <el-col :span="6">
-          <div class="">
-            <i><img src="../../assets/index-2.png"/></i>
-            <h3>在线管理CapTable</h3>
-            <p>追踪包括期权在内的所有资产和债务，轻松管理行权计划</p>
-            <a href="javascript:void(0);">了解更多</a>
-          </div>
-        </el-col>
-        <el-col :span="6">
-          <div class="">
-            <i><img src="../../assets/index-3.png"/></i>
-            <h3>筹划下轮融资</h3>
-            <p>分析和比较未来的融资趋势，在融资时做出最佳决定</p>
-            <a href="javascript:void(0);">了解更多</a>
-          </div>
-        </el-col>
-        <el-col :span="6">
-          <div class="">
-            <i><img src="../../assets/index-4.png"/></i>
-            <h3>行使股东权利</h3>
-            <p>给予股东及投资者随时获得最新信息的便捷通道</p>
-            <a href="javascript:void(0);">了解更多</a>
-          </div>
-        </el-col>
-      </el-row>
-    </section>
-    <!--产品展示-->
-    <section class="part3">
-      <h3 class="small-head"><i>.</i><span>产品展示</span><i>.</i></h3>
-      <h2 class="mid-head">一站式股权管理</h2>
-      <div class="slide-main">
-        <!-- <div class="left-btn"><img src="../../assets/index-left.png"/></div> -->
-        <template>
-          <el-tabs v-model="activeName" @tab-click="handleClick">
-            <el-tab-pane label="权益管理" name="a0">
-              <div><img src="../../assets/index-equity.png"/></div>
-            </el-tab-pane>
-            <el-tab-pane label="期权管理" name="a1">
-              <div><img src="../../assets/index-option.png"/></div>
-            </el-tab-pane>
-            <el-tab-pane label="文档管理" name="a2">
-              <div><img src="../../assets/index-equity.png"/></div>
-            </el-tab-pane>
-          </el-tabs>
-        </template>
-        <el-carousel :v-model="0" :autoplay="false" arrow="always" @change="link" :initial-index="returnItem">
-          <el-carousel-item v-for="item in 3" :key="item">
-          </el-carousel-item>
-        </el-carousel>
-        <!-- <div class="right-btn"><img src="../../assets/index-right.png"/></div> -->
-      </div>
-    </section>
-    <!--产品优势-->
-    <section class="part4">
-      <h3 class="small-head"><i>.</i><span>产品优势</span><i>.</i></h3>
-      <h2 class="mid-head">一站式股权管理</h2>
-      <el-row type="flex" class="ways" :gutter="60" justify="space-between">
-        <el-col class="old" :span="12"><img src="../../assets/index-oldways.png"/></el-col>
-        <el-col class="new" :span="12"><img src="../../assets/index-newways.png"/></el-col>
-      </el-row>
-    </section>
-    <!--服务用户-->
-    <section class="part5">
-      <h3 class="small-head"><i>.</i><span>服务用户</span><i>.</i></h3>
-      <h2 class="mid-head">一站式股权管理</h2>
-      <div><img src="../../assets/index-part5.png"/></div>
-    </section>
-    <!--others-->
-    <section class="part6">
-      <el-row  type="flex" :gutter="60" justify="space-between">
-        <el-col :span="14"><img src="../../assets/index-bottom.png"/></el-col>
-        <el-col :span="10" class="des">
-          <p>快来定制期权激励计划</p>
-          <a href="javascript:void(0)">申请试用</a>
-        </el-col>
-      </el-row>
-    </section>
+      </section>
+      <!--产品功能-->
+      <section class="part2">
+        <h3 class="small-head"><i>.</i><span>产品功能</span><i>.</i></h3>
+        <h2 class="mid-head">一站式股权管理</h2>
+        <el-row type="flex" :gutter="20" class="part2-main" justify="space-between">
+          <el-col :span="6">
+            <div class="">
+              <i><img src="../../assets/index-1.png"/></i>
+              <h3>发行电子股票</h3>
+              <p>网上发行证书及无证书股份，淘汰纸质股票证书</p>
+              <a href="javascript:void(0);">了解更多</a>
+            </div>
+          </el-col>
+          <el-col :span="6">
+            <div class="">
+              <i><img src="../../assets/index-2.png"/></i>
+              <h3>在线管理CapTable</h3>
+              <p>追踪包括期权在内的所有资产和债务，轻松管理行权计划</p>
+              <a href="javascript:void(0);">了解更多</a>
+            </div>
+          </el-col>
+          <el-col :span="6">
+            <div class="">
+              <i><img src="../../assets/index-3.png"/></i>
+              <h3>筹划下轮融资</h3>
+              <p>分析和比较未来的融资趋势，在融资时做出最佳决定</p>
+              <a href="javascript:void(0);">了解更多</a>
+            </div>
+          </el-col>
+          <el-col :span="6">
+            <div class="">
+              <i><img src="../../assets/index-4.png"/></i>
+              <h3>行使股东权利</h3>
+              <p>给予股东及投资者随时获得最新信息的便捷通道</p>
+              <a href="javascript:void(0);">了解更多</a>
+            </div>
+          </el-col>
+        </el-row>
+      </section>
+      <!--产品展示-->
+      <section class="part3">
+        <h3 class="small-head"><i>.</i><span>产品展示</span><i>.</i></h3>
+        <h2 class="mid-head">一站式股权管理</h2>
+        <div class="slide-main">
+          <!-- <div class="left-btn"><img src="../../assets/index-left.png"/></div> -->
+          <template>
+            <el-tabs v-model="activeName" @tab-click="handleClick">
+              <el-tab-pane label="权益管理" name="a0">
+                <div><img src="../../assets/index-equity.png"/></div>
+              </el-tab-pane>
+              <el-tab-pane label="期权管理" name="a1">
+                <div><img src="../../assets/index-option.png"/></div>
+              </el-tab-pane>
+              <el-tab-pane label="文档管理" name="a2">
+                <div><img src="../../assets/index-equity.png"/></div>
+              </el-tab-pane>
+            </el-tabs>
+          </template>
+          <el-carousel :v-model="0" :autoplay="false" arrow="always" @change="link" :initial-index="0">
+            <el-carousel-item v-for="item in 3" :key="item">
+            </el-carousel-item>
+          </el-carousel>
+          <!-- <el-carousel :v-model="0" :autoplay="false" arrow="always" @change="link" :initial-index="returnItem">
+            <el-carousel-item v-for="(val, key) in slideImgs" :key="key">
+              <img :src="val"/>
+            </el-carousel-item>
+          </el-carousel> -->
+          <div class="right-btn"><img src="../../assets/index-right.png"/></div>
+        </div>
+      </section>
+      <!--产品优势-->
+      <section class="part4">
+        <h3 class="small-head"><i>.</i><span>产品优势</span><i>.</i></h3>
+        <h2 class="mid-head">一站式股权管理</h2>
+        <el-row type="flex" class="ways" :gutter="60" justify="space-between">
+          <el-col class="old" :span="12"><img src="../../assets/index-oldways.png"/></el-col>
+          <el-col class="new" :span="12"><img src="../../assets/index-newways.png"/></el-col>
+        </el-row>
+      </section>
+      <!--服务用户-->
+      <section class="part5">
+        <h3 class="small-head"><i>.</i><span>服务用户</span><i>.</i></h3>
+        <h2 class="mid-head">一站式股权管理</h2>
+        <div><img src="../../assets/index-part5.png"/></div>
+      </section>
+      <!--others-->
+      <section class="part6">
+        <el-row  type="flex" :gutter="60" justify="space-between">
+          <el-col :span="14"><img src="../../assets/index-bottom.png"/></el-col>
+          <el-col :span="10" class="des">
+            <p>快来定制期权激励计划</p>
+            <a href="javascript:void(0)">申请试用</a>
+          </el-col>
+        </el-row>
+      </section>
       <div @click="jump" style="border: 1px solid red;width: 100px;">点我跳到控制台</div>
       <br>
-      <br> <br>
+      <br>
       <br>
     </div>
   </div>
@@ -126,7 +131,11 @@ export default {
       linkable: 0, // 默认进来左右按钮也未被点击
       linkBefore: 0,
       linkNow: 1,
-      // handleNow: 1,
+      // slideImgs: {
+      //   0: '../../../static/img/index-equity.png',
+      //   1: '../../../static/img/index-option.png',
+      //   2: '../../../static/img/index-equity.png',
+      // },
     };
   },
   methods: {
@@ -135,46 +144,10 @@ export default {
       window.location.href = `http://${window.location.host}/console`;
     },
     link(i) {
-      // this.linkable = 1; // 左右按钮被点击了
-      // console.log(i, m); // i是当前索引，m是上一个索引
-      // this.linkBefore = m;
-      // this.linkNow = i;
-      // console.log(this.linkBefore, this.linkNow);
-      // if (this.handle === 1) {
-      //   this.linkNow = this.handleNow;
-      //   this.activeName = `a${this.linkNow}`;
-      // } else {
-      //   this.linkNow = i;
-      //   this.activeName = `a${i}`;
-      // }
-      // if (this.handle === 1) {
-      //   if (this.handleNow !== this.linkNow) { // 如果选项卡被点击了并且选项卡跟左右按钮索引不一致时
-      //     this.linkBefore = this.handleNow;
-      //     if (this.linkBefore === 2) {
-      //       this.linkNow = 0;
-      //     }
-      //     this.linkNow = this.linkBefore + 1;
-      //     this.activeName = `a${this.linkNow}`;
-      //   }
-      // } else {
-      //   this.activeName = `a${i}`; // 通过左右按钮控制选项卡被选中的项
-      // }
-      // if (this.returnItem !== i) {
-      //   this.activeName = `a${this.returnItem}`;
-      // } else {
-      //   this.activeName = `a${i}`;
-      // }
-
       this.activeName = `a${i}`;
     },
     handleClick(j) {
       this.returnItem = Number(j.index);
-      // console.log(this.returnItem);
-      // this.handle = 1; // 选项卡被点击了
-      // this.returnItem = 1; // 获得选项卡当前索引
-      // this.handleNow = parseFloat(j.index);
-      // console.log(j);
-      // this.activeName = `a${this.returnItem}`;
     },
   },
   components: {
@@ -446,5 +419,9 @@ img{
   font-size: 16px;
   color: #FFFFFF;
   letter-spacing: 3px;
+}
+.el-carousel__arrow {
+  width: 60px;
+  height: 60px;
 }
 </style>
