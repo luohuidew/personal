@@ -1,7 +1,6 @@
 <template>
   <div id="home">
-    我是企业展示端
-    <hm-header></hm-header>
+    <!-- <hm-header></hm-header> -->
     <router-view></router-view>
     <hm-footer></hm-footer>
   </div>
@@ -18,6 +17,3 @@ export default {
   },
 };
 </script>
-
-<style>
-</style>

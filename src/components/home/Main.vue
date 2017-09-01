@@ -1,6 +1,8 @@
 <template>
-  <div class="main">
-    <section class="part1">
+  <div>
+    <hm-header></hm-header>
+    <div class="main">
+      <section class="part1">
       <h2>实施股权激励的有效方式</h2>
       <p>创造价值互联</p>
       <div class="par1-links">
@@ -100,11 +102,17 @@
         </el-col>
       </el-row>
     </section>
-    <!-- <div @click="jump" style="border: 1px solid red;width: 100px;">点我跳到控制台</div> -->
+      <div @click="jump" style="border: 1px solid red;width: 100px;">点我跳到控制台</div>
+      <br>
+      <br> <br>
+      <br>
+    </div>
   </div>
 </template>
 
 <script>
+import hmHeader from './HmHeader';
+
 export default {
   name: 'main',
   data() {
@@ -168,6 +176,9 @@ export default {
       // console.log(j);
       // this.activeName = `a${this.returnItem}`;
     },
+  },
+  components: {
+    hmHeader,
   },
 };
 </script>
