@@ -16,19 +16,19 @@
     height: 1px;
     background: rgba(255,255,255,0.50);
 }
-/* .main .el-carousel__indicators {
+.main .el-carousel__indicators {
     display: none;
 }
 .main .el-carousel__arrow {
-    position: absolute;
-    top: 50%;
+    /* position: absolute;
+    top: 50%; */
     width: 60px;
     height: 60px;
-    margin-top: -30px;
-    -webkit-appearance: none;
-    appearance: none;
+    background: yellow !important;
+    /* margin-top: -30px;
+    -webkit-appearance: none; */
 }
-.main .el-carousel__arrow i{
+/* .main .el-carousel__arrow i{
     display: none;
 }
 .main .el-carousel__arrow--left {
