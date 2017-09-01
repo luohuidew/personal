@@ -1,21 +1,20 @@
 <template>
   <div class="main">
-    <br>
-    <br>
-    <br>
     <section class="part1">
       <h2>实施股权激励的有效方式</h2>
       <p>创造价值互联</p>
       <div class="par1-links">
-        <a href="javascript:void(0);" class="a-1"><span>申请试用</span></a>
-        <a href="javascript:void(0);" class="a-2"><i></i><span>播放视频</span></a>
+        <div>
+          <a href="javascript:void(0);" class="a-1"><span>申请试用</span></a>
+          <a href="javascript:void(0);" class="a-2"><i></i><span>播放视频</span></a>
+        </div>
       </div>
-
     </section>
+    <!--产品功能-->
     <section class="part2">
       <h3 class="small-head"><i>.</i><span>产品功能</span><i>.</i></h3>
       <h2 class="mid-head">一站式股权管理</h2>
-      <el-row :gutter="20" class="part2-main">
+      <el-row type="flex" :gutter="20" class="part2-main" justify="space-between">
         <el-col :span="6">
           <div class="">
             <i><img src="../../assets/index-1.png"/></i>
@@ -50,10 +49,67 @@
         </el-col>
       </el-row>
     </section>
-    <div @click="jump" style="border: 1px solid red;width: 100px;">点我跳到控制台</div>
-    <br>
-    <br> <br>
-    <br>
+    <!--产品展示-->
+    <section class="part3">
+      <h3 class="small-head"><i>.</i><span>产品展示</span><i>.</i></h3>
+      <h2 class="mid-head">一站式股权管理</h2>
+      <div class="slide-main">
+        <!-- <div class="left-btn"><img src="../../assets/index-left.png"/></div> -->
+        <template>
+          <el-tabs v-model="activeName" @tab-click="link2">
+            <el-tab-pane label="权益管理" name="a0">
+              <div><img src="../../assets/index-equity.png"/></div>
+            </el-tab-pane>
+            <el-tab-pane label="期权管理" name="a1">
+              <div><img src="../../assets/index-option.png"/></div>
+            </el-tab-pane>
+            <el-tab-pane label="文档管理" name="a2">
+              <div><img src="../../assets/index-equity.png"/></div>
+            </el-tab-pane>
+          </el-tabs>
+        </template>
+
+        <br>
+        <br>
+        <br>
+        <br>
+        <el-carousel :autoplay="false" arrow="always" @change="link" :initial-index="returnItem">
+          <el-carousel-item v-for="item in 3" :key="item">
+          </el-carousel-item>
+        </el-carousel>
+         <br>
+        <br>
+        <br>
+        <br>
+        <!-- <div class="right-btn"><img src="../../assets/index-right.png"/></div> -->
+      </div>
+    </section>
+    <!--产品优势-->
+    <section class="part4">
+      <h3 class="small-head"><i>.</i><span>产品优势</span><i>.</i></h3>
+      <h2 class="mid-head">一站式股权管理</h2>
+      <el-row type="flex" class="ways" :gutter="60" justify="space-between">
+        <el-col class="old" :span="12"><img src="../../assets/index-oldways.png"/></el-col>
+        <el-col class="new" :span="12"><img src="../../assets/index-newways.png"/></el-col>
+      </el-row>
+    </section>
+    <!--服务用户-->
+    <section class="part5">
+      <h3 class="small-head"><i>.</i><span>服务用户</span><i>.</i></h3>
+      <h2 class="mid-head">一站式股权管理</h2>
+      <div><img src="../../assets/index-part5.png"/></div>
+    </section>
+    <!--others-->
+    <section class="part6">
+      <el-row  type="flex" :gutter="60" justify="space-between">
+        <el-col :span="14"><img src="../../assets/index-bottom.png"/></el-col>
+        <el-col :span="10" class="des">
+          <p>快来定制期权激励计划</p>
+          <a href="javascript:void(0)">申请试用</a>
+        </el-col>
+      </el-row>
+    </section>
+    <!-- <div @click="jump" style="border: 1px solid red;width: 100px;">点我跳到控制台</div> -->
   </div>
 </template>
 
@@ -62,6 +118,8 @@ export default {
   name: 'main',
   data() {
     return {
+      activeName: 'a0',
+      returnItem: 0, // 选项卡返回来的index
     };
   },
   methods: {
@@ -69,35 +127,49 @@ export default {
 //      this.$router.push({ name: 'ForgetPassword' });
       window.location.href = `http://${window.location.host}/console`;
     },
+    link(i) {
+      this.activeName = `a${i}`;
+    },
+    link2(i) {
+      this.returnItem = parseFloat(i.index);
+    },
   },
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+img{
+  width: 100%;
+  height: auto;
+}
+.part1, .part2, .part3, .part4, .part5, .part6{
+  text-align: center;
+}
 .part1{
   width: 100%;
-  height: 650px;
+  padding: 208px 0 165px;
   background-image: url('../../assets/banner.png');
   background-color: rgba(11,22,49,0.72);
   background-size: cover;
   background-position: center bottom;
-  text-align: center;
   font-family: NotoSansHans-Regular;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
 }
 .part1 h2{
   margin-bottom: 20px;
   font-size: 45px;
-  color: #FFFFFF;
+  color: #fff;
   letter-spacing: 3px;
   line-height: 100px;
   text-shadow: 0 2px 4px rgba(179,179,179,0.50);
   font-weight: normal;
 }
-par1-links {
+.par1-links div{
   height: 46px;
   line-height: 46px;
-  overflow: hidden;
 }
 .par1-links a{
   display: inline-block;
@@ -106,10 +178,9 @@ par1-links {
   -moz-border-radius: 30px;
   -webkit-border-radius: 30px;
   border-radius: 30px;
-  
+  overflow: hidden;
 }
 .par1-links a span{
-  display: inline-block;
   font-size: 16px;
   color: #FFFFFF;
   letter-spacing: 3px;
@@ -118,6 +189,11 @@ par1-links {
 .a-1{
   background: #FFCA57;
   margin-right: 3%;
+}
+.a-1 span{
+  float: left;
+  width: 100%;
+  height: 100%;
 }
 .a-1:hover{
   -webkit-opacity: 0.8; 
@@ -132,19 +208,16 @@ par1-links {
   border: 1px solid #FFFFFF;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
+  overflow: hidden;
 }
 .a-2 i{
-  position: relative;
-  top: 3px;
-  display: inline-block;
-  width: 40px;
-  height: 40px;
-  margin-right: 4px;
+  width: 46px;
+  height: 46px;
+  margin-right: -3px;
   background: url('../../assets/index-player.png') no-repeat center center;
 }
-.a-2 span{
-  position: relative;
-  top: -12px;
+.a-2 i, .a-2 span {
+  float: left;
 }
 .a-2:hover{
   background:rgba(255,255,255,.3);
@@ -208,6 +281,7 @@ par1-links {
   height: 26px;
 }
 .part2-main .el-col div i img{
+  width: auto;
   height: 100%;
 }
 .part2-main .el-col div h3{
@@ -235,6 +309,8 @@ par1-links {
   height: 45px;
   line-height: 45px;
   border: 1px solid #E7E7E7;
+  -webkit-border-radius: 40px;
+  -moz-border-radius: 40px;
   border-radius: 40px;
   font-size: 14px;
   color: #4F5152;
@@ -244,5 +320,85 @@ par1-links {
   background:#546AAC;
   color: #fff;
 }
-
+.part3 {
+  padding: 46px 0 56px;
+  background: #50608F;
+}
+.part3 h2, .part3 h3 span, .part3 h3 i{
+  color: #fff;
+}
+.part3 h2 {
+  margin-bottom: 12px;
+}
+.left-btn, .right-btn, .slide-main {
+  display: inline-block;
+}
+.left-btn, .right-btn{
+  position: absolute;
+  top: 50%;
+  width: 60px;
+  height: 60px;
+  margin-top: -30px;
+}
+.left-btn:hover, .right-btn:hover {
+  -webkit-opacity: 0.8; 
+  -moz-opacity: 0.8;
+  -khtml-opacity: 0.8;
+  opacity: .8;
+  filter:alpha(opacity=80);
+  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+  filter:progid:DXImageTransform.Microsoft.Alpha(Opacity=80);
+}
+.slide-main {
+  position: relative;
+  width: 45%;
+  margin: 0 2%;
+}
+.left-btn {
+  left: -13%;
+}
+.right-btn {
+  right: -13%;
+}
+.part4 {
+  padding: 46px 15.6% 90px;
+  background: #fff;
+}
+.part4 h2 {
+  margin-bottom: 10px;
+}
+/* .ways div img {
+  width: 100%;
+  height: auto;
+} */
+.part5 {
+  padding: 56px 15.6% 85px;
+  background: #EAEFF3;
+}
+.part5 h2 {
+  margin-bottom: 30px;
+}
+.part6 {
+  padding: 82px 15.6% 102px;
+}
+.part6 .des p{
+  margin: 92px 0 40px;
+  line-height: 26px;
+  font-size: 26px;
+  color: #131313;
+  letter-spacing: 0.37px;
+}
+.part6 .des a{
+  display: inline-block;
+  width: 150px;
+  height: 45px;
+  line-height: 45px;
+  background: #546AAC;
+  -webkit-border-radius: 40px;
+  -moz-border-radius: 40px;
+  border-radius: 40px;
+  font-size: 16px;
+  color: #FFFFFF;
+  letter-spacing: 3px;
+}
 </style>
