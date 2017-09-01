@@ -79,7 +79,7 @@
               <img :src="val"/>
             </el-carousel-item>
           </el-carousel> -->
-          <div class="right-btn"><img src="../../assets/index-right.png"/></div>
+          <!-- <div class="right-btn"><img src="../../assets/index-right.png"/></div> -->
         </div>
       </section>
       <!--产品优势-->
@@ -349,24 +349,8 @@ img{
 .part3 h2 {
   margin-bottom: 12px;
 }
-.left-btn, .right-btn, .slide-main {
+.left-btn, .slide-main {
   display: inline-block;
-}
-.left-btn, .right-btn{
-  position: absolute;
-  top: 50%;
-  width: 60px;
-  height: 60px;
-  margin-top: -30px;
-}
-.left-btn:hover, .right-btn:hover {
-  -webkit-opacity: 0.8; 
-  -moz-opacity: 0.8;
-  -khtml-opacity: 0.8;
-  opacity: .8;
-  filter:alpha(opacity=80);
-  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
-  filter:progid:DXImageTransform.Microsoft.Alpha(Opacity=80);
 }
 .slide-main {
   position: relative;
