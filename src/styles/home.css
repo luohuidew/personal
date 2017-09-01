@@ -1,11 +1,24 @@
+*{margin:0; padding:0}
+body{background:#F4F5F7;}
 #home {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
+  font-size:14px;
   color: #fff;
-  margin-top: 60px;
 }
 ul, ol{
   list-style: none;
+}
+img{
+  border: none;
+  vertical-align: bottom;
+}
+.clearfix:after {
+  content: " ";
+  display: block;
+  clear: both;
+  height: 0;
+}
+.clearfix {
+  zoom: 1;
 }
