@@ -15,6 +15,7 @@
         <el-menu-item index="/user/my_order"><i class="icon-img"></i>我的订单</el-menu-item>
         <el-menu-item index="/user/enterprise_list"><i class="icon-img"></i>企业列表</el-menu-item>
       </el-submenu>
+      <el-menu-item index="/module/module_doc"><i class="icon-img"><img src="../../assets/menu-doc.png" alt=""></i>组件文档(开发使用)</el-menu-item>
     </el-menu>
   </div>
 </template>

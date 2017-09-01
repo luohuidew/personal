@@ -15,6 +15,9 @@ import UserPersonalInfo from '../components/console/user/PersonalInfo';
 import UserMyOrder from '../components/console/user/MyOrder';
 import UserEnterpriseList from '../components/console/user/EnterpriseList';
 
+// 组件文档
+import ModuleDoc from '../components/console/module/doc';
+
 Vue.use(Router);
 
 export default new Router({
@@ -72,6 +75,12 @@ export default new Router({
       path: '/user/enterprise_list',
       name: 'UserEnterpriseList',
       component: UserEnterpriseList,
+    },
+    // 组件文档
+    {
+      path: '/module/module_doc',
+      name: 'ModuleDoc',
+      component: ModuleDoc,
     },
   ],
 });
