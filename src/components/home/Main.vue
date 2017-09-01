@@ -56,7 +56,7 @@
       <div class="slide-main">
         <!-- <div class="left-btn"><img src="../../assets/index-left.png"/></div> -->
         <template>
-          <el-tabs v-model="activeName" @tab-click="link2">
+          <el-tabs v-model="activeName" @tab-click="handleClick">
             <el-tab-pane label="权益管理" name="a0">
               <div><img src="../../assets/index-equity.png"/></div>
             </el-tab-pane>
@@ -68,19 +68,10 @@
             </el-tab-pane>
           </el-tabs>
         </template>
-
-        <br>
-        <br>
-        <br>
-        <br>
-        <el-carousel :autoplay="false" arrow="always" @change="link" :initial-index="returnItem">
+        <el-carousel :v-model="0" :autoplay="false" arrow="always" @change="link" :initial-index="returnItem">
           <el-carousel-item v-for="item in 3" :key="item">
           </el-carousel-item>
         </el-carousel>
-         <br>
-        <br>
-        <br>
-        <br>
         <!-- <div class="right-btn"><img src="../../assets/index-right.png"/></div> -->
       </div>
     </section>
@@ -118,8 +109,16 @@ export default {
   name: 'main',
   data() {
     return {
-      activeName: 'a0',
+      activeName: 'a0', // 通过activeName来控制选项卡被选中的项
       returnItem: 0, // 选项卡返回来的index
+      handle: 0, // 默认进来选项卡未被点击
+      handleNext: 2,
+      handleNow: 1, // 默认进来选项卡索引
+      handleBefore: 0,
+      linkable: 0, // 默认进来左右按钮也未被点击
+      linkBefore: 0,
+      linkNow: 1,
+      // handleNow: 1,
     };
   },
   methods: {
@@ -128,10 +127,46 @@ export default {
       window.location.href = `http://${window.location.host}/console`;
     },
     link(i) {
+      // this.linkable = 1; // 左右按钮被点击了
+      // console.log(i, m); // i是当前索引，m是上一个索引
+      // this.linkBefore = m;
+      // this.linkNow = i;
+      // console.log(this.linkBefore, this.linkNow);
+      // if (this.handle === 1) {
+      //   this.linkNow = this.handleNow;
+      //   this.activeName = `a${this.linkNow}`;
+      // } else {
+      //   this.linkNow = i;
+      //   this.activeName = `a${i}`;
+      // }
+      // if (this.handle === 1) {
+      //   if (this.handleNow !== this.linkNow) { // 如果选项卡被点击了并且选项卡跟左右按钮索引不一致时
+      //     this.linkBefore = this.handleNow;
+      //     if (this.linkBefore === 2) {
+      //       this.linkNow = 0;
+      //     }
+      //     this.linkNow = this.linkBefore + 1;
+      //     this.activeName = `a${this.linkNow}`;
+      //   }
+      // } else {
+      //   this.activeName = `a${i}`; // 通过左右按钮控制选项卡被选中的项
+      // }
+      // if (this.returnItem !== i) {
+      //   this.activeName = `a${this.returnItem}`;
+      // } else {
+      //   this.activeName = `a${i}`;
+      // }
+
       this.activeName = `a${i}`;
     },
-    link2(i) {
-      this.returnItem = parseFloat(i.index);
+    handleClick(j) {
+      this.returnItem = Number(j.index);
+      // console.log(this.returnItem);
+      // this.handle = 1; // 选项卡被点击了
+      // this.returnItem = 1; // 获得选项卡当前索引
+      // this.handleNow = parseFloat(j.index);
+      // console.log(j);
+      // this.activeName = `a${this.returnItem}`;
     },
   },
 };
