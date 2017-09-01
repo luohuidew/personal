@@ -44,7 +44,11 @@ export default {
   }
 
   .icon-img{
-    margin-right: 25px;
+    margin-right: 30px;
+  }
+
+  .icon-img img {
+    margin-bottom: 5px;
   }
   /* element cover */
 
