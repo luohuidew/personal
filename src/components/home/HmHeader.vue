@@ -1,12 +1,12 @@
 <template>
-  <div class="header" id="header">
+  <div class="header" id="header" v-bind:class="{ stack: noDefultHead }">
     <div class="headerwrap">
-      <a class="login-link" href=""><img class="logo-img" id="imgsrc" :src="imgUrl" alt=""></a>
+      <a class="login-link" href=""><img class="logo-img" id="imgsrc" :src="noDefultHead ? imgUrl2 : imgUrl" alt=""></a>
       <!-- <a class="login-link" href=""><img class="logo-img" id="imgsrc2" :src="imgUrl2" alt="" style="display:none"></a> -->
       <div class="header-menu">
         <ul>
-          <li><a href="">首页</a></li>
-          <li><a href="/home.html#/price_view">价格概览</a></li>
+          <li class="text-link"><a href="">首页</a></li>
+          <li class="text-link"><a href="/home.html#/price_view">价格概览</a></li>
           <li><a class="yellow-btn" href="">申请试用</a></li>
           <li><a class="grey-btn" href="">登录</a></li>
         </ul>
@@ -21,34 +21,47 @@ import logImgurl2 from '../../assets/index-logo2.png';
 export default {
   name: 'hm-header',
   created() {
-    window.onscroll = () => {
-      const t = document.documentElement.scrollTop || document.body.scrollTop;
-      const headDom = document.getElementById('header');
-      const imgSrc = document.getElementById('imgsrc');
-      // const imgSrc2 = document.getElementById('imgsrc2');
-      if (t > 0) {
-        headDom.className = 'header stack';
-        imgSrc.src = this.imgUrl2;
-        // imgSrc.style.display = 'none';
-        // imgSrc.style.opacity = 0;
-        // imgSrc2.style.display = '';
-        // imgSrc2.style.opacity = 1;
-      } else {
-        headDom.className = 'header';
-        imgSrc.src = this.imgUrl;
-        // imgSrc.style.display = '';
-        // imgSrc.style.opacity = 1;
-        // imgSrc2.style.display = 'none';
-        // imgSrc2.style.opacity = 0;
-      }
-    };
+    console.log('111111', this, this.noDefultHead);
+    console.log(this.$router, this.$route);
+    if (!this.$route.path.includes('price_view')) {
+      this.winScroll();
+    }
+    // if (typeof this.noDefultHead === 'undefined') {
+    //   this.winScroll();
+    // }
   },
-  prop: [''],
+  props: ['noDefultHead'],
   data() {
     return {
       imgUrl: logImgurl,
       imgUrl2: logImgurl2,
+      headtype: undefined,
     };
+  },
+  methods: {
+    winScroll() {
+      const that = this;
+      window.onscroll = () => {
+        const t = document.documentElement.scrollTop || document.body.scrollTop;
+        const headDom = document.getElementById('header');
+        const imgSrc = document.getElementById('imgsrc');
+        if (t > 0 && !that.$route.path.includes('price_view')) {
+          headDom.className = 'header stack';
+          imgSrc.src = that.imgUrl2;
+          // imgSrc.style.display = 'none';
+          // imgSrc.style.opacity = 0;
+          // imgSrc2.style.display = '';
+          // imgSrc2.style.opacity = 1;
+        } else if (t === 0 && !that.$route.path.includes('price_view')) {
+          headDom.className = 'header';
+          imgSrc.src = that.imgUrl;
+          // imgSrc.style.display = '';
+          // imgSrc.style.opacity = 1;
+          // imgSrc2.style.display = 'none';
+          // imgSrc2.style.opacity = 0;
+        }
+      };
+    },
   },
 };
 </script>
@@ -61,7 +74,8 @@ export default {
 .headerwrap{padding:20px 15.6% 0;height:60px;position:relative;}
 .login-link{float:left;display: inline-block;margin-top:-6px;}
 .header-menu{float:right;display:inline-block;}
-.header-menu li{position: relative;display: inline-block;vertical-align: middle;margin:0 20px;width:120px;text-align:center;font-size:16px;}
+.header-menu li{position: relative;display: inline-block;vertical-align: middle;margin:0 20px;text-align:center;font-size:16px;}
+.header-menu li.text-link{margin:0 30px;}
 .header-menu a{color:#fff;}
 .yellow-btn{width:120px;height:40px;line-height:40px;text-align:center;background: #FFCA57;border-radius: 4px;display: inline-block;zoom:1;}
 .grey-btn{width:116px;height:36px;line-height:36px;text-align:center;border-radius: 4px;border: 2px solid #F2F2F2;display: inline-block;zoom:1;}
