@@ -95,7 +95,7 @@
 /*main.vue end*/
 
 /*login & apply start*/
-.login, .apply {
+.login, .apply, .forget {
     width: 100%;
     height: 100%;
     background-image: -webkit-linear-gradient(50deg, #768296 38%, #99A3B9 93%);
@@ -103,7 +103,7 @@
     background-image: -o-linear-gradient(50deg, #768296 38%, #99A3B9 93%);
     background-image: linear-gradient(50deg, #768296 38%, #99A3B9 93%);
   }
-  .login .login-inner, .apply .apply-inner {
+  .login .login-inner, .apply .apply-inner, .forget .forget-inner {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -117,20 +117,20 @@
     -moz-box-shadow: 0 0 30px 0 rgba(70,70,93,0.50);
     box-shadow: 0 0 30px 0 rgba(70,70,93,0.50);
   }
-  .login .logo, .apply .logo {
+  .login .logo, .apply .logo, .forget .logo {
     display: block;
     width: 41.33%;
     margin: 50px auto 20px;
   }
-  .login .logo img, .apply .logo img {
+  .login .logo img, .apply .logo img , .forget .logo img{
     width: 100%;
     height: auto;
   }
-  .login .login-main, .apply .apply-main {
+  .login .login-main, .apply .apply-main , .forget .forget-main{
     width: 77.8%;
     margin: 0 auto;
   }
-  .login .login-now, .apply .apply-now {
+  .login .login-now, .apply .apply-now , .forget .submit-now{
     display: block;
     width: 100%;
     height: 40px;
@@ -142,7 +142,7 @@
     color: #FFFFFF;
     letter-spacing: 6px;
   }
-  .login .login-now:hover, .apply .apply-now:hover {
+  .login .login-now:hover, .apply .apply-now:hover , .forget .submit-now:hover{
     -webkit-opacity: 0.8; 
     -moz-opacity: 0.8;
     -khtml-opacity: 0.8;
@@ -151,7 +151,7 @@
     -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
     filter:progid:DXImageTransform.Microsoft.Alpha(Opacity=80);
   }
-  .login .el-input__inner, .apply .el-input__inner, .apply .el-textarea__inner {
+  .login .el-input__inner, .apply .el-input__inner, .apply .el-textarea__inner , .forget .el-input__inner{
     height: 46px !important;
     border: 0 none !important;
     border-bottom: 1px solid rgba(213,213,213,0.40) !important;
@@ -160,7 +160,17 @@
 .apply .el-textarea__inner {
     resize: none !important;
 }
-.login .el-input, .apply .el-input, .apply .el-textarea{
+.login .el-input, .apply .el-input, .apply .el-textarea, .forget .el-input{
     margin: 20px 0;
 }  
+.forget .get-code .el-input {
+    margin: 0;
+}
+.forget .get-code .el-input__inner{
+    border-bottom: 0 none !important;
+}
 /*login & apply end*/
+/* 输入框统一色值 */
+.el-input__inner {
+    color: #666 !important;
+}

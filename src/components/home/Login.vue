@@ -3,10 +3,10 @@
       <section class="login-inner">
         <a href="javascript:void(0)" class="logo"><img src="../../assets/login-logo.png"/></a>
         <div class="login-main">
-          <el-input type="text" v-model="userName" placeholder="请输入邮箱／手机号"></el-input>
-          <el-input type="password" v-model="password" placeholder="请输入密码"></el-input>
+          <el-input type="text" v-model.trim="userName" placeholder="请输入邮箱／手机号"></el-input>
+          <el-input type="password" v-model.trim="password" placeholder="请输入密码"></el-input>
           <el-row type="flex" justify="end">
-            <el-col :span="12" class="forget"><a href="javascript:void(0)">忘记密码？</a></el-col>
+            <el-col :span="12" class="forget"><a href="#/forget_pass">忘记密码？</a></el-col>
           </el-row>
           <a href="javascript:void(0)" class="login-now">立即登录</a>
           <div class="trial">
