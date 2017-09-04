@@ -131,7 +131,7 @@
       <el-col :span="12">
         <el-date-picker
           size="small"
-          v-model="value1"
+          v-model="value2"
           type="date"
           placeholder="选择日期">
         </el-date-picker>
@@ -141,7 +141,7 @@
     <el-row :gutter="20">
       <el-col :span="12">
         <el-date-picker
-          v-model="value1"
+          v-model="value3"
           type="date"
           placeholder="选择日期">
         </el-date-picker>
@@ -150,11 +150,35 @@
       <el-col :span="12">
         <el-date-picker
           size="large"
-          v-model="value1"
+          v-model="value4"
           type="date"
           placeholder="选择日期">
         </el-date-picker>
         <pre>size="large", width=400；</pre>
+      </el-col>
+    </el-row>
+    <h3>7、Table 表格</h3>
+    <el-row :gutter="20">
+      <el-col :span="24">
+        <el-table
+          :data="tableData"
+          style="width: 100%">
+          <el-table-column
+            prop="date"
+            label="日期"
+            width="180">
+          </el-table-column>
+          <el-table-column
+            prop="name"
+            label="姓名"
+            width="180">
+          </el-table-column>
+          <el-table-column
+            prop="address"
+            label="地址">
+          </el-table-column>
+        </el-table>
+        <pre>el-table</pre>
       </el-col>
     </el-row>
   </div>
@@ -182,6 +206,26 @@ export default {
       }],
       value: '',
       value1: '',
+      value2: '',
+      value3: '',
+      value4: '',
+      tableData: [{
+        date: '2016-05-02',
+        name: '安其拉',
+        address: '上海市普陀区金沙江路 1518 弄',
+      }, {
+        date: '2016-05-04',
+        name: '王昭君',
+        address: '上海市普陀区金沙江路 1517 弄',
+      }, {
+        date: '2016-05-01',
+        name: '阿珂',
+        address: '上海市普陀区金沙江路 1519 弄',
+      }, {
+        date: '2016-05-03',
+        name: '高渐离',
+        address: '上海市普陀区金沙江路 1516 弄',
+      }],
     };
   },
   methods: {
