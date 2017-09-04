@@ -1,6 +1,6 @@
 <template>
   <div>
-    <hm-header></hm-header>
+    <hm-header :no-defult-head="noDefultHead"></hm-header>
     <div class="price-view">
       <p class="title1">小投入，大回报</p>
       <el-row :gutter="52" class="pure-g">
@@ -66,6 +66,7 @@ export default {
   name: 'price-view',
   data() {
     return {
+      noDefultHead: true,
     };
   },
   methods: {

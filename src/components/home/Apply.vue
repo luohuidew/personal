@@ -7,7 +7,7 @@
           <el-input type="text" v-model="companyName" placeholder="请输入公司名称"></el-input>
           <el-input type="email" v-model="email" placeholder="请输入邮箱地址"></el-input>
           <el-input type="tel" v-model="tel" placeholder="请输入手机号"></el-input>
-          <el-textarea v-model="remarks" aria-placeholder="备注点什么？"></el-textarea>
+          <el-input type="textarea" v-model="remarks" :autosize="{ minRows: 1, maxRows: 4}" placeholder="备注点什么？" class="texarea"></el-input>
           <a href="javascript:void(0)" class="apply-now">申请试用</a>
         </div>
     </div>
@@ -33,5 +33,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
+.texarea.el-textarea .el-textarea__inner{
+  border: none;
+}
 </style>
