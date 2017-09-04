@@ -1,3 +1,7 @@
 build/*.js
 config/*.js
 static/*.js
+src/lib/*.js
+src/components/home/Login.vue
+src/components/home/Apply.vue
+src/components/home/ForgetPassword.vue

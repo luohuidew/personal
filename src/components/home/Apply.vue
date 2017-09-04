@@ -1,5 +1,8 @@
 <template>
   <div class="apply">
+    <div id="canvas-wrapper">
+      <canvas id="demo-canvas"></canvas>
+    </div>
     <div class="apply-inner">
       <a href="javascript:void(0)" class="logo"><img src="../../assets/login-logo.png"/></a>
         <div class="apply-main">
@@ -15,6 +18,7 @@
 </template>
 
 <script>
+import canvasbg from '../../lib/canvasbg';
 export default {
   name: 'apply',
   data() {
@@ -26,8 +30,18 @@ export default {
       remarks: '', // 备注
     };
   },
+  mounted() {
+    this.canvas();
+  },
   methods: {
-
+    canvas() {
+      canvasbg.init({
+        Loc: {
+          x: window.innerWidth / 2,
+          y: window.innerHeight / 3.3,
+        },
+      });
+    },
   },
 };
 </script>

@@ -1,21 +1,25 @@
 <template>
   <div class="forget">
-      <section class="forget-inner">
-        <a href="javascript:void(0)" class="logo"><img src="../../assets/login-logo.png"/></a>
-        <div class="forget-main">
-          <el-input type="text" v-model.trim="userName" placeholder="请输入您的注册邮箱/手机号"></el-input>
-          <div class="get-code">
-            <el-input type="password" v-model.trim="captcha" placeholder="请输入验证码"></el-input>
-            <span class="code-info">获取验证码</span>
-          </div>
-          <el-input type="password" v-model.trim="newPassword" placeholder="设置新密码"></el-input>
-          <a href="javascript:void(0)" class="submit-now">提交</a>
+    <div id="canvas-wrapper">
+      <canvas id="demo-canvas"></canvas>
+    </div>
+    <section class="forget-inner">
+      <a href="javascript:void(0)" class="logo"><img src="../../assets/login-logo.png"/></a>
+      <div class="forget-main">
+        <el-input type="text" v-model.trim="userName" placeholder="请输入您的注册邮箱/手机号"></el-input>
+        <div class="get-code">
+          <el-input type="password" v-model.trim="captcha" placeholder="请输入验证码"></el-input>
+          <span class="code-info">获取验证码</span>
         </div>
-      </section>
+        <el-input type="password" v-model.trim="newPassword" placeholder="设置新密码"></el-input>
+        <a href="javascript:void(0)" class="submit-now">提交</a>
+      </div>
+    </section>
   </div>
 </template>
 
 <script>
+import canvasbg from '../../lib/canvasbg';
 export default {
   name: 'forget_password',
   data() {
@@ -25,7 +29,18 @@ export default {
       newPassword: '', // 设置新密码
     };
   },
+  mounted() {
+    this.canvas();
+  },
   methods: {
+    canvas() {
+      canvasbg.init({
+        Loc: {
+          x: window.innerWidth / 2,
+          y: window.innerHeight / 3.3,
+        },
+      });
+    },
   },
 };
 </script>

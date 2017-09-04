@@ -1,23 +1,27 @@
 <template>
   <div class="login">
-      <section class="login-inner">
-        <a href="javascript:void(0)" class="logo"><img src="../../assets/login-logo.png"/></a>
-        <div class="login-main">
-          <el-input type="text" v-model.trim="userName" placeholder="请输入邮箱／手机号"></el-input>
-          <el-input type="password" v-model.trim="password" placeholder="请输入密码"></el-input>
-          <el-row type="flex" justify="end">
-            <el-col :span="12" class="forget-pass"><a href="#/forget_password">忘记密码？</a></el-col>
-          </el-row>
-          <a href="javascript:void(0)" class="login-now">立即登录</a>
-          <div class="trial">
-            <a href="#/apply">申请试用<i></i></a>
-          </div>
+    <div id="canvas-wrapper">
+      <canvas id="demo-canvas"></canvas>
+    </div>
+    <section class="login-inner">
+      <a href="javascript:void(0)" class="logo"><img src="../../assets/login-logo.png"/></a>
+      <div class="login-main">
+        <el-input type="text" v-model.trim="userName" placeholder="请输入邮箱／手机号"></el-input>
+        <el-input type="password" v-model.trim="password" placeholder="请输入密码"></el-input>
+        <el-row type="flex" justify="end">
+          <el-col :span="12" class="forget-pass"><a href="#/forget_password">忘记密码？</a></el-col>
+        </el-row>
+        <a href="javascript:void(0)" class="login-now">立即登录</a>
+        <div class="trial">
+          <a href="#/apply">申请试用<i></i></a>
         </div>
-      </section>
+      </div>
+    </section>
   </div>
 </template>
 
 <script>
+import canvasbg from '../../lib/canvasbg';
 export default {
   name: 'login',
   data() {
@@ -26,7 +30,18 @@ export default {
       password: '', // 密码
     };
   },
+  mounted() {
+    this.canvas();
+  },
   methods: {
+    canvas() {
+      canvasbg.init({
+        Loc: {
+          x: window.innerWidth / 2,
+          y: window.innerHeight / 3.3,
+        },
+      });
+    },
   },
 };
 </script>
