@@ -1,19 +1,19 @@
 <template>
   <div id="home">
-    <!-- <hm-header></hm-header> -->
     <router-view></router-view>
-    <hm-footer></hm-footer>
+    <!-- <hm-footer></hm-footer> -->
   </div>
 </template>
 
 <script>
-import HmHeader from './components/home/HmHeader';
-import HmFooter from './components/home/HmFooter';
+// import HmHeader from './components/home/HmHeader';
+// import HmFooter from './components/home/HmFooter';
 
 export default {
   name: 'home',
   components: {
-    HmHeader, HmFooter,
+    // HmHeader,
+    // HmFooter,
   },
 };
 </script>
