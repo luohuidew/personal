@@ -4,7 +4,6 @@ import Vue from 'vue';
 import ElementUI from 'element-ui';
 import Home from './home.vue';
 import router from './router/home';
-import './styles/home.css';
 
 import './style/reset.css';
 import './style/home-common.css';

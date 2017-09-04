@@ -1,7 +1,47 @@
 /*main.vue start*/
+
+* {
+    margin: 0;
+    padding: 0
+}
+
+body {
+    background: #F4F5F7;
+}
+
+#home {
+    height: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-size: 14px;
+    color: #fff;
+}
+
+ul,
+ol {
+    list-style: none;
+}
+
+img {
+    border: none;
+    vertical-align: bottom;
+}
+
+.clearfix:after {
+    content: " ";
+    display: block;
+    clear: both;
+    height: 0;
+}
+
+.clearfix {
+    zoom: 1;
+}
+
 .main .el-tabs__header {
     border-bottom: 0 none !important;
 }
+
 .main .el-tabs__item {
     /* margin: 0 4.75%; */
     width: 20%;
@@ -12,55 +52,67 @@
     letter-spacing: 2px;
     line-height: 27px;
 }
-.main .el-tabs__item.is-active, .main .el-tabs__item:hover {
+
+.main .el-tabs__item.is-active,
+.main .el-tabs__item:hover {
     color: #fff;
     font-weight: bold;
 }
+
 .main .el-tabs__active-bar {
     display: none;
 }
+
 .main .el-carousel__arrow {
     position: absolute;
     top: 60%;
     width: 60px;
     height: 60px;
 }
+
 .main .el-carousel__arrow i {
     display: none;
 }
+
 .main .el-carousel__arrow--right {
     right: -15%;
     background-image: url('../assets/index-right.png');
 }
+
 .main .el-carousel__arrow--left {
     left: -15%;
     background-image: url('../assets/index-left.png');
 }
-.main .el-carousel__arrow{
+
+.main .el-carousel__arrow {
     -webkit-background-repeat: no-repeat;
     background-repeat: no-repeat;
     -webkit-background-size: 60px 60px;
     background-size: 60px 60px;
 }
+
 .main .el-carousel__arrow:hover {
-    -webkit-opacity: 0.8; 
+    -webkit-opacity: 0.8;
     -moz-opacity: 0.8;
     -khtml-opacity: 0.8;
     opacity: .8;
     filter: alpha(opacity=80);
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
-    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=80);
+    filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=80);
 }
+
 .main .el-carousel__indicators {
     position: absolute;
     top: 0;
     width: 60%;
     height: 36px;
 }
+
 .main .el-carousel__indicator {
     width: 33.333%;
     padding: 0;
 }
+
 .main .el-carousel__indicator .el-carousel__button {
     width: 80%;
     height: 36px;
@@ -68,10 +120,12 @@
     background: transparent;
     /* background: rgba(255,255,255,0.50); */
 }
+
 .main .el-carousel__indicator.is-active .el-carousel__button {
-    border-bottom: 1px solid rgba(255,255,255,0.50);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.50);
     transition: all ease-out;
 }
+
 .main .el-carousel {
     position: absolute;
     left: 0%;
@@ -79,58 +133,80 @@
     width: 100%;
     height: 100%;
 }
+
 .main .el-tabs__nav {
     float: none;
 }
-.main .resize-triggers, .main.resize-triggers > div, .main.contract-trigger:before, .main .el-carousel__item {
+
+.main .resize-triggers,
+.main.resize-triggers>div,
+.main.contract-trigger:before,
+.main .el-carousel__item {
     display: none;
 }
-.main .el-carousel__container{
+
+.main .el-carousel__container {
     top: 0 !important;
     height: 100% !important;
 }
+
 .main .el-carousel {
     overflow-x: visible;
 }
+
+
 /*main.vue end*/
 
+
 /*login & apply start*/
-.login, .apply {
+
+.login,
+.apply {
     width: 100%;
     height: 100%;
     background-image: -webkit-linear-gradient(50deg, #768296 38%, #99A3B9 93%);
     background-image: -moz-linear-gradient(50deg, #768296 38%, #99A3B9 93%);
     background-image: -o-linear-gradient(50deg, #768296 38%, #99A3B9 93%);
     background-image: linear-gradient(50deg, #768296 38%, #99A3B9 93%);
-  }
-  .login .login-inner, .apply .apply-inner {
+}
+
+.login .login-inner,
+.apply .apply-inner {
     position: absolute;
     top: 50%;
     left: 50%;
-    -webkit-transform: translate(-50%,-50%);
-    -moz-transform: translate(-50%,-50%);
-    transform: translate(-50%,-50%);
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
     width: 23.5%;
     padding-bottom: 70px;
     background: #fff;
-    -webkit-box-shadow: 0 0 30px 0 rgba(70,70,93,0.50);
-    -moz-box-shadow: 0 0 30px 0 rgba(70,70,93,0.50);
-    box-shadow: 0 0 30px 0 rgba(70,70,93,0.50);
-  }
-  .login .logo, .apply .logo {
+    -webkit-box-shadow: 0 0 30px 0 rgba(70, 70, 93, 0.50);
+    -moz-box-shadow: 0 0 30px 0 rgba(70, 70, 93, 0.50);
+    box-shadow: 0 0 30px 0 rgba(70, 70, 93, 0.50);
+}
+
+.login .logo,
+.apply .logo {
     display: block;
     width: 41.33%;
     margin: 50px auto 20px;
-  }
-  .login .logo img, .apply .logo img {
+}
+
+.login .logo img,
+.apply .logo img {
     width: 100%;
     height: auto;
-  }
-  .login .login-main, .apply .apply-main {
+}
+
+.login .login-main,
+.apply .apply-main {
     width: 77.8%;
     margin: 0 auto;
-  }
-  .login .login-now, .apply .apply-now {
+}
+
+.login .login-now,
+.apply .apply-now {
     display: block;
     width: 100%;
     height: 40px;
@@ -141,26 +217,37 @@
     font-family: NotoSansHans-Regular;
     color: #FFFFFF;
     letter-spacing: 6px;
-  }
-  .login .login-now:hover, .apply .apply-now:hover {
-    -webkit-opacity: 0.8; 
+}
+
+.login .login-now:hover,
+.apply .apply-now:hover {
+    -webkit-opacity: 0.8;
     -moz-opacity: 0.8;
     -khtml-opacity: 0.8;
     opacity: .8;
-    filter:alpha(opacity=80);
-    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
-    filter:progid:DXImageTransform.Microsoft.Alpha(Opacity=80);
-  }
-  .login .el-input__inner, .apply .el-input__inner, .apply .el-textarea__inner {
+    filter: alpha(opacity=80);
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+    filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=80);
+}
+
+.login .el-input__inner,
+.apply .el-input__inner,
+.apply .el-textarea__inner {
     height: 46px !important;
     border: 0 none !important;
-    border-bottom: 1px solid rgba(213,213,213,0.40) !important;
+    border-bottom: 1px solid rgba(213, 213, 213, 0.40) !important;
     letter-spacing: 6px;
 }
+
 .apply .el-textarea__inner {
     resize: none !important;
 }
-.login .el-input, .apply .el-input, .apply .el-textarea{
+
+.login .el-input,
+.apply .el-input,
+.apply .el-textarea {
     margin: 20px 0;
-}  
+}
+
+
 /*login & apply end*/

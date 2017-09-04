@@ -21,8 +21,6 @@ import logImgurl2 from '../../assets/index-logo2.png';
 export default {
   name: 'hm-header',
   created() {
-    console.log('111111', this, this.noDefultHead);
-    console.log(this.$router, this.$route);
     if (!this.$route.path.includes('price_view')) {
       this.winScroll();
     }
