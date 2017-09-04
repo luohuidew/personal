@@ -1,6 +1,7 @@
 *{margin:0; padding:0}
 body{background:#F4F5F7;}
 #home {
+  height: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-size:14px;

@@ -112,11 +112,13 @@
       <br>
       <br>
     </div>
+    <hm-footer></hm-footer>
   </div>
 </template>
 
 <script>
 import hmHeader from './HmHeader';
+import HmFooter from './HmFooter';
 
 export default {
   name: 'main',
@@ -151,7 +153,7 @@ export default {
     },
   },
   components: {
-    hmHeader,
+    hmHeader, HmFooter,
   },
 };
 </script>

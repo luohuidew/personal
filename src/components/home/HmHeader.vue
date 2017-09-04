@@ -7,8 +7,8 @@
         <ul>
           <li><a href="">首页</a></li>
           <li><a href="/home.html#/price_view">价格概览</a></li>
-          <li><a class="yellow-btn" href="">申请试用</a></li>
-          <li><a class="grey-btn" href="">登录</a></li>
+          <li><a class="yellow-btn" href="#/apply">申请试用</a></li>
+          <li><a class="grey-btn" href="#/login">登录</a></li>
         </ul>
       </div>
     </div>
