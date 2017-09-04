@@ -151,13 +151,16 @@
     -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
     filter:progid:DXImageTransform.Microsoft.Alpha(Opacity=80);
   }
-  .login .el-input__inner, .apply .el-input__inner {
+  .login .el-input__inner, .apply .el-input__inner, .apply .el-textarea__inner {
     height: 46px !important;
     border: 0 none !important;
     border-bottom: 1px solid rgba(213,213,213,0.40) !important;
     letter-spacing: 6px;
 }
-.login .el-input, .apply .el-input{
+.apply .el-textarea__inner {
+    resize: none !important;
+}
+.login .el-input, .apply .el-input, .apply .el-textarea{
     margin: 20px 0;
 }  
   /*login & apply end*/
