@@ -5,6 +5,7 @@ import Main from '../components/home/Main';
 import PriceView from '../components/home/PriceView';
 import Apply from '../components/home/Apply';
 import Login from '../components/home/Login';
+import ForgetPassword from '../components/home/ForgetPassword';
 
 
 Vue.use(Router);
@@ -30,6 +31,11 @@ export default new Router({
       path: '/login',
       name: 'Login',
       component: Login,
+    },
+    {
+      path: '/forget_password',
+      name: 'ForgetPassword',
+      component: ForgetPassword,
     },
   ],
 });
