@@ -56,7 +56,17 @@
         <pre> el-checkbox-group； 用于"多选框组" </pre>
       </el-col>
     </el-row>
-    <h3>4、Input 输入框</h3>
+    <h3>4、Switch 开关</h3>
+    <el-row :gutter="20">
+      <el-col :span="12">
+        <el-switch
+          v-model="switchVal"
+          on-text="on"
+          off-text="off">
+        </el-switch> <pre> el-switch； 用于"开关"</pre>
+      </el-col>
+    </el-row>
+    <h3>5、Input 输入框</h3>
     <el-row :gutter="20">
       <el-col :span="12">
         <el-input v-model="input" size="mini" placeholder="请输入内容"></el-input> <pre>size="mini", width=180；</pre>
@@ -73,7 +83,7 @@
         <el-input v-model="input" size="large" placeholder="请输入内容"></el-input> <pre>size="large", width=400；</pre>
       </el-col>
     </el-row>
-    <h3>5、Select 选择器</h3>
+    <h3>6、Select 选择器</h3>
     <el-row :gutter="20">
       <el-col :span="12">
         <el-select v-model="value" size="mini"  clearable placeholder="请选择">
@@ -122,7 +132,7 @@
         <pre>size="large", width=400；</pre>
       </el-col>
     </el-row>
-    <h3>6、DatePicker 日期选择器</h3>
+    <h3>7、DatePicker 日期选择器</h3>
     <el-row :gutter="20">
       <el-col :span="12">
         <el-date-picker
@@ -162,7 +172,7 @@
         <pre>size="large", width=400；</pre>
       </el-col>
     </el-row>
-    <h3>7、Table 表格</h3>
+    <h3>8、Table 表格</h3>
     <el-row :gutter="20">
       <el-col :span="24">
         <el-table
@@ -186,6 +196,48 @@
         <pre>el-table</pre>
       </el-col>
     </el-row>
+    <h3>9、Dialog 对话框</h3>
+    <el-row :gutter="20">
+      <el-col :span="24">
+        <el-button type="text" @click="dialogVisibleT = true">点击打开 Dialog;size="tiny" </el-button>
+        <el-button type="text" @click="dialogVisibleS = true">点击打开 Dialog;size="small" </el-button>
+      </el-col>
+    </el-row>
+    <el-dialog title="添加融资信息" :visible.sync="dialogVisibleT" size="tiny" :before-close="handleClose">
+      <el-form :model="form">
+        <el-form-item label="活动名称" :label-width="formLabelWidth">
+          <el-input v-model="form.name" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="活动区域" :label-width="formLabelWidth">
+          <el-select v-model="form.region" placeholder="请选择活动区域">
+            <el-option label="区域一" value="shanghai"></el-option>
+            <el-option label="区域二" value="beijing"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+            <el-button @click="dialogVisibleT = false">取 消</el-button>
+            <el-button type="primary" @click="dialogVisibleT = false">确 定</el-button>
+          </span>
+    </el-dialog>
+    <el-dialog title="添加融资信息" :visible.sync="dialogVisibleS" size="small" :before-close="handleClose">
+      <el-form :model="form">
+        <el-form-item label="活动名称" :label-width="formLabelWidth">
+          <el-input v-model="form.name" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="活动区域" :label-width="formLabelWidth" required>
+          <el-select v-model="form.region" placeholder="请选择活动区域">
+            <el-option label="区域一" value="shanghai"></el-option>
+            <el-option label="区域二" value="beijing"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+            <el-button @click="dialogVisibleS = false">取 消</el-button>
+            <el-button type="primary" @click="dialogVisibleS = false">确 定</el-button>
+          </span>
+    </el-dialog>
+    <pre>el-dialog;</pre>
   </div>
 </template>
 
@@ -198,6 +250,7 @@ export default {
       radio2: '1',
       checked: true,
       checkList: ['选中且禁用', '复选框 A'],
+      switchVal: true,
       input: '',
       options: [{
         value: '选项3',
@@ -231,9 +284,21 @@ export default {
         name: '高渐离',
         address: '上海市普陀区金沙江路 1516 弄',
       }],
+      dialogVisibleT: false,
+      dialogVisibleS: false,
+      form: {
+        name: '',
+        region: '',
+      },
+      formLabelWidth: '120px',
     };
   },
   methods: {
+    handleClose(done) {
+      this.$confirm('确认关闭？').then(() => {
+        done();
+      }).catch(() => {});
+    },
   },
 };
 </script>
@@ -254,4 +319,5 @@ export default {
     height: 40px;
     line-height: 40px;
   }
+
 </style>
