@@ -31,7 +31,7 @@ import canvasbg from '../../lib/canvasbg';
 export default {
   name: 'login',
   data() {
-    var checkUserName = (rule, value, callback) => {
+      var checkUserName = (rule, value, callback) => {
         if (!value) {
           return callback(new Error('有户名（手机号/邮箱）不能为空'));
         }
@@ -97,7 +97,7 @@ export default {
   line-height: 24px;
 }
 .trial a:hover {
-  -webkit-opacity: 0.8; 
+  -webkit-opacity: 0.8;
   -moz-opacity: 0.8;
   -khtml-opacity: 0.8;
   opacity: .8;

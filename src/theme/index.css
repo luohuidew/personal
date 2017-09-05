@@ -8227,7 +8227,9 @@
 .el-button > span{
   font-weight: 300;
 }
-
+.el-button--text > span {
+  font-weight: 400;
+}
 /* type primary */
 .el-button--primary {
   color: #fff;

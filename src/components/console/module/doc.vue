@@ -1,7 +1,7 @@
 <template>
   <div class="cust-module-doc">
     <h2>平台组件示例及使用文档</h2>
-    <p style="width: 100%;text-align: center">供开发人员使用。系统上线后隐藏掉</p>
+    <p style="width: 100%;text-align: center">供开发人员使用。系统上线后可隐藏掉</p>
     <h3>1、Button 按钮</h3>
     <el-row :gutter="20">
       <el-col :span="12">
@@ -19,6 +19,11 @@
       <el-col :span="12">
         <el-button type="info">页面按钮</el-button>
         <pre>type="info"；<br>用于页面上边角较小按钮，border-radius=2</pre>
+      </el-col>
+    </el-row>
+    <el-row :gutter="20">
+      <el-col :span="12">
+        <el-button type="text">文字按钮</el-button> <pre>type="text"；文字按钮</pre>
       </el-col>
     </el-row>
     <h3>2、Radio 单选框</h3>
@@ -237,14 +242,14 @@ export default {
 <style scoped>
   .cust-module-doc {
     background: #fff;
-    padding: 20px;
+    padding: 30px;
   }
   h2{
     text-align: center;
     margin: 10px 0 20px;
   }
   h3 {
-    margin: 30px 0 10px 0;
+    margin: 30px -20px 10px -20px;
     border-top: 1px solid #cfcfcf;
     height: 40px;
     line-height: 40px;
