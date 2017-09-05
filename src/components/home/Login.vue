@@ -50,10 +50,10 @@ export default {
   },
   rules: {
     userName: [
-      { validator: checkUserName, trigger: 'blur' }
+      { validator: this.checkUserName, trigger: 'blur' }
     ],
     password: [
-      { validator: validatePassword, trigger: 'blur' }
+      { validator: this.validatePassword, trigger: 'blur' }
     ]
   },
   mounted() {
