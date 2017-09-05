@@ -1,4 +1,4 @@
-import $ from 'jquery';
+// import $ from 'jquery';
 var CanvasBG = function (options) {
   var width, height, largeHeader, canvas, ctx, points, target, animateHeader = true;
 
