@@ -13,14 +13,16 @@
           <el-form-item prop="password">
             <el-input type="password" v-model.trim="loginData.password" placeholder="请输入密码"></el-input>
           </el-form-item>
+          <el-form-item>
+            <el-row type="flex" justify="end">
+              <el-col :span="12" class="forget-pass"><router-link to="/forget_password">忘记密码？</router-link></el-col>
+            </el-row>
+            <a href="javascript:void(0)" class="login-now">立即登录</a>
+            <div class="trial">
+              <router-link to="/apply">申请试用</router-link>
+            </div>
+          </el-form-item>
         </el-form>
-        <el-row type="flex" justify="end">
-          <el-col :span="12" class="forget-pass"><a href="#/forget_password">忘记密码？</a></el-col>
-        </el-row>
-        <a href="javascript:void(0)" class="login-now">立即登录</a>
-        <div class="trial">
-          <a href="#/apply">申请试用<i></i></a>
-        </div>
       </div>
     </section>
   </div>
@@ -28,24 +30,11 @@
 
 <script>
 import canvasbg from '../../lib/canvasbg';
+import validate from '../../utils/validation';
+
 export default {
   name: 'login',
   data() {
-    // var checkUserName = (rule, value, callback) => {
-    //   if (!value) {
-    //     return callback(new Error('有户名（手机号/邮箱）不能为空！'));
-    //   } else {
-    //     // 如果不符合邮箱也不符合电话号码的情况下
-    //     if(!this.isPoneAvailable(value) && !this.isEmailAvailable(value)) {
-    //       return callback(new Error('请输入正确的手机号/邮箱！'));
-    //     }
-    //   }
-    // };
-    // var validatePassword = (rule, value, callback) => {
-    //   if (value === '') {
-    //     callback(new Error('密码不能为空'));
-    //   }
-    // };
     return {
       loginData: {
         userName: '', // 用户名
@@ -73,28 +62,12 @@ export default {
         },
       });
     },
-    isPoneAvailable(str) { // 手机号码正则
-      var myreg = /^[1][3,4,5,7,8][0-9]{9}$/;  
-      if(!myreg.test(str)) {  
-          return false;  
-      } else {  
-          return true;  
-      }
-    },
-    isEmailAvailable(str) { //邮箱电子邮箱正则
-      var emailreg = /[a-zA-Z0-9]{1,10}@[a-zA-Z0-9]{1,5}\.[a-zA-Z0-9]{1,5}/;
-      if(!emailreg.test(str)) {  
-          return false;  
-      } else {  
-          return true;  
-      }
-    },
     checkUserName(rule, value, callback) {
       if (!value) {
         return callback(new Error('有户名（手机号/邮箱）不能为空！'));
       } else {
         // 如果不符合邮箱也不符合电话号码的情况下
-        if(!this.isPoneAvailable(value) && !this.isEmailAvailable(value)) {
+        if(!validate.isPhoneAvailable(value) && !validate.isEmailAvailable(value)) {
           return callback(new Error('请输入正确的手机号/邮箱！'));
         }
       }

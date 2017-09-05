@@ -6,13 +6,23 @@
     <section class="forget-inner">
       <a href="javascript:void(0)" class="logo"><img src="../../assets/login-logo.png"/></a>
       <div class="forget-main">
-        <el-input type="text" v-model.trim="userName" placeholder="请输入您的注册邮箱/手机号"></el-input>
-        <div class="get-code">
-          <el-input type="password" v-model.trim="captcha" placeholder="请输入验证码"></el-input>
-          <span class="code-info">获取验证码</span>
-        </div>
-        <el-input type="password" v-model.trim="newPassword" placeholder="设置新密码"></el-input>
-        <a href="javascript:void(0)" class="submit-now">提交</a>
+        <el-form :model="forgetData" :rules="rules" ref="forgetData">
+          <el-form-item prop="userName">
+            <el-input type="text" v-model.trim="forgetData.userName" placeholder="请输入您的注册邮箱/手机号"></el-input>
+          </el-form-item>
+          <el-form-item prop="captcha">
+            <div class="get-code">
+              <el-input type="password" v-model.trim="forgetData.captcha" placeholder="请输入验证码"></el-input>
+              <span class="code-info">获取验证码</span>
+            </div>
+          </el-form-item>
+          <el-form-item prop="newPassword">
+            <el-input type="password" v-model.trim="forgetData.newPassword" placeholder="设置新密码"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <a href="javascript:void(0)" class="submit-now">提交</a>
+          </el-form-item>
+        </el-form>
       </div>
     </section>
   </div>
@@ -20,13 +30,28 @@
 
 <script>
 import canvasbg from '../../lib/canvasbg';
+import validate from '../../utils/validation';
+
 export default {
   name: 'forget_password',
   data() {
     return {
-      userName: '', // 用户名
-      captcha: '', // 验证码
-      newPassword: '', // 设置新密码
+      forgetData: {
+        userName: '', // 用户名
+        captcha: '', // 验证码
+        newPassword: '', // 设置新密码
+      },
+      rules: {
+        userName: [
+          { validator: this.checkUserName, trigger: 'blur' }
+        ],
+        newPassword: [
+          { validator: this.checkPassword, trigger: 'blur' }
+        ],
+        captcha: [
+          { validator: this.checkCaptcha, trigger: 'blur' }
+        ],
+      },
     };
   },
   mounted() {
@@ -40,6 +65,26 @@ export default {
           y: window.innerHeight / 3.3,
         },
       });
+    },
+    checkUserName(rule, value, callback) {
+      if (!value) {
+        return callback(new Error('有户名（手机号/邮箱）不能为空！'));
+      } else {
+        // 如果不符合邮箱也不符合电话号码的情况下
+        if(!validate.isPhoneAvailable(value) && !validate.isEmailAvailable(value)) {
+          return callback(new Error('请输入正确的手机号/邮箱！'));
+        }
+      }
+    },
+    checkPassword(rule, value, callback) {
+      if (value === '') {
+        callback(new Error('密码不能为空'));
+      }
+    },
+    checkCaptcha(rule, value, callback) {
+      if (value === '') {
+        callback(new Error('验证码不能为空'));
+      }
     },
   },
 };
