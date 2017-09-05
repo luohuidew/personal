@@ -6,12 +6,26 @@
     <div class="apply-inner">
       <a href="javascript:void(0)" class="logo"><img src="../../assets/login-logo.png"/></a>
         <div class="apply-main">
-          <el-input type="text" v-model.trim="userName" placeholder="请输入您的名称"></el-input>
-          <el-input type="text" v-model.trim="companyName" placeholder="请输入公司名称"></el-input>
-          <el-input type="email" v-model.trim="email" placeholder="请输入邮箱地址"></el-input>
-          <el-input type="tel" v-model.number.trim="tel" placeholder="请输入手机号"></el-input>
-          <el-input type="textarea" v-model.trim="remarks" :autosize="{ minRows: 1, maxRows: 4}" placeholder="备注点什么？" class="texarea"></el-input>
-          <a href="javascript:void(0)" class="apply-now">申请试用</a>
+          <el-form :model="applyData" :rules="rules" ref="applyData">
+            <el-form-item prop="userName">
+              <el-input type="text" v-model.trim="applyData.userName" placeholder="请输入您的名称"></el-input>
+            </el-form-item>
+            <el-form-item prop="companyName">
+              <el-input type="text" v-model.trim="applyData.companyName" placeholder="请输入公司名称"></el-input>
+            </el-form-item>
+            <el-form-item prop="email">
+              <el-input type="email" v-model.trim="applyData.email" placeholder="请输入邮箱地址"></el-input>
+            </el-form-item>
+            <el-form-item prop="tel">
+              <el-input type="tel" v-model.number.trim="applyData.tel" placeholder="请输入手机号"></el-input>
+            </el-form-item>
+            <el-form-item prop="remarks">
+              <el-input type="textarea" v-model.trim="applyData.remarks" :autosize="{ minRows: 1, maxRows: 4}" placeholder="备注点什么？" class="texarea"></el-input>
+            </el-form-item>
+            <el-form-item>
+              <a href="javascript:void(0)" class="apply-now">申请试用</a>
+            </el-form-item>
+          </el-form>
         </div>
     </div>
   </div>
@@ -19,15 +33,33 @@
 
 <script>
 import canvasbg from '../../lib/canvasbg';
+import validate from '../../utils/validation';
+
 export default {
   name: 'apply',
   data() {
     return {
-      userName: '', // 名称
-      companyName: '', // 公司名称
-      email: '', // 邮箱地址
-      tel: '', // 电话号码
-      remarks: '', // 备注
+      applyData: {
+        userName: '', // 名称
+        companyName: '', // 公司名称
+        email: '', // 邮箱地址
+        tel: '', // 电话号码
+        remarks: '', // 备注
+      },
+      rules: {
+        userName: [
+          { validator: this.checkUsername, trigger: 'blur' }
+        ],
+        companyName: [
+          { validator: this.checkCompanyName, trigger: 'blur' }
+        ],
+        email: [
+          { validator: this.checkEmail, trigger: 'blur' }
+        ],
+        tel: [
+          { validator: this.checkTel, trigger: 'blur' }
+        ],
+      },
     };
   },
   mounted() {
@@ -42,6 +74,41 @@ export default {
         },
       });
     },
+    checkPassword(rule, value, callback) {
+      if (value === '') {
+        callback(new Error('密码不能为空'));
+      }
+    },
+    checkUsername(rule, value, callback) {
+      if (value === '') {
+        callback(new Error('请输入您的名称'));
+      }
+    },
+    checkCompanyName(rule, value, callback) {
+      if (value === '') {
+        callback(new Error('请输入公司名称'));
+      }
+    },
+    checkEmail(rule, value, callback) {
+      if (!value) {
+        return callback(new Error('邮箱不能为空！'));
+      } else {
+        // 如果不符合邮箱的情况下
+        if(!validate.isEmailAvailable(value)) {
+          return callback(new Error('请输入正确的邮箱！'));
+        }
+      }
+    },
+    checkTel(rule, value, callback) {
+      if (!value) {
+        return callback(new Error('手机号不能为空！'));
+      } else {
+        // 如果不符合电话号码的情况下
+        if(!validate.isPhoneAvailable(value)) {
+          return callback(new Error('请输入正确的手机号！'));
+        }
+      }
+    },
   },
 };
 </script>
@@ -50,5 +117,17 @@ export default {
 <style scoped>
 .texarea.el-textarea .el-textarea__inner{
   border: none;
+}
+@media screen and (max-width: 1421px) {
+  .login .el-input, .apply .el-input, .apply .el-textarea, .forget .el-input {
+    margin: 10px 0 !important;
+  }
+  .apply .apply-inner {
+    padding-bottom: 50px !important;
+  }
+  .apply .apply-now {
+    margin-bottom: 0 !important;
+    margin-top: 30px !important;
+  }
 }
 </style>
