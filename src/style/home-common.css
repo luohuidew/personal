@@ -251,7 +251,12 @@ img {
 }
 .login .el-input, .apply .el-input, .apply .el-textarea, .forget .el-input{
     margin: 20px 0;
-}  
+}
+.login .el-input {
+    width: 100%;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
 .forget .get-code .el-input {
     margin: 0;
 }

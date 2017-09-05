@@ -31,30 +31,35 @@ import canvasbg from '../../lib/canvasbg';
 export default {
   name: 'login',
   data() {
-      var checkUserName = (rule, value, callback) => {
-        if (!value) {
-          return callback(new Error('有户名（手机号/邮箱）不能为空'));
-        }
-      };
-      var validatePassword = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请输入密码'));
-        }
-      };
+    // var checkUserName = (rule, value, callback) => {
+    //   if (!value) {
+    //     return callback(new Error('有户名（手机号/邮箱）不能为空！'));
+    //   } else {
+    //     // 如果不符合邮箱也不符合电话号码的情况下
+    //     if(!this.isPoneAvailable(value) && !this.isEmailAvailable(value)) {
+    //       return callback(new Error('请输入正确的手机号/邮箱！'));
+    //     }
+    //   }
+    // };
+    // var validatePassword = (rule, value, callback) => {
+    //   if (value === '') {
+    //     callback(new Error('密码不能为空'));
+    //   }
+    // };
     return {
       loginData: {
         userName: '', // 用户名
         password: '', // 密码
-      }
+      },
+      rules: {
+        userName: [
+          { validator: this.checkUserName, trigger: 'blur' }
+        ],
+        password: [
+          { validator: this.validatePassword, trigger: 'blur' }
+        ],
+      },
     };
-  },
-  rules: {
-    userName: [
-      { validator: this.checkUserName, trigger: 'blur' }
-    ],
-    password: [
-      { validator: this.validatePassword, trigger: 'blur' }
-    ]
   },
   mounted() {
     this.canvas();
@@ -67,6 +72,37 @@ export default {
           y: window.innerHeight / 3.3,
         },
       });
+    },
+    isPoneAvailable(str) { // 手机号码正则
+      var myreg = /^[1][3,4,5,7,8][0-9]{9}$/;  
+      if(!myreg.test(str)) {  
+          return false;  
+      } else {  
+          return true;  
+      }
+    },
+    isEmailAvailable(str) { //邮箱电子邮箱正则
+      var emailreg = /[a-zA-Z0-9]{1,10}@[a-zA-Z0-9]{1,5}\.[a-zA-Z0-9]{1,5}/;
+      if(!emailreg.test(str)) {  
+          return false;  
+      } else {  
+          return true;  
+      }
+    },
+    checkUserName(rule, value, callback) {
+      if (!value) {
+        return callback(new Error('有户名（手机号/邮箱）不能为空！'));
+      } else {
+        // 如果不符合邮箱也不符合电话号码的情况下
+        if(!this.isPoneAvailable(value) && !this.isEmailAvailable(value)) {
+          return callback(new Error('请输入正确的手机号/邮箱！'));
+        }
+      }
+    },
+    validatePassword(rule, value, callback) {
+      if (value === '') {
+        callback(new Error('密码不能为空'));
+      }
     },
   },
 };
@@ -97,7 +133,7 @@ export default {
   line-height: 24px;
 }
 .trial a:hover {
-  -webkit-opacity: 0.8;
+  -webkit-opacity: 0.8; 
   -moz-opacity: 0.8;
   -khtml-opacity: 0.8;
   opacity: .8;
