@@ -7,16 +7,16 @@
       <a href="javascript:void(0)" class="logo"><img src="../../assets/login-logo.png"/></a>
         <div class="apply-main">
           <el-form :model="applyData" :rules="rules" ref="applyData">
-            <el-form-item prop="userName">
+            <el-form-item prop="userName" required>
               <el-input type="text" v-model.trim="applyData.userName" placeholder="请输入您的名称"></el-input>
             </el-form-item>
-            <el-form-item prop="companyName">
+            <el-form-item prop="companyName" required>
               <el-input type="text" v-model.trim="applyData.companyName" placeholder="请输入公司名称"></el-input>
             </el-form-item>
-            <el-form-item prop="email">
+            <el-form-item prop="email" required>
               <el-input type="email" v-model.trim="applyData.email" placeholder="请输入邮箱地址"></el-input>
             </el-form-item>
-            <el-form-item prop="tel">
+            <el-form-item prop="tel" required>
               <el-input type="tel" v-model.number.trim="applyData.tel" placeholder="请输入手机号"></el-input>
             </el-form-item>
             <el-form-item prop="remarks">

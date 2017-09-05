@@ -7,16 +7,16 @@
       <a href="javascript:void(0)" class="logo"><img src="../../assets/login-logo.png"/></a>
       <div class="forget-main">
         <el-form :model="forgetData" :rules="rules" ref="forgetData">
-          <el-form-item prop="userName">
+          <el-form-item prop="userName" required>
             <el-input type="text" v-model.trim="forgetData.userName" placeholder="请输入您的注册邮箱/手机号"></el-input>
           </el-form-item>
-          <el-form-item prop="captcha">
+          <el-form-item prop="captcha" required>
             <div class="get-code">
               <el-input type="password" v-model.trim="forgetData.captcha" placeholder="请输入验证码"></el-input>
               <span class="code-info">获取验证码</span>
             </div>
           </el-form-item>
-          <el-form-item prop="newPassword">
+          <el-form-item prop="newPassword" required>
             <el-input type="password" v-model.trim="forgetData.newPassword" placeholder="设置新密码"></el-input>
           </el-form-item>
           <el-form-item>

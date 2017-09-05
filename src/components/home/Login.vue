@@ -7,10 +7,10 @@
       <a href="javascript:void(0)" class="logo"><img src="../../assets/login-logo.png"/></a>
       <div class="login-main">
         <el-form :model="loginData" :rules="rules" ref="loginData">
-          <el-form-item prop="userName">
+          <el-form-item prop="userName" required>
             <el-input type="text" v-model.trim="loginData.userName" placeholder="请输入手机号/邮箱"></el-input>
           </el-form-item>
-          <el-form-item prop="password">
+          <el-form-item prop="password" required>
             <el-input type="password" v-model.trim="loginData.password" placeholder="请输入密码"></el-input>
           </el-form-item>
           <el-form-item>
