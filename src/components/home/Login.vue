@@ -31,21 +31,21 @@ import canvasbg from '../../lib/canvasbg';
 export default {
   name: 'login',
   data() {
-    var checkUserName = (rule, value, callback) => {
-      if (!value) {
-        return callback(new Error('有户名（手机号/邮箱）不能为空！'));
-      } else {
-        // 如果输入的是邮箱
-        if(!this.isPoneAvailable(value) && !this.isEmailAvailable(value)) {
-          return callback(new Error('请输入正确的手机号/邮箱！'));
-        }
-      }
-    };
-    var validatePassword = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('请输入密码'));
-      }
-    };
+    // var checkUserName = (rule, value, callback) => {
+    //   if (!value) {
+    //     return callback(new Error('有户名（手机号/邮箱）不能为空！'));
+    //   } else {
+    //     // 如果不符合邮箱也不符合电话号码的情况下
+    //     if(!this.isPoneAvailable(value) && !this.isEmailAvailable(value)) {
+    //       return callback(new Error('请输入正确的手机号/邮箱！'));
+    //     }
+    //   }
+    // };
+    // var validatePassword = (rule, value, callback) => {
+    //   if (value === '') {
+    //     callback(new Error('密码不能为空'));
+    //   }
+    // };
     return {
       loginData: {
         userName: '', // 用户名
@@ -87,6 +87,21 @@ export default {
           return false;  
       } else {  
           return true;  
+      }
+    },
+    checkUserName(rule, value, callback) {
+      if (!value) {
+        return callback(new Error('有户名（手机号/邮箱）不能为空！'));
+      } else {
+        // 如果不符合邮箱也不符合电话号码的情况下
+        if(!this.isPoneAvailable(value) && !this.isEmailAvailable(value)) {
+          return callback(new Error('请输入正确的手机号/邮箱！'));
+        }
+      }
+    },
+    validatePassword(rule, value, callback) {
+      if (value === '') {
+        callback(new Error('密码不能为空'));
       }
     },
   },
