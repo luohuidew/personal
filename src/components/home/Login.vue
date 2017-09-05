@@ -1,42 +1,83 @@
 <template>
   <div class="login">
-      <section class="login-inner">
-        <a href="javascript:void(0)" class="logo"><img src="../../assets/login-logo.png"/></a>
-        <div class="login-main">
-          <el-input type="text" v-model="userName" placeholder="请输入邮箱／手机号"></el-input>
-          <el-input type="password" v-model="password" placeholder="请输入密码"></el-input>
-          <el-row type="flex" justify="end">
-            <el-col :span="12" class="forget"><a href="javascript:void(0)">忘记密码？</a></el-col>
-          </el-row>
-          <a href="javascript:void(0)" class="login-now">立即登录</a>
-          <div class="trial">
-            <a href="#/apply">申请试用<i></i></a>
-          </div>
+    <div id="canvas-wrapper">
+      <canvas id="demo-canvas"></canvas>
+    </div>
+    <section class="login-inner">
+      <a href="javascript:void(0)" class="logo"><img src="../../assets/login-logo.png"/></a>
+      <div class="login-main">
+        <el-form :model="loginData" :rules="rules" ref="loginData">
+          <el-form-item prop="userName">
+            <el-input type="text" v-model.trim="loginData.userName" placeholder="请输入手机号/邮箱"></el-input>
+          </el-form-item>
+          <el-form-item prop="password">
+            <el-input type="password" v-model.trim="loginData.password" placeholder="请输入密码"></el-input>
+          </el-form-item>
+        </el-form>
+        <el-row type="flex" justify="end">
+          <el-col :span="12" class="forget-pass"><a href="#/forget_password">忘记密码？</a></el-col>
+        </el-row>
+        <a href="javascript:void(0)" class="login-now">立即登录</a>
+        <div class="trial">
+          <a href="#/apply">申请试用<i></i></a>
         </div>
-      </section>
+      </div>
+    </section>
   </div>
 </template>
 
 <script>
+import canvasbg from '../../lib/canvasbg';
 export default {
   name: 'login',
   data() {
+    var checkUserName = (rule, value, callback) => {
+        if (!value) {
+          return callback(new Error('有户名（手机号/邮箱）不能为空'));
+        }
+      };
+      var validatePassword = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入密码'));
+        }
+      };
     return {
-      userName: '', // 用户名
-      password: '', // 密码
+      loginData: {
+        userName: '', // 用户名
+        password: '', // 密码
+      }
     };
   },
+  rules: {
+    userName: [
+      { validator: checkUserName, trigger: 'blur' }
+    ],
+    password: [
+      { validator: validatePassword, trigger: 'blur' }
+    ]
+  },
+  mounted() {
+    this.canvas();
+  },
   methods: {
+    canvas() {
+      canvasbg.init({
+        Loc: {
+          x: window.innerWidth / 2,
+          y: window.innerHeight / 3.3,
+        },
+      });
+    },
   },
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.forget {
+.forget-pass {
     text-align: right;
 }
-.forget a {
+.forget-pass a {
   font-family: MicrosoftYaHei;
   font-size: 14px;
   color: rgba(200,200,200,0.70);

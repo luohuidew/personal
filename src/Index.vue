@@ -1,7 +1,9 @@
 <template>
   <div id="index">
     <con-header></con-header>
-    <router-view id="router-page" class="router-page"></router-view>
+    <div class="router-wrap">
+      <router-view></router-view>
+    </div>
     <con-sidebar></con-sidebar>
   </div>
 </template>
@@ -19,12 +21,9 @@ export default {
 </script>
 
 <style>
-  #router-page{
-    overflow: hidden;
-    min-height: 550px;
+  .router-wrap {
     padding: 80px 20px 20px 230px;
-  }
-  .router-page {
     background: #eee;
   }
+
 </style>
