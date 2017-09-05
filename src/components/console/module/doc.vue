@@ -238,6 +238,29 @@
           </span>
     </el-dialog>
     <pre>el-dialog;</pre>
+    <h3>10、Message 消息提示</h3>
+    <el-row :gutter="20">
+      <el-col :span="6">
+        <el-button @click="open2">成功</el-button><pre>this.$message({
+  message: '这是一条成功消息',
+  type: 'success'
+  });</pre>
+      </el-col>
+      <el-col :span="6">
+        <el-button @click="open3">警告</el-button><pre>this.$message({
+  message: '这是一条警告消息',
+  type: 'success'
+  });</pre>
+      </el-col>
+      <el-col :span="6">
+        <el-button @click="open">消息</el-button><pre>this.$message(
+  '这是一条消息提示');</pre>
+      </el-col>
+      <el-col :span="6">
+        <el-button @click="open4">错误</el-button><pre>this.$message
+  .error('这是一条错误消息');</pre>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -299,6 +322,26 @@ export default {
         done();
       }).catch(() => {});
     },
+    open() {
+      this.$message('这是一条消息提示');
+    },
+    open2() {
+      this.$message({
+        message: '这是一条成功消息',
+        type: 'success',
+      });
+    },
+
+    open3() {
+      this.$message({
+        message: '这是一条警告消息',
+        type: 'warning',
+      });
+    },
+
+    open4() {
+      this.$message.error('这是一条错误消息');
+    },
   },
 };
 </script>
@@ -309,10 +352,12 @@ export default {
     background: #fff;
     padding: 30px;
   }
-  h2{
+
+  h2 {
     text-align: center;
     margin: 10px 0 20px;
   }
+
   h3 {
     margin: 30px -20px 10px -20px;
     border-top: 1px solid #cfcfcf;
