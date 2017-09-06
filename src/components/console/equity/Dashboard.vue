@@ -27,7 +27,7 @@
           <div class="main-content bgcolor">
             <div class="main-title clearfix">
               <span class="title">股权概况</span>
-              <a href="/console#/equity/dashboard/stockdetail" class="more">更多详情&gt;</a>
+              <router-link class="more" :to="{ path: '/equity/dashboard/stockdetail' }">更多详情&gt;</router-link>
             </div>
             <div class="main-wrap">
               <el-table :data="tableData">
@@ -42,7 +42,7 @@
           <div class="main-content bgcolor">
             <div class="main-title clearfix">
               <span class="title">融资历史</span>
-              <a href="/console#/equity/dashboard/financdetail" class="more">更多详情&gt;</a>
+              <router-link class="more" :to="{ path: '/equity/dashboard/financdetail' }">更多详情&gt;</router-link>
             </div>
             <div class="main-wrap">
               <el-steps :space="100" direction="vertical">
