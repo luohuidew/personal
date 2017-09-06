@@ -3,6 +3,8 @@ import Router from 'vue-router';
 
 // 权益管理
 import EquityDashboard from '../components/console/equity/Dashboard';
+import StockDetail from '../components/console/equity/dashboard/StockDetail';
+import FinancDetail from '../components/console/equity/dashboard/FinancDetail';
 // 期权管理
 import OptionManagementList from '../components/console/option/ManagementList';
 import OptionIncentivePlan from '../components/console/option/IncentivePlan';
@@ -32,6 +34,16 @@ export default new Router({
       path: '/equity/dashboard',
       name: 'EquityDashboard',
       component: EquityDashboard,
+    },
+    {
+      path: '/equity/dashboard/stockdetail',
+      name: 'StockDetail',
+      component: StockDetail,
+    },
+    {
+      path: '/equity/dashboard/financdetail',
+      name: 'FinancDetail',
+      component: FinancDetail,
     },
     // 期权管理
     {
