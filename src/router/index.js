@@ -23,13 +23,9 @@ import ModuleDoc from '../components/console/module/doc';
 Vue.use(Router);
 
 export default new Router({
+  mode: 'history',
   routes: [
     // 权益管理
-    {
-      path: '/',
-      name: 'EquityDashboard',
-      component: EquityDashboard,
-    },
     {
       path: '/equity/dashboard',
       name: 'EquityDashboard',

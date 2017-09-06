@@ -196,8 +196,8 @@
     font-family: NotoSansHans-Regular;
     color: #FFFFFF;
     letter-spacing: 6px;
-  }
-  .login .login-now:hover, .apply .apply-now:hover , .forget .submit-now:hover{
+}
+.login .login-now:hover, .apply .apply-now:hover , .forget .submit-now:hover{
     -webkit-opacity: 0.8; 
     -moz-opacity: 0.8;
     -khtml-opacity: 0.8;
@@ -205,7 +205,7 @@
     filter:alpha(opacity=80);
     -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
     filter:progid:DXImageTransform.Microsoft.Alpha(Opacity=80);
-  }
+}
 
 .login .el-input__inner,
 .apply .el-input__inner,
@@ -220,13 +220,13 @@
     resize: none !important;
 }
 .login .el-input, .apply .el-input, .apply .el-textarea, .forget .el-input{
+    width: 100%;
     margin: 20px 0;
-}  
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
 .forget .get-code .el-input {
     margin: 0;
-}
-.forget .get-code .el-input__inner{
-    border-bottom: 0 none !important;
 }
 /*login & apply end*/
 /* 输入框统一色值 */

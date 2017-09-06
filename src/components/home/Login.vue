@@ -7,20 +7,22 @@
       <a href="javascript:void(0)" class="logo"><img src="../../assets/login-logo.png"/></a>
       <div class="login-main">
         <el-form :model="loginData" :rules="rules" ref="loginData">
-          <el-form-item prop="userName">
+          <el-form-item prop="userName" required>
             <el-input type="text" v-model.trim="loginData.userName" placeholder="请输入手机号/邮箱"></el-input>
           </el-form-item>
-          <el-form-item prop="password">
+          <el-form-item prop="password" required>
             <el-input type="password" v-model.trim="loginData.password" placeholder="请输入密码"></el-input>
           </el-form-item>
+          <el-form-item>
+            <el-row type="flex" justify="end">
+              <el-col :span="12" class="forget-pass"><router-link to="/forget_password">忘记密码？</router-link></el-col>
+            </el-row>
+            <a href="javascript:void(0)" class="login-now">立即登录</a>
+            <div class="trial">
+              <router-link to="/apply">申请试用</router-link>
+            </div>
+          </el-form-item>
         </el-form>
-        <el-row type="flex" justify="end">
-          <el-col :span="12" class="forget-pass"><a href="#/forget_password">忘记密码？</a></el-col>
-        </el-row>
-        <a href="javascript:void(0)" class="login-now">立即登录</a>
-        <div class="trial">
-          <a href="#/apply">申请试用<i></i></a>
-        </div>
       </div>
     </section>
   </div>
@@ -28,33 +30,25 @@
 
 <script>
 import canvasbg from '../../lib/canvasbg';
+import validate from '../../utils/validation';
+
 export default {
   name: 'login',
   data() {
-    var checkUserName = (rule, value, callback) => {
-        if (!value) {
-          return callback(new Error('有户名（手机号/邮箱）不能为空'));
-        }
-      };
-      var validatePassword = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请输入密码'));
-        }
-      };
     return {
       loginData: {
         userName: '', // 用户名
         password: '', // 密码
-      }
+      },
+      rules: {
+        userName: [
+          { validator: this.checkUserName, trigger: 'blur' }
+        ],
+        password: [
+          { validator: this.validatePassword, trigger: 'blur' }
+        ],
+      },
     };
-  },
-  rules: {
-    userName: [
-      { validator: this.checkUserName, trigger: 'blur' }
-    ],
-    password: [
-      { validator: this.validatePassword, trigger: 'blur' }
-    ]
   },
   mounted() {
     this.canvas();
@@ -67,6 +61,21 @@ export default {
           y: window.innerHeight / 3.3,
         },
       });
+    },
+    checkUserName(rule, value, callback) {
+      if (!value) {
+        return callback(new Error('有户名（手机号/邮箱）不能为空！'));
+      } else {
+        // 如果不符合邮箱也不符合电话号码的情况下
+        if(!validate.isPhoneAvailable(value) && !validate.isEmailAvailable(value)) {
+          return callback(new Error('请输入正确的手机号/邮箱！'));
+        }
+      }
+    },
+    validatePassword(rule, value, callback) {
+      if (value === '') {
+        callback(new Error('密码不能为空'));
+      }
     },
   },
 };

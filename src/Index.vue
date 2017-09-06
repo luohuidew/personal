@@ -21,9 +21,12 @@ export default {
 </script>
 
 <style>
+  #index {
+    min-height: 100%;
+    background: #eee;
+  }
   .router-wrap {
     padding: 80px 20px 20px 230px;
-    background: #eee;
   }
 
 </style>

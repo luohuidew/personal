@@ -1,7 +1,7 @@
 <template>
   <div class="cust-module-doc">
     <h2>平台组件示例及使用文档</h2>
-    <p style="width: 100%;text-align: center">供开发人员使用。系统上线后隐藏掉</p>
+    <p style="width: 100%;text-align: center">供开发人员使用。系统上线后可隐藏掉</p>
     <h3>1、Button 按钮</h3>
     <el-row :gutter="20">
       <el-col :span="12">
@@ -19,6 +19,11 @@
       <el-col :span="12">
         <el-button type="info">页面按钮</el-button>
         <pre>type="info"；<br>用于页面上边角较小按钮，border-radius=2</pre>
+      </el-col>
+    </el-row>
+    <el-row :gutter="20">
+      <el-col :span="12">
+        <el-button type="text">文字按钮</el-button> <pre>type="text"；文字按钮</pre>
       </el-col>
     </el-row>
     <h3>2、Radio 单选框</h3>
@@ -51,7 +56,17 @@
         <pre> el-checkbox-group； 用于"多选框组" </pre>
       </el-col>
     </el-row>
-    <h3>4、Input 输入框</h3>
+    <h3>4、Switch 开关</h3>
+    <el-row :gutter="20">
+      <el-col :span="12">
+        <el-switch
+          v-model="switchVal"
+          on-text="on"
+          off-text="off">
+        </el-switch> <pre> el-switch； 用于"开关"</pre>
+      </el-col>
+    </el-row>
+    <h3>5、Input 输入框</h3>
     <el-row :gutter="20">
       <el-col :span="12">
         <el-input v-model="input" size="mini" placeholder="请输入内容"></el-input> <pre>size="mini", width=180；</pre>
@@ -68,7 +83,7 @@
         <el-input v-model="input" size="large" placeholder="请输入内容"></el-input> <pre>size="large", width=400；</pre>
       </el-col>
     </el-row>
-    <h3>5、Select 选择器</h3>
+    <h3>6、Select 选择器</h3>
     <el-row :gutter="20">
       <el-col :span="12">
         <el-select v-model="value" size="mini"  clearable placeholder="请选择">
@@ -117,7 +132,7 @@
         <pre>size="large", width=400；</pre>
       </el-col>
     </el-row>
-    <h3>6、DatePicker 日期选择器</h3>
+    <h3>7、DatePicker 日期选择器</h3>
     <el-row :gutter="20">
       <el-col :span="12">
         <el-date-picker
@@ -157,7 +172,7 @@
         <pre>size="large", width=400；</pre>
       </el-col>
     </el-row>
-    <h3>7、Table 表格</h3>
+    <h3>8、Table 表格</h3>
     <el-row :gutter="20">
       <el-col :span="24">
         <el-table
@@ -181,6 +196,71 @@
         <pre>el-table</pre>
       </el-col>
     </el-row>
+    <h3>9、Dialog 对话框</h3>
+    <el-row :gutter="20">
+      <el-col :span="24">
+        <el-button type="text" @click="dialogVisibleT = true">点击打开 Dialog;size="tiny" </el-button>
+        <el-button type="text" @click="dialogVisibleS = true">点击打开 Dialog;size="small" </el-button>
+      </el-col>
+    </el-row>
+    <el-dialog title="添加融资信息" :visible.sync="dialogVisibleT" size="tiny" :before-close="handleClose">
+      <el-form :model="form">
+        <el-form-item label="活动名称" :label-width="formLabelWidth">
+          <el-input v-model="form.name" auto-complete="off" size="mini"></el-input>
+        </el-form-item>
+        <el-form-item label="活动区域" :label-width="formLabelWidth">
+          <el-select v-model="form.region" placeholder="请选择活动区域" size="mini">
+            <el-option label="区域一" value="shanghai"></el-option>
+            <el-option label="区域二" value="beijing"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+            <el-button @click="dialogVisibleT = false">取 消</el-button>
+            <el-button type="primary" @click="dialogVisibleT = false">确 定</el-button>
+          </span>
+    </el-dialog>
+    <el-dialog title="添加融资信息" :visible.sync="dialogVisibleS" size="small" :before-close="handleClose">
+      <el-form :model="form">
+        <el-form-item label="活动名称" :label-width="formLabelWidth">
+          <el-input v-model="form.name" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="活动区域" :label-width="formLabelWidth" required>
+          <el-select v-model="form.region" placeholder="请选择活动区域">
+            <el-option label="区域一" value="shanghai"></el-option>
+            <el-option label="区域二" value="beijing"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+            <el-button @click="dialogVisibleS = false">取 消</el-button>
+            <el-button type="primary" @click="dialogVisibleS = false">确 定</el-button>
+          </span>
+    </el-dialog>
+    <pre>el-dialog;</pre>
+    <h3>10、Message 消息提示</h3>
+    <el-row :gutter="20">
+      <el-col :span="6">
+        <el-button @click="open2">成功</el-button><pre>this.$message({
+  message: '这是一条成功消息',
+  type: 'success'
+  });</pre>
+      </el-col>
+      <el-col :span="6">
+        <el-button @click="open3">警告</el-button><pre>this.$message({
+  message: '这是一条警告消息',
+  type: 'success'
+  });</pre>
+      </el-col>
+      <el-col :span="6">
+        <el-button @click="open">消息</el-button><pre>this.$message(
+  '这是一条消息提示');</pre>
+      </el-col>
+      <el-col :span="6">
+        <el-button @click="open4">错误</el-button><pre>this.$message
+  .error('这是一条错误消息');</pre>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -193,6 +273,7 @@ export default {
       radio2: '1',
       checked: true,
       checkList: ['选中且禁用', '复选框 A'],
+      switchVal: true,
       input: '',
       options: [{
         value: '选项3',
@@ -226,9 +307,41 @@ export default {
         name: '高渐离',
         address: '上海市普陀区金沙江路 1516 弄',
       }],
+      dialogVisibleT: false,
+      dialogVisibleS: false,
+      form: {
+        name: '',
+        region: '',
+      },
+      formLabelWidth: '120px',
     };
   },
   methods: {
+    handleClose(done) {
+      this.$confirm('确认关闭？').then(() => {
+        done();
+      }).catch(() => {});
+    },
+    open() {
+      this.$message('这是一条消息提示');
+    },
+    open2() {
+      this.$message({
+        message: '这是一条成功消息',
+        type: 'success',
+      });
+    },
+
+    open3() {
+      this.$message({
+        message: '这是一条警告消息',
+        type: 'warning',
+      });
+    },
+
+    open4() {
+      this.$message.error('这是一条错误消息');
+    },
   },
 };
 </script>
@@ -237,16 +350,19 @@ export default {
 <style scoped>
   .cust-module-doc {
     background: #fff;
-    padding: 20px;
+    padding: 30px;
   }
-  h2{
+
+  h2 {
     text-align: center;
     margin: 10px 0 20px;
   }
+
   h3 {
-    margin: 30px 0 10px 0;
+    margin: 30px -20px 10px -20px;
     border-top: 1px solid #cfcfcf;
     height: 40px;
     line-height: 40px;
   }
+
 </style>
