@@ -4,6 +4,7 @@
       <el-menu-item index="/equity/dashboard"><i class="icon-img"><img src="../../assets/menu-equity.png" alt=""></i>权益管理</el-menu-item>
       <el-submenu index="2">
         <template slot="title" index="/option/management_list"><i class="icon-img"><img src="../../assets/menu-option.png" alt=""></i>期权管理</template>
+        <el-menu-item index="/option/management_list"><i class="icon-img"></i>期权管理</el-menu-item>
         <el-menu-item index="/option/incentive_plan"><i class="icon-img"></i>激励计划</el-menu-item>
         <el-menu-item index="/option/holding_platform"><i class="icon-img"></i>持股平台</el-menu-item>
         <el-menu-item index="/option/participator"><i class="icon-img"></i>参与方</el-menu-item>
