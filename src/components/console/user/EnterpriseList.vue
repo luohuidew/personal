@@ -25,11 +25,24 @@
           <el-input v-model="form.b" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="营业执照" :label-width="formLabelWidth" required>
-          <el-input v-model="form.a" auto-complete="off"></el-input>
+          <el-upload
+            class="upload-demo"
+            action="https://jsonplaceholder.typicode.com/posts/"
+            :on-preview="handlePreview"
+            :on-remove="handleRemove"
+            :file-list="fileList">
+            <el-button size="small" type="primary">上传营业执照扫描件</el-button>
+          </el-upload>
+          <div class="tips">
+            <p>1.选择项(企业认证时必需)</p>
+            <p>2.仅支持JPG、PNG格式</p>
+            <p>3.文件不超过5M</p>
+            <p>4.请上传营业执照原件</p>
+          </div>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submit">确 定</el-button>
+        <el-button type="primary" @click="save"> 确 认 </el-button>
       </span>
     </el-dialog>
   </div>
@@ -46,11 +59,21 @@ export default {
         a: '',
         b: '',
       },
+      fileList: [],
     };
   },
   methods: {
     openDialog() {
       this.dialogVisible = true;
+    },
+    save() {
+      this.dialogVisible = false;
+    },
+    handleRemove(file, fileList) {
+      console.log(file, fileList);
+    },
+    handlePreview(file) {
+      console.log(file);
     },
   },
 };
@@ -127,6 +150,23 @@ export default {
   .row > img {
     vertical-align: middle;
     margin-right: 15px;
+  }
+
+  .el-upload .el-button--primary{
+    width: 300px;
+    height: 40px;
+    color: #999;
+    background-color: #f4f4f4;
+    border-color: #f4f4f4;
+    font-size: 14px;
+  }
+
+  .tips {
+    margin-top: 10px;
+    font-size: 12px;
+    color: #BDBDBD;
+    letter-spacing: 0.59px;
+    line-height: 20px;
   }
 
 </style>

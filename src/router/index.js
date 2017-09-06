@@ -18,7 +18,7 @@ import UserMyOrder from '../components/console/user/MyOrder';
 import UserEnterpriseList from '../components/console/user/EnterpriseList';
 
 // 组件文档
-import ModuleDoc from '../components/console/module/doc';
+import ModuleDoc from '../components/console/doc';
 
 Vue.use(Router);
 
@@ -86,7 +86,7 @@ export default new Router({
     },
     // 组件文档
     {
-      path: '/module/module_doc',
+      path: '/module_doc',
       name: 'ModuleDoc',
       component: ModuleDoc,
     },
