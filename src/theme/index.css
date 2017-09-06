@@ -6754,15 +6754,15 @@
 .el-step__line {
     display: inline-block;
     position: absolute;
-    border-color: inherit;
+    border-color: #F4F4F4;
     background-color: rgb(191, 203, 217);
 }
 .el-step__line.is-vertical {
-    width: 2px;
+    width: 1px;
     box-sizing: border-box;
-    top: 32px;
+    top: 12px;
     bottom: 0;
-    left: 15px;
+    left: 5px;
 }
 .el-step__line.is-horizontal {
     top: 15px;
@@ -6793,13 +6793,12 @@
     vertical-align: middle;
 }
 .el-step__head {
-    width: 28px;
-    height: 28px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     background-color: transparent;
     text-align: center;
-    line-height: 28px;
-    font-size: 28px;
+    font-size: 0px;
     vertical-align: top;
     transition: all 150ms;
 }
@@ -6817,14 +6816,14 @@
 }
 .el-step__head.is-wait {
     color: rgb(191, 203, 217);
-    border-color: rgb(191, 203, 217);
+    border-color: #52B0F6;
 }
 .el-step__head.is-process {
     color: rgb(191, 203, 217);
-    border-color: rgb(191, 203, 217);
+    border-color: #52B0F6;
 }
 .el-step__head.is-text {
-    font-size: 14px;
+    font-size: 0px;
     border-width: 2px;
     border-style: solid;
 }
@@ -6846,12 +6845,12 @@
 .el-step__head.is-text.is-wait {
     color: rgb(191, 203, 217);
     background-color: #fff;
-    border-color: rgb(191, 203, 217);
+    border-color: #52B0F6;
 }
 .el-step__head.is-text.is-process {
     color: #fff;
     background-color: rgb(191, 203, 217);
-    border-color: rgb(191, 203, 217);
+    border-color: #52B0F6;
 }
 .el-step__main {
     white-space: normal;
