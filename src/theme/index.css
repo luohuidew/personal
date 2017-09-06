@@ -8557,13 +8557,13 @@
 }
 
 .el-dialog__body{
-  padding: 30px 20px;
+  padding: 30px 20px 10px;
   color: rgb(72, 87, 106);
   font-size: 14px;
 }
 
 .el-dialog__footer{
-  padding: 10px 20px 15px;
+  padding:0 20px 20px;
   box-sizing: border-box;
   text-align: center;
 }

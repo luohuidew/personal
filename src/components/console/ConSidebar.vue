@@ -52,8 +52,8 @@ export default {
   .icon-img img {
     margin-bottom: 5px;
   }
-  /* element cover */
 
+  /* element cover */
   .el-menu--dark{
     background: #243B5F!important;
   }
