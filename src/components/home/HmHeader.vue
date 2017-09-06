@@ -5,8 +5,8 @@
       <!-- <a class="login-link" href=""><img class="logo-img" id="imgsrc2" :src="imgUrl2" alt="" style="display:none"></a> -->
       <div class="header-menu">
         <ul>
-          <li class="text-link"><a href="">首页</a></li>
-          <li class="text-link"><a href="/home.html#/price_view">价格概览</a></li>
+          <li class="text-link"><router-link :to="{ path: '/' }">首页</router-link></li>
+          <li class="text-link"><router-link :to="{ path: '/price_view' }">价格概览</router-link></li>
           <li><a class="yellow-btn" href="">申请试用</a></li>
           <li><a class="grey-btn" href="">登录</a></li>
         </ul>
