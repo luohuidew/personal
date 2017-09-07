@@ -2,3 +2,27 @@ body{
   background: #eee;
 }
 .bgcolor{background: #fff;border-radius:2px;}
+
+/*背景颜色*/
+.darkGrey_bg{
+  background-color: #666666;
+}
+.lightGrey_bg{
+  background-color: #999999;
+}
+.darkPurple_bg{
+  background-color: #4F6BBF;
+}
+.lightPurple_bg{
+  background-color: #7D96E0;
+}
+.yellow_bg{
+  background-color: #FFCA57;
+}
+/*浮动*/
+.floatLeft{
+  float: left;
+}
+.floatRight{
+  float: right;
+}
