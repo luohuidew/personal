@@ -18,7 +18,7 @@
       <div class="stock-list bgcolor">
         <div class="main-title clearfix">
           <span class="title">融资列表</span>
-          <el-button class="addbtn" type="primary">新增融资</el-button>
+          <el-button class="addbtn" type="primary" @click="dialogVisible = true">新增融资</el-button>
         </div>
         <div class="table-wrap">
           <el-table :data="tableData">
@@ -31,6 +31,27 @@
         </div>
       </div>
     </div>
+    <!-- 新增股东 -->
+    <el-dialog title="添加融资信息" :visible.sync="dialogVisible" size="small" :before-close="handleClose">
+      <el-form :model="stockMap">
+        <el-form-item label="融资轮次" :label-width="formLabelWidth" required>
+          <el-input v-model="stockMap.name" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="融资时间" :label-width="formLabelWidth" required>
+          <el-input v-model="stockMap.name" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="融资金额" :label-width="formLabelWidth" required>
+          <el-input v-model="stockMap.name" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="投资方" :label-width="formLabelWidth" required>
+          <el-input v-model="stockMap.name" auto-complete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+            <el-button @click="dialogVisible = false">继续添加</el-button>
+            <el-button type="primary" @click="dialogVisible = false">确认保存</el-button>
+          </span>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -38,11 +59,22 @@ export default {
   name: 'stock-detail',
   data() {
     return {
+      stockMap: {
+        name: undefined,
+      },
+      tableData: [],  // 测试
+      dialogVisible: false,
+      formLabelWidth: '120px',
     };
   },
   created() {
   },
   methods: {
+    handleClose(done) {
+      this.$confirm('确认关闭？').then(() => {
+        done();
+      }).catch(() => {});
+    },
   },
 };
 </script>

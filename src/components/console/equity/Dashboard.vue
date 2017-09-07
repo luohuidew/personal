@@ -81,7 +81,7 @@ export default {
   data() {
     return {
       myChartDiv: undefined,
-      stepList: [{
+      stepList: [{   // 测试
         title: '2017-07-06',
         finance: 'A轮',
         compony: '经纬中国投资',
@@ -99,6 +99,7 @@ export default {
         compony: '经纬中国投资',
         money: '500万',
       }],
+      tableData: [],   // 测试
     };
   },
   created() {

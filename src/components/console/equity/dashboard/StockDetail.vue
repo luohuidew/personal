@@ -18,7 +18,7 @@
       <div class="stock-list bgcolor">
         <div class="main-title clearfix">
           <span class="title">股权列表</span>
-          <el-button class="addbtn" type="primary">新增股东</el-button>
+          <el-button class="addbtn" type="primary" @click="dialogVisible = true">新增股东</el-button>
         </div>
         <div class="table-wrap">
           <el-table :data="tableData">
@@ -31,6 +31,39 @@
         </div>
       </div>
     </div>
+    <!-- 新增股东 -->
+    <el-dialog title="添加股权信息" :visible.sync="dialogVisible" size="small" :before-close="handleClose">
+      <el-form :model="stockMap">
+        <el-form-item label="股东名称" :label-width="formLabelWidth" required>
+          <el-input v-model="stockMap.name" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="股东名称" :label-width="formLabelWidth" required>
+          <el-input v-model="stockMap.name" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="股东类型" :label-width="formLabelWidth" required>
+          <el-select v-model="stockMap.region" placeholder="请选择活动区域">
+            <el-option label="区域一" value="shanghai"></el-option>
+            <el-option label="区域二" value="beijing"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="投资轮次" :label-width="formLabelWidth" required>
+          <el-select v-model="stockMap.region" placeholder="请选择活动区域">
+            <el-option label="区域一" value="shanghai"></el-option>
+            <el-option label="区域二" value="beijing"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="注册资本" :label-width="formLabelWidth" required>
+          <el-input v-model="stockMap.name" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="股份比例" :label-width="formLabelWidth" required>
+          <el-input v-model="stockMap.name" auto-complete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+            <el-button @click="dialogVisible = false">继续添加</el-button>
+            <el-button type="primary" @click="dialogVisible = false">确认保存</el-button>
+          </span>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -38,11 +71,22 @@ export default {
   name: 'stock-detail',
   data() {
     return {
+      stockMap: {
+        name: undefined,
+      },
+      tableData: [],  // 测试
+      dialogVisible: false,
+      formLabelWidth: '120px',
     };
   },
   created() {
   },
   methods: {
+    handleClose(done) {
+      this.$confirm('确认关闭？').then(() => {
+        done();
+      }).catch(() => {});
+    },
   },
 };
 </script>
