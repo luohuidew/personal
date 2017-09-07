@@ -45,14 +45,18 @@
               <router-link class="more" :to="{ path: '/equity/dashboard/financdetail' }">更多详情&gt;</router-link>
             </div>
             <div class="main-wrap">
-              <el-steps :space="100" direction="vertical">
-                <el-step title="2017-06-08" description=financeText>
-                  <div slot="text"></div>
-                </el-step>
-                <el-step title="2017-07-08" description=financeText></el-step>
-                <el-step title="2017-08-08" description=financeText></el-step>
-                <el-step title="2017-12-08" description="这是一段很长很长很长的描述性文字"></el-step>
-              </el-steps>
+              <div class="step-list">
+                <div class="step-wrap" v-for="item in stepList">
+                  <div class="step-head">
+                    <div class="step-line"></div>
+                    <div class="step-icon"></div>
+                  </div>
+                  <div class="step-main">
+                    <div class="step-title">{{item.title}}</div>
+                    <div class="step-description"><span class="bold">{{item.finance}}</span>&nbsp;&nbsp;获<span class="bold">{{item.money}}</span>{{item.compony}}</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </el-col>
@@ -77,7 +81,24 @@ export default {
   data() {
     return {
       myChartDiv: undefined,
-      financeText: '<span class="text-bold">A轮</span>&nbsp;&nbsp;获<span class="text-bold">120万</span>经纬中国投资',
+      stepList: [{
+        title: '2017-07-06',
+        finance: 'A轮',
+        compony: '经纬中国投资',
+        money: '120万',
+      },
+      {
+        title: '2017-07-26',
+        finance: 'B轮',
+        compony: '经纬中国投资',
+        money: '220万',
+      },
+      {
+        title: '2017-08-06',
+        finance: 'C轮',
+        compony: '经纬中国投资',
+        money: '500万',
+      }],
     };
   },
   created() {
@@ -123,4 +144,12 @@ export default {
 .main-title .title{float:left;display: inline;font-size: 16px;color: #666666;letter-spacing: 4px;font-weight:bold;}
 .main-title .more{float:right;display: inline;font-size: 14px;color: #4F6BBF;letter-spacing: 1.14px;font-weight:bold;}
 .main-wrap{margin:20px 0 0;}
+.step-wrap{position:relative;vertical-align:top;height:100px;color:#999;letter-spacing: 1.3px;font-size:0;}
+.step-head{float:left;display:inline-block;}
+.step-icon{display:inline-block;line-height:8px;width:8px;height:8px;border:2px solid #52B0F6;border-radius: 50%;}
+.step-line{position:absolute;display:inline-block;width:0;top:12px;left:5px;bottom: 0;border: 1px solid #F4F4F4;}
+.step-main{padding-left:20px;}
+.step-title{font-size: 14px;}
+.step-description{font-size: 16px;color: #999;padding-right:10px;line-height: 66px;}
+.step-description .bold{font-weight: bold;color: #666;}
 </style>
