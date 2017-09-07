@@ -31,7 +31,8 @@
           <div class="tip"><span>2，980</span> 元</div>
         </el-form-item>
         <el-form-item label="支付方式" :label-width="formLabelWidth">
-          <img src="" alt="支付宝">
+          <img @click="checkZhifu" v-if="!zhifubao" class="zhifu" src="../../../../assets/zhifubao.png" alt="支付宝">
+          <img @click="checkZhifu" v-if="zhifubao" class="zhifu" src="../../../../assets/zhifubao-checked.png" alt="支付宝">
         </el-form-item>
         <el-form-item label="" :label-width="formLabelWidth">
           <el-button type="primary">去 支 付</el-button>
@@ -50,9 +51,13 @@
           a: '',
         },
         formLabelWidth: '120px',
+        zhifubao: true,
       };
     },
     methods: {
+      checkZhifu() {
+        this.zhifubao = !this.zhifubao;
+      },
     },
   };
 </script>
@@ -103,5 +108,11 @@
     color: #F66E68;
     letter-spacing: 1.63px;
     font-weight: bold;
+  }
+
+  .zhifu {
+    width: 138px;
+    height: 55px;
+    cursor: pointer;
   }
 </style>
