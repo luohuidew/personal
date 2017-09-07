@@ -15,6 +15,7 @@ import DocManagementList from '../components/console/doc/ManagementList';
 // 账户管理
 import UserPersonalInfo from '../components/console/user/PersonalInfo';
 import UserMyOrder from '../components/console/user/MyOrder';
+import UserRenew from '../components/console/user/myOrder/Renew';
 import UserEnterpriseList from '../components/console/user/EnterpriseList';
 
 // 组件文档
@@ -78,6 +79,11 @@ export default new Router({
       path: '/user/my_order',
       name: 'UserMyOrder',
       component: UserMyOrder,
+    },
+    {
+      path: '/user/my_order/renew',
+      name: 'UserRenew',
+      component: UserRenew,
     },
     {
       path: '/user/enterprise_list',

@@ -9,6 +9,8 @@ import './style/reset.css';
 import './style/console-common.css';
 import './theme/index.css';
 
+require('./utils/tools');
+
 Vue.config.productionTip = false;
 Vue.use(ElementUI);
 

@@ -261,6 +261,17 @@
   .error('这是一条错误消息');</pre>
       </el-col>
     </el-row>
+    <h3>11、已有工具方法</h3>
+    <el-row :gutter="20">
+      <el-col :span="24">
+        日期格式化：
+        <pre>
+          * (new Date()).Format('yyyy-MM-dd hh:mm:ss.S') ==> 2006-07-02 08:09:04.423
+          * (new Date()).Format('yyyy-M-d h:m:s.S')      ==> 2006-7-2 8:9:4.18
+          * (new Date('2017-09-08')).Format('yyyy/MM/dd')      ==> 2017/07/08
+        </pre>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -316,6 +327,8 @@ export default {
       formLabelWidth: '120px',
     };
   },
+  mounted() {
+  },
   methods: {
     handleClose(done) {
       this.$confirm('确认关闭？').then(() => {
@@ -331,14 +344,12 @@ export default {
         type: 'success',
       });
     },
-
     open3() {
       this.$message({
         message: '这是一条警告消息',
         type: 'warning',
       });
     },
-
     open4() {
       this.$message.error('这是一条错误消息');
     },

@@ -17,7 +17,7 @@
             <el-row type="flex" justify="end">
               <el-col :span="12" class="forget-pass"><router-link to="/forget_password">忘记密码？</router-link></el-col>
             </el-row>
-            <a href="javascript:void(0)" class="login-now">立即登录</a>
+            <a href="javascript:void(0)" class="login-now" @click="login">立即登录</a>
             <div class="trial">
               <router-link to="/apply">申请试用</router-link>
             </div>
@@ -42,10 +42,11 @@ export default {
       },
       rules: {
         userName: [
-          { validator: this.checkUserName, trigger: 'blur' }
+          { validator: this.checkUserName, trigger: 'blur' },
+          { validator: this.checkUserName, trigger: 'blur' },
         ],
         password: [
-          { validator: this.validatePassword, trigger: 'blur' }
+          { validator: this.validatePassword, trigger: 'blur' },
         ],
       },
     };
@@ -63,19 +64,22 @@ export default {
       });
     },
     checkUserName(rule, value, callback) {
+      let result = '';
       if (!value) {
         return callback(new Error('有户名（手机号/邮箱）不能为空！'));
-      } else {
+      } else if (!validate.isPhoneAvailable(value) && !validate.isEmailAvailable(value)) {
         // 如果不符合邮箱也不符合电话号码的情况下
-        if(!validate.isPhoneAvailable(value) && !validate.isEmailAvailable(value)) {
-          return callback(new Error('请输入正确的手机号/邮箱！'));
-        }
+        result = callback(new Error('请输入正确的手机号/邮箱！'));
       }
+      return result;
     },
     validatePassword(rule, value, callback) {
       if (value === '') {
         callback(new Error('密码不能为空'));
       }
+    },
+    login() {
+      window.location.href = `http://${window.location.host}/console/equity/dashboard`;
     },
   },
 };
@@ -106,7 +110,7 @@ export default {
   line-height: 24px;
 }
 .trial a:hover {
-  -webkit-opacity: 0.8; 
+  -webkit-opacity: 0.8;
   -moz-opacity: 0.8;
   -khtml-opacity: 0.8;
   opacity: .8;
