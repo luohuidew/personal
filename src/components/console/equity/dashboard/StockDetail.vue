@@ -3,7 +3,9 @@
     <div class="stock-head">
       <el-row :gutter="20">
         <el-col :span="24">
-          <div class="head-menu"><span class="title">股权详情</span><a href="/console#/equity/dashboard" class="return">&lt;返回</a></div>
+          <div class="head-menu"><span class="title">股权详情</span>
+          <router-link class="return" :to="{ path: '/equity/dashboard' }">&lt;返回</router-link>
+        </div>
         </el-col>
       </el-row>
     </div>
