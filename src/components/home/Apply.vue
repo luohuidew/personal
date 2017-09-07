@@ -90,26 +90,6 @@ export default {
       }
     },
     checkEmail(rule, value, callback) {
-<<<<<<< HEAD
-      let result = '';
-      if (!value) {
-        result = callback(new Error('邮箱不能为空！'));
-      } else if (value && !validate.isEmailAvailable(value)) {
-        // 如果不符合邮箱的情况下
-        result = callback(new Error('请输入正确的邮箱！'));
-      }
-      return result;
-    },
-    checkTel(rule, value, callback) {
-      let result = '';
-      if (!value) {
-        result = callback(new Error('手机号不能为空！'));
-      } else if (value && !validate.isPhoneAvailable(value)) {
-        // 如果不符合电话号码的情况下
-        result = callback(new Error('请输入正确的手机号！'));
-      }
-      return result;
-=======
       let r = '';
       if (!value) {
         r = callback(new Error('邮箱不能为空！'));
@@ -128,7 +108,6 @@ export default {
         r = callback(new Error('请输入正确的手机号！'));
       }
       return r;
->>>>>>> 7d92f481fcc859ca31172fd8339027e74c9fe56f
     },
   },
 };
