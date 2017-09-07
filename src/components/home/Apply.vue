@@ -48,16 +48,16 @@ export default {
       },
       rules: {
         userName: [
-          { validator: this.checkUsername, trigger: 'blur' }
+          { validator: this.checkUsername, trigger: 'blur' },
         ],
         companyName: [
-          { validator: this.checkCompanyName, trigger: 'blur' }
+          { validator: this.checkCompanyName, trigger: 'blur' },
         ],
         email: [
-          { validator: this.checkEmail, trigger: 'blur' }
+          { validator: this.checkEmail, trigger: 'blur' },
         ],
         tel: [
-          { validator: this.checkTel, trigger: 'blur' }
+          { validator: this.checkTel, trigger: 'blur' },
         ],
       },
     };
@@ -90,24 +90,24 @@ export default {
       }
     },
     checkEmail(rule, value, callback) {
+      let result = '';
       if (!value) {
-        return callback(new Error('邮箱不能为空！'));
-      } else {
+        result = callback(new Error('邮箱不能为空！'));
+      } else if (value && !validate.isEmailAvailable(value)) {
         // 如果不符合邮箱的情况下
-        if(!validate.isEmailAvailable(value)) {
-          return callback(new Error('请输入正确的邮箱！'));
-        }
+        result = callback(new Error('请输入正确的邮箱！'));
       }
+      return result;
     },
     checkTel(rule, value, callback) {
+      let result = '';
       if (!value) {
-        return callback(new Error('手机号不能为空！'));
-      } else {
+        result = callback(new Error('手机号不能为空！'));
+      } else if (value && !validate.isPhoneAvailable(value)) {
         // 如果不符合电话号码的情况下
-        if(!validate.isPhoneAvailable(value)) {
-          return callback(new Error('请输入正确的手机号！'));
-        }
+        result = callback(new Error('请输入正确的手机号！'));
       }
+      return result;
     },
   },
 };
