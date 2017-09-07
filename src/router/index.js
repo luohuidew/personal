@@ -3,6 +3,8 @@ import Router from 'vue-router';
 
 // 权益管理
 import EquityDashboard from '../components/console/equity/Dashboard';
+import StockDetail from '../components/console/equity/dashboard/StockDetail';
+import FinancDetail from '../components/console/equity/dashboard/FinancDetail';
 // 期权管理
 import OptionManagementList from '../components/console/option/ManagementList';
 import OptionIncentivePlan from '../components/console/option/IncentivePlan';
@@ -13,10 +15,11 @@ import DocManagementList from '../components/console/doc/ManagementList';
 // 账户管理
 import UserPersonalInfo from '../components/console/user/PersonalInfo';
 import UserMyOrder from '../components/console/user/MyOrder';
+import UserRenew from '../components/console/user/myOrder/Renew';
 import UserEnterpriseList from '../components/console/user/EnterpriseList';
 
 // 组件文档
-import ModuleDoc from '../components/console/module/doc';
+import ModuleDoc from '../components/console/doc';
 
 Vue.use(Router);
 
@@ -28,6 +31,16 @@ export default new Router({
       path: '/equity/dashboard',
       name: 'EquityDashboard',
       component: EquityDashboard,
+    },
+    {
+      path: '/equity/dashboard/stockdetail',
+      name: 'StockDetail',
+      component: StockDetail,
+    },
+    {
+      path: '/equity/dashboard/financdetail',
+      name: 'FinancDetail',
+      component: FinancDetail,
     },
     // 期权管理
     {
@@ -68,13 +81,18 @@ export default new Router({
       component: UserMyOrder,
     },
     {
+      path: '/user/my_order/renew',
+      name: 'UserRenew',
+      component: UserRenew,
+    },
+    {
       path: '/user/enterprise_list',
       name: 'UserEnterpriseList',
       component: UserEnterpriseList,
     },
     // 组件文档
     {
-      path: '/module/module_doc',
+      path: '/module_doc',
       name: 'ModuleDoc',
       component: ModuleDoc,
     },
