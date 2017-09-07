@@ -118,7 +118,7 @@
         <p class="des">为保障您的账号安全，请输入账号密码进行验证</p>
         <el-form :model="usefulData">
           <el-form-item label="真实姓名" :label-width="usefulData.formLabelWidth">
-            <el-input v-model.trim="usefulData.realName" placeholder="请输入账号密码"></el-input>
+            <el-input v-model.trim="usefulData.confirmRealName" placeholder="请输入您的真实姓名"></el-input>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -209,6 +209,7 @@ export default {
         formLabelWidth: '95px',
         telCode: '', // 默认手机验证码
         telCodeStatus: false, // 手机验证码状态
+        confirmRealName: '', // 输入的实名
         realName: '', // 实名认证的实名
         realNameStatus: false, // 默认进来实名认证弹窗是不可见状态
       },
