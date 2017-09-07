@@ -1,6 +1,6 @@
 <template>
   <div class="user-renew">
-    <div class="title"> <span class="back">&lt; 返回</span> <span class="title-text">续费及购买</span></div>
+    <div class="title"> <span class="back" @click="back">&lt; 返回</span> <span class="title-text">续费及购买</span></div>
     <div class="content">
       <el-form :model="form">
         <el-form-item label="参与方人数" :label-width="formLabelWidth">
@@ -58,6 +58,9 @@
       checkZhifu() {
         this.zhifubao = !this.zhifubao;
       },
+      back() {
+        window.history.back();
+      },
     },
   };
 </script>
@@ -79,6 +82,7 @@
     color: #999999;
     letter-spacing: 1.14px;
     float: left;
+    cursor: pointer;
   }
 
   .title-text {
