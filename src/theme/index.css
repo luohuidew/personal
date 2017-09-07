@@ -8470,24 +8470,29 @@
 }
 
 .el-dialog--tiny{
-  width: 30%;
+  width: 400px;
 }
 
 .el-dialog--small{
-  width: 50%;
+  width: 600px;
 }
 
 .el-dialog--large{
-  width: 90%;
+  width: 1000px;
 }
 
 .el-dialog--tiny .el-form {
-  width: 420px;
+  width: 320px;
   margin: 0 auto;
 }
 
 .el-dialog--small .el-form {
   width: 430px;
+  margin: 0 auto;
+}
+
+.el-dialog--large .el-form {
+  width: 830px;
   margin: 0 auto;
 }
 
@@ -8514,7 +8519,6 @@
   text-align: center;
   background: #F2F4FA;
   font-size: 18px;
-  color: #172C4F;
   letter-spacing:5px;
 }
 
@@ -8549,7 +8553,7 @@
   line-height: 1;
   font-size: 16px;
   font-weight: 700;
-  color: rgb(31, 45, 61);
+  color: #172C4F;
 }
 
 .el-dialog__body{
