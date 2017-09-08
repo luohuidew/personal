@@ -22,10 +22,10 @@
         </div>
         <div class="table-wrap">
           <el-table :data="tableData">
-            <el-table-column label="股东名称"></el-table-column>
-            <el-table-column label="投资轮次"></el-table-column>
-            <el-table-column label="注册资本"></el-table-column>
-            <el-table-column label="股份比例"></el-table-column>
+            <el-table-column label="融资轮次"></el-table-column>
+            <el-table-column label="融资金额"></el-table-column>
+            <el-table-column label="融资时间"></el-table-column>
+            <el-table-column label="投资方"></el-table-column>
             <el-table-column label="操作"></el-table-column>
           </el-table>
         </div>

@@ -21,13 +21,14 @@
           <el-button class="addbtn" type="primary" @click="dialogVisible = true">新增股东</el-button>
         </div>
         <div class="table-wrap">
-          <el-table :data="tableData">
+          <tree-table :treeClomns="treeClomns"></tree-table>
+          <!-- <el-table :data="tableData">
             <el-table-column label="股东名称"></el-table-column>
             <el-table-column label="投资轮次"></el-table-column>
             <el-table-column label="注册资本"></el-table-column>
             <el-table-column label="股份比例"></el-table-column>
             <el-table-column label="操作"></el-table-column>
-          </el-table>
+          </el-table> -->
         </div>
       </div>
     </div>
@@ -67,6 +68,8 @@
   </div>
 </template>
 <script>
+import treeTable from './treetable';
+
 export default {
   name: 'stock-detail',
   data() {
@@ -74,6 +77,21 @@ export default {
       stockMap: {
         name: undefined,
       },
+      treeClomns: [
+        {
+          text: '股东名称',
+          dataIndex: 'name',
+        }, {
+          text: '投资轮次',
+          dataIndex: 'name',
+        }, {
+          text: '注册资本',
+          dataIndex: 'name',
+        }, {
+          text: '股份比例',
+          dataIndex: 'name',
+        },
+      ],
       tableData: [],  // 测试
       dialogVisible: false,
       formLabelWidth: '120px',
@@ -87,6 +105,9 @@ export default {
         done();
       }).catch(() => {});
     },
+  },
+  components: {
+    treeTable,
   },
 };
 </script>
