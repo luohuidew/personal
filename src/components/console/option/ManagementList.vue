@@ -7,10 +7,10 @@
             <div class="main-title clearfix">
               <span class="title">正在签字的期权</span>
               <span class="titleNum">(共40,000股)</span>
-              <a href="/console#/option/managementList/ManagerialOptionList" class="more">管理期权&gt;</a>
+              <router-link class="more" :to="{ path: '/option/managementList/managerialOptionList' }">管理期权&gt;</router-link>
             </div>
             <div class="main-wrap">
-              <el-table :data="tableData">
+              <el-table>
                 <el-table-column label="编号"></el-table-column>
                 <el-table-column label="被授予人"></el-table-column>
                 <el-table-column label="状态"></el-table-column>

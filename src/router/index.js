@@ -7,6 +7,11 @@ import StockDetail from '../components/console/equity/dashboard/StockDetail';
 import FinancDetail from '../components/console/equity/dashboard/FinancDetail';
 // 期权管理
 import OptionManagementList from '../components/console/option/ManagementList';
+// 期权管理二级页面
+import OptionManagerialList from '../components/console/option/managementList/ManagerialOptionList';
+import OptionsGgranted1 from '../components/console/option/managementList/OptionsGgranted1';
+import OptionsGgranted2 from '../components/console/option/managementList/OptionsGgranted2';
+
 import OptionIncentivePlan from '../components/console/option/IncentivePlan';
 import OptionHoldingPlatform from '../components/console/option/HoldingPlatform';
 import OptionParticipator from '../components/console/option/Participator';
@@ -47,6 +52,21 @@ export default new Router({
       path: '/option/management_list',
       name: 'OptionManagementList',
       component: OptionManagementList,
+    },
+    {
+      path: '/option/managementList/managerialOptionList',
+      name: 'OptionManagerialList',
+      component: OptionManagerialList,
+    },
+    {
+      path: '/option/managementList/optionsGgranted1',
+      name: 'OptionsGgranted1',
+      component: OptionsGgranted1,
+    },
+    {
+      path: '/option/managementList/optionsGgranted2',
+      name: 'OptionsGgranted2',
+      component: OptionsGgranted2,
     },
     {
       path: '/option/incentive_plan',
