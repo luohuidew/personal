@@ -19,6 +19,9 @@ body{
 .yellow_bg{
   background-color: #FFCA57;
 }
+.blue_bg{
+  background-color: #2E76E0;
+}
 /*浮动*/
 .floatLeft{
   float: left;
