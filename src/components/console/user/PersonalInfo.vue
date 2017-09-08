@@ -359,10 +359,11 @@ export default {
       let result = '';
       if (!value) {
         result = callback(new Error('验证码不能为空！'));
-      } else if (value && false) {
-        // 这里需要调用手机验证码接口来做判断
-        result = callback(new Error('请输入正确的验证码！'));
       }
+      // else if (value && false) {
+      //   // 这里需要调用手机验证码接口来做判断
+      //   result = callback(new Error('请输入正确的验证码！'));
+      // }
       return result;
     },
     handleAvatarSuccess(res, file) {
