@@ -9,8 +9,8 @@
       <ul class="line1">
         <li class="nikeName" :v-model="usefulData">
           <span>用户昵称</span>
-          <input v-if="!isNameEdit" type="text" class="name disabled" v-model="usefulData.nikeName" disabled/>
-          <input v-if="isNameEdit" type="text" class="name" v-model="usefulData.nikeName"/>
+          <input v-if="!isNameEdit" type="text" class="name disabled" v-model.trim="usefulData.nikeName" disabled/>
+          <input v-if="isNameEdit" type="text" class="name" v-model.trim="usefulData.nikeName"/>
           <div v-if="!isNameEdit" class="edit-btn" @click="changeNameEdit">
             <i><img src="../../../assets/icon-edit.png"/></i><em>编辑</em>
           </div>
@@ -22,19 +22,27 @@
           <span>绑定邮箱</span><p>{{usefulData.xingEmail}}</p><div class="edit-btn" @click="usefulData.userPassword=true"><em>修改</em></div>
         </li>
         <li class="common tel">
-          <span>绑定手机</span><p>{{usefulData.xingTel}}</p><div class="edit-btn" @click="usefulData.userPassword=true"><em>解绑</em></div>
+          <span>绑定手机</span>
+          <p v-if="!usefulData.unlinkTel">{{usefulData.xingTel}}</p>
+          <div v-if="!usefulData.unlinkTel" class="edit-btn" @click="usefulData.userPassword=true">
+            <em>解绑</em>
+          </div>
+          <p v-if="usefulData.unlinkTel">未绑定</p>
+          <div v-if="usefulData.unlinkTel" class="edit-btn" @click="usefulData.linkTel=true">
+            <em>手机绑定</em>
+          </div>
         </li>
       </ul>
       <h2>安全设置</h2>
       <ul class="line2">
         <li class="common autonym">
-          <span>实名认证</span><p>未认证</p><div class="edit-btn"><em>实名认证</em></div>
+          <span>实名认证</span><p>未认证</p><div class="edit-btn" @click="usefulData.realNameStatus=true"><em>实名认证</em></div>
         </li>
         <li class="common sign">
           <span>签名管理</span><p><img src="../../../assets/sign-img.png"/></p><div class="edit-btn"><em>设置</em></div>
         </li>
         <li class="common account">
-          <span>账号安全</span><div class="edit-btn"><em>修改密码</em></div>
+          <span>账号安全</span><div class="edit-btn" @click="usefulData.passwordStatus=true"><em>修改密码</em></div>
         </li>
       </ul>
       <div class="attention">
@@ -45,7 +53,7 @@
         <p class="des">为保障您的账号安全，请输入账号密码进行验证</p>
         <el-form :model="usefulData">
           <el-form-item label="请输入密码" :label-width="usefulData.formLabelWidth">
-            <el-input v-model="usefulData.password" placeholder="请输入账号密码"></el-input>
+            <el-input v-model.trim="usefulData.password" placeholder="请输入账号密码"></el-input>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -56,7 +64,7 @@
       <el-dialog v-if="usefulData.userEmail" title="修改邮箱" :visible.sync="usefulData.userEmail" size="tiny" :before-close="handleClose">
         <el-form :model="usefulData">
           <el-form-item label="修改邮箱" :label-width="usefulData.formLabelWidth">
-            <el-input type="email" v-model="usefulData.newEmail" placeholder="请输入新的邮箱地址"></el-input>
+            <el-input type="email" v-model.trim="usefulData.newEmail" placeholder="请输入新的邮箱地址"></el-input>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -70,7 +78,7 @@
         <p class="des">为保障您的账号安全，请输入账号密码进行验证</p>
         <el-form :model="usefulData">
           <el-form-item label="请输入密码" :label-width="usefulData.formLabelWidth">
-            <el-input v-model="usefulData.password" placeholder="请输入账号密码"></el-input>
+            <el-input v-model.trim="usefulData.password" placeholder="请输入账号密码"></el-input>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -84,15 +92,91 @@
         <p class="des">解除绑定后您将无法用当前绑定手机号继续登录股书平台并接收相关信息。<br/>是否确定要接除绑定？</p>
         <span slot="footer" class="dialog-footer">
           <el-button @click="usefulData.userTel = false">取 消</el-button>
-          <el-button type="primary" @click="usefulData.userTel = false">确 定</el-button>
+          <el-button type="primary" @click="editUnlinkTel">确 定</el-button>
         </span>
       </el-dialog>
       <!--手机解绑弹窗 end-->
+      <!--手机绑定弹窗 start-->
+      <el-dialog v-if="usefulData.linkTel" title="手机绑定" :visible.sync="usefulData.linkTel" size="tiny" :before-close="handleClose">
+        <el-form :model="usefulData" :rules="rules">
+          <el-form-item prop="newTel" label="手机号" :label-width="usefulData.formLabelWidth" required="">
+            <el-input type="tel" v-model.number.trim="usefulData.newTel" placeholder="请输入手机号"></el-input>
+          </el-form-item>
+          <el-form-item required prop="telCode" label="手机验证码" :label-width="usefulData.formLabelWidth" class="tel-code">
+            <!--这里需要做一个处理，掉接口判断手机验证码正确与否-->
+            <el-input v-model.trim="usefulData.telCode" placeholder="请输入手机验证码" class="tel-code"></el-input><el-button>发送验证码</el-button>
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="usefulData.linkTel = false">取 消</el-button>
+          <el-button type="primary" @click="usefulData.linkTel = false">确 定</el-button>
+        </span>
+      </el-dialog>
+      <!--手机绑定弹窗 end-->
+      <!--实名认证弹窗 start-->
+      <el-dialog v-if="usefulData.realNameStatus" title="实名认证" :visible.sync="usefulData.realNameStatus" size="small" :before-close="handleClose">
+        <el-form :model="usefulData">
+          <el-form-item label="真实姓名" :label-width="usefulData.formLabelWidth">
+            <el-input v-model.trim="usefulData.confirmRealName" placeholder="请输入您的真实姓名"></el-input>
+          </el-form-item>
+          <el-form-item label="证件号" :label-width="usefulData.formLabelWidth" class="ids">
+            <el-row :gutter="10" class="ids-row">
+              <el-col :span="7">
+                <el-select v-model="idStyle" clearable placeholder="请选择">
+                  <el-option
+                    v-for="item in certificateLists"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-col>
+              <el-col :span="17">
+                <el-input v-model.trim="usefulData.idNo" placeholder="请输入您的证件号"></el-input>
+              </el-col>
+            </el-row>
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="usefulData.userPassword = false">取 消</el-button>
+          <el-button type="primary" @click="editTel">确 定</el-button>
+        </span>
+      </el-dialog>
+      <!--实名认证弹窗 end-->
+      <!--修改密码弹窗 start-->
+      <el-dialog v-if="usefulData.passwordStatus" title="修改密码" :visible.sync="usefulData.passwordStatus" size="tiny" :before-close="handleClose">
+        <p class="des">为保障您的账号安全，请输入账号密码进行验证</p>
+        <el-form :model="usefulData">
+          <el-form-item label="旧密码" :label-width="usefulData.formLabelWidth">
+            <el-input v-model.trim="usefulData.password" placeholder="请输入旧密码"></el-input>
+          </el-form-item>
+          <el-form-item label="新密码" :label-width="usefulData.formLabelWidth">
+            <el-input v-model.trim="usefulData.newPassword" placeholder="请输入新密码"></el-input>
+          </el-form-item>
+          <el-form-item label="确认密码" :label-width="usefulData.formLabelWidth">
+            <el-input v-model.trim="usefulData.confirmPassword" placeholder="请再次输入新密码"></el-input>
+          </el-form-item>
+          <el-form-item label="密码安全性" :label-width="usefulData.formLabelWidth">
+            <el-row :gutter="10" class="safety">
+              <el-col :span="8" class="active"><span></span></el-col>
+              <el-col :span="8" class="active"><span></span></el-col>
+              <el-col :span="8"><span></span></el-col>
+            </el-row>
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="usefulData.passwordStatus = false">取 消</el-button>
+          <el-button type="primary" @click="usefulData.passwordStatus = false">确 定</el-button>
+        </span>
+      </el-dialog>
+      <!--修改密码弹窗 end-->
     </div>
   </div>
 </template>
 
 <script>
+import validate from '../../../utils/validation';
+
 export default {
   name: 'user-personal-info',
   created() {
@@ -105,28 +189,62 @@ export default {
     this.usefulData.xingEmail = editedEmai.replace(emailArray[0], xing);
     // 手机中间4位均为*号
     const tel = this.usefulData.tel;
-    // console.log(tel);
     this.usefulData.xingTel = `${tel.substr(0, 3)}****${tel.substr(7)}`;
-    // console.log(this.usefulData.xingTel);
   },
   data() {
     return {
       isNameEdit: false,
       oldName: '沙枫',
+      idStyle: '', // 证件类型
+      certificateLists: [
+        {
+          value: '0',
+          label: '身份证',
+        }, {
+          value: '1',
+          label: '护照',
+        }, {
+          value: '2',
+          label: '台胞证',
+        },
+        {
+          value: '3',
+          label: '回乡证',
+        },
+      ],
       usefulData: {
-        userPassword: false, // 默认输入用户密码是不可见的
+        userPassword: false, // 默认输入用户密码弹窗是不可见的
         userEmail: false, // 默认用户邮箱弹窗是不可见的
         userTel: false, // 默认进来用户手机号弹窗是不可见的
         password: '123', // 临时账号密码
+        newPassword: '', // 修改后的密码
+        confirmPassword: '', // 确认的新密码
+        passwordStatus: false, // 默认修改密码不可见
         nikeName: '沙枫',
         newEmail: '', // 变更后的邮箱地址
         email: '675714031@qq.com', // 默认邮箱地址为空
         xingEmail: '', // 被截取后的邮箱地址
         tel: '15010841736', // 手机号
+        newTel: '', // 验证码手机号新的手机号
         xingTel: '', // 被截取后的手机号
+        unlinkTel: false, // 默认进来手机解绑为false
+        linkTel: false, // 默认进来手机号未绑定
         editStatus: false, // 默认输入框是不可编辑的
         changeNick: false, // 默认昵称是不可编辑的
-        formLabelWidth: '90px',
+        formLabelWidth: '95px',
+        telCode: '', // 默认手机验证码
+        telCodeStatus: false, // 手机验证码状态
+        confirmRealName: '', // 输入的实名
+        realName: '', // 实名认证的实名
+        realNameStatus: false, // 默认进来实名认证弹窗是不可见状态
+      },
+      rules: {
+        newTel: [
+          { validator: this.checkTel, trigger: 'blur' },
+        ],
+        telCode: [
+          { validator: this.checkTelCode, trigger: 'blur' },
+        ],
       },
     };
   },
@@ -155,6 +273,34 @@ export default {
       this.usefulData.userPassword = false;
       this.usefulData.userTel = true; // 邮箱弹出
       // 这个地方需要做验证，当用户密码对上了，设置userPassword为true,这样切换弹窗里的内容
+    },
+    // 手机解绑确认
+    editUnlinkTel() {
+      this.usefulData.userTel = false;
+      this.usefulData.unlinkTel = true; // 手机解绑成功
+      // this.usefulData.linkTel = true; // 手机号未被绑定为true
+    },
+    // 验证手机号
+    checkTel(rule, value, callback) {
+      let result = '';
+      if (!value) {
+        result = callback(new Error('手机号不能为空！'));
+      } else if (value && !validate.isPhoneAvailable(value)) {
+        // 如果不符合电话号码的情况下
+        result = callback(new Error('请输入正确的手机号！'));
+      }
+      return result;
+    },
+    // 手机验证码
+    checkTelCode(rule, value, callback) {
+      let result = '';
+      if (!value) {
+        result = callback(new Error('验证码不能为空！'));
+      } else if (value && false) {
+        // 这里需要调用手机验证码接口来做判断
+        result = callback(new Error('请输入正确的验证码！'));
+      }
+      return result;
     },
   },
 };
@@ -305,5 +451,45 @@ body {
   color: #3184be;
   font-weight: 700;
   font-size: 16px;
+}
+.tel-code .el-input{
+  width: 90px !important;
+  margin-right: 10px;
+}
+.tel-code .el-button {
+  padding:10px 5px!important;
+}
+.safety.el-row {
+  margin: 0 !important;
+}
+.safety.el-row span {
+  display: block;
+  width: 100%;
+  margin-top: 16px;
+  border-bottom: 3px solid #ccc;
+}
+.safety.el-row .el-col.active span{
+  border-bottom: 3px solid #f3b043;
+}
+.ids .el-select {
+  width: 100%;
+}
+.el-dialog--small .el-input {
+  width:  100% !important;
+}
+.ids .el-col-17 .el-input {
+  width: 100% !important;
+}
+.ids-row {
+  margin: 0 !important;
+}
+/* .ids-row .el-col {
+  padding: 0 !important;
+} */
+.ids-row .el-col.el-col-7 {
+  padding-left: 0 !important;
+}
+.ids-row .el-col.el-col-17 {
+  padding-right: 0 !important;
 }
 </style>

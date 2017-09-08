@@ -29,3 +29,7 @@ body{
 .floatRight{
   float: right;
 }
+/*个人信息*/
+.user-personal-info .ids .el-row .el-select .el-input {
+  width: 100% !important;
+}
