@@ -38,9 +38,6 @@
         <el-form-item label="股东名称" :label-width="formLabelWidth" required>
           <el-input v-model="stockMap.name" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="股东名称" :label-width="formLabelWidth" required>
-          <el-input v-model="stockMap.name" auto-complete="off"></el-input>
-        </el-form-item>
         <el-form-item label="股东类型" :label-width="formLabelWidth" required>
           <el-select v-model="stockMap.region" placeholder="请选择活动区域">
             <el-option label="区域一" value="shanghai"></el-option>
@@ -54,6 +51,9 @@
           </el-select>
         </el-form-item>
         <el-form-item label="注册资本" :label-width="formLabelWidth" required>
+          <el-input v-model="stockMap.name" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="总注册资本" :label-width="formLabelWidth" required>
           <el-input v-model="stockMap.name" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="股份比例" :label-width="formLabelWidth" required>
@@ -80,16 +80,16 @@ export default {
       treeClomns: [
         {
           text: '股东名称',
-          dataIndex: 'name',
+          dataIndex: 'shareholderAbbreviation',
         }, {
           text: '投资轮次',
-          dataIndex: 'name',
+          dataIndex: 'rounds',
         }, {
           text: '注册资本',
-          dataIndex: 'name',
+          dataIndex: 'registeredCapital',
         }, {
           text: '股份比例',
-          dataIndex: 'name',
+          dataIndex: 'rate',
         },
       ],
       tableData: [],  // 测试
