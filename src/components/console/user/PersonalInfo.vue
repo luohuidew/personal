@@ -114,11 +114,27 @@
       </el-dialog>
       <!--手机绑定弹窗 end-->
       <!--实名认证弹窗 start-->
-      <el-dialog v-if="usefulData.realNameStatus" title="手机解绑" :visible.sync="usefulData.realNameStatus" size="tiny" :before-close="handleClose">
-        <p class="des">为保障您的账号安全，请输入账号密码进行验证</p>
+      <el-dialog v-if="usefulData.realNameStatus" title="实名认证" :visible.sync="usefulData.realNameStatus" size="small" :before-close="handleClose">
         <el-form :model="usefulData">
           <el-form-item label="真实姓名" :label-width="usefulData.formLabelWidth">
             <el-input v-model.trim="usefulData.confirmRealName" placeholder="请输入您的真实姓名"></el-input>
+          </el-form-item>
+          <el-form-item label="证件号" :label-width="usefulData.formLabelWidth" class="ids">
+            <el-row :gutter="10" class="ids-row">
+              <el-col :span="7">
+                <el-select v-model="idStyle" clearable placeholder="请选择">
+                  <el-option
+                    v-for="item in certificateLists"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-col>
+              <el-col :span="17">
+                <el-input v-model.trim="usefulData.idNo" placeholder="请输入您的证件号"></el-input>
+              </el-col>
+            </el-row>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -126,17 +142,9 @@
           <el-button type="primary" @click="editTel">确 定</el-button>
         </span>
       </el-dialog>
-      <el-dialog v-if="usefulData.userTel" title="手机解绑" :visible.sync="usefulData.userTel" size="tiny" :before-close="handleClose">
-        <h4 class="success">验证成功!</h4>
-        <p class="des">解除绑定后您将无法用当前绑定手机号继续登录股书平台并接收相关信息。<br/>是否确定要接除绑定？</p>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="usefulData.userTel = false">取 消</el-button>
-          <el-button type="primary" @click="usefulData.userTel = false">确 定</el-button>
-        </span>
-      </el-dialog>
       <!--实名认证弹窗 end-->
       <!--修改密码弹窗 start-->
-      <el-dialog v-if="usefulData.passwordStatus" title="修改邮箱" :visible.sync="usefulData.passwordStatus" size="tiny" :before-close="handleClose">
+      <el-dialog v-if="usefulData.passwordStatus" title="修改密码" :visible.sync="usefulData.passwordStatus" size="tiny" :before-close="handleClose">
         <p class="des">为保障您的账号安全，请输入账号密码进行验证</p>
         <el-form :model="usefulData">
           <el-form-item label="旧密码" :label-width="usefulData.formLabelWidth">
@@ -187,6 +195,23 @@ export default {
     return {
       isNameEdit: false,
       oldName: '沙枫',
+      idStyle: '', // 证件类型
+      certificateLists: [
+        {
+          value: '0',
+          label: '身份证',
+        }, {
+          value: '1',
+          label: '护照',
+        }, {
+          value: '2',
+          label: '台胞证',
+        },
+        {
+          value: '3',
+          label: '回乡证',
+        },
+      ],
       usefulData: {
         userPassword: false, // 默认输入用户密码弹窗是不可见的
         userEmail: false, // 默认用户邮箱弹窗是不可见的
@@ -445,5 +470,26 @@ body {
 }
 .safety.el-row .el-col.active span{
   border-bottom: 3px solid #f3b043;
+}
+.ids .el-select {
+  width: 100%;
+}
+.el-dialog--small .el-input {
+  width:  100% !important;
+}
+.ids .el-col-17 .el-input {
+  width: 100% !important;
+}
+.ids-row {
+  margin: 0 !important;
+}
+/* .ids-row .el-col {
+  padding: 0 !important;
+} */
+.ids-row .el-col.el-col-7 {
+  padding-left: 0 !important;
+}
+.ids-row .el-col.el-col-17 {
+  padding-right: 0 !important;
 }
 </style>
