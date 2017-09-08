@@ -43,13 +43,13 @@ export default {
       },
       rules: {
         userName: [
-          { validator: this.checkUserName, trigger: 'blur' }
+          { validator: this.checkUserName, trigger: 'blur' },
         ],
         newPassword: [
-          { validator: this.checkPassword, trigger: 'blur' }
+          { validator: this.checkPassword, trigger: 'blur' },
         ],
         captcha: [
-          { validator: this.checkCaptcha, trigger: 'blur' }
+          { validator: this.checkCaptcha, trigger: 'blur' },
         ],
       },
     };
@@ -67,14 +67,14 @@ export default {
       });
     },
     checkUserName(rule, value, callback) {
+      let result = '';
       if (!value) {
-        return callback(new Error('有户名（手机号/邮箱）不能为空！'));
-      } else {
+        result = callback(new Error('有户名（手机号/邮箱）不能为空！'));
+      } else if (!validate.isPhoneAvailable(value) && !validate.isEmailAvailable(value)) {
         // 如果不符合邮箱也不符合电话号码的情况下
-        if(!validate.isPhoneAvailable(value) && !validate.isEmailAvailable(value)) {
-          return callback(new Error('请输入正确的手机号/邮箱！'));
-        }
+        result = callback(new Error('请输入正确的手机号/邮箱！'));
       }
+      return result;
     },
     checkPassword(rule, value, callback) {
       if (value === '') {
