@@ -115,14 +115,14 @@
       <!--手机绑定弹窗 end-->
       <!--实名认证弹窗 start-->
       <el-dialog v-if="usefulData.realNameStatus" title="实名认证" :visible.sync="usefulData.realNameStatus" size="small" :before-close="handleClose">
-        <el-form :model="usefulData">
+        <el-form :model="usefulData" :rules="rules">
           <el-form-item label="真实姓名" :label-width="usefulData.formLabelWidth">
             <el-input v-model.trim="usefulData.confirmRealName" placeholder="请输入您的真实姓名"></el-input>
           </el-form-item>
           <el-form-item label="证件号" :label-width="usefulData.formLabelWidth" class="ids">
             <el-row :gutter="10" class="ids-row">
               <el-col :span="7">
-                <el-select v-model="idStyle" clearable placeholder="请选择">
+                <el-select v-model="idValue" clearable placeholder="请选择" @change="changeItem">
                   <el-option
                     v-for="item in certificateLists"
                     :key="item.value"
@@ -132,7 +132,64 @@
                 </el-select>
               </el-col>
               <el-col :span="17">
-                <el-input v-model.trim="usefulData.idNo" placeholder="请输入您的证件号"></el-input>
+                <el-input v-if="usefulData.passportStatus" v-model.trim="usefulData.passportNo" placeholder="请输入您的证件号"></el-input>
+                <el-input v-if="usefulData.idStatus" v-model.trim="usefulData.idNo" placeholder="请输入您的证件号"></el-input>
+              </el-col>
+            </el-row>
+          </el-form-item>
+          <el-form-item label="手持证件照" :label-width="usefulData.formLabelWidth" class="hand-photo">
+            <el-row :gutter="15">
+              <el-col :span="10">
+                <img v-if="imageUrl" :src="imageUrl">
+                <i v-else class="avatar-uploader">
+                  <img src="../../../assets/hand-idphoto.png"/>
+                </i>
+                <el-upload
+                  class="avatar-uploader-icon upload"
+                  action="https://jsonplaceholder.typicode.com/posts/"
+                  :show-file-list="false"
+                  :on-success="handleAvatarSuccess"
+                  :before-upload="beforeAvatarUpload">上传并预览
+                </el-upload>
+              </el-col>
+              <el-col :span="14">
+                <p>注意：<br/>选取纯色干净背景拍摄<br/>手臂和脸部完全露出无遮挡<br/>证件全部信息清晰无遮挡</p>
+                <!-- <div>或
+                  <el-tooltip placement="top">
+                    <div slot="content"></div>
+                    <el-button>扫描二维码拍照上传</el-button>
+                  </el-tooltip>
+                </div> -->
+              </el-col>
+            </el-row>
+          </el-form-item>
+          <el-form-item label="证件正反面" :label-width="usefulData.formLabelWidth">
+            <el-row :gutter="30" class="two-upload">
+              <el-col :span="12">
+                <img v-if="frontUrl" :src="frontUrl">
+                <i v-else class="avatar-uploader">
+                  <img src="../../../assets/id-img.png"/>
+                </i>
+                <el-upload
+                  class="avatar-uploader-icon upload"
+                  action="https://jsonplaceholder.typicode.com/posts/"
+                  :show-file-list="false"
+                  :on-success="handleAvatarSuccess"
+                  :before-upload="beforeAvatarUpload">上传并预览
+                </el-upload>
+              </el-col>
+              <el-col :span="12">
+                <img v-if="backUrl" :src="backUrl">
+                <i v-else class="avatar-uploader">
+                  <img src="../../../assets/id-img.png"/>
+                </i>
+                <el-upload
+                  class="avatar-uploader-icon upload"
+                  action="https://jsonplaceholder.typicode.com/posts/"
+                  :show-file-list="false"
+                  :on-success="handleAvatarSuccess"
+                  :before-upload="beforeAvatarUpload">上传并预览
+                </el-upload>
               </el-col>
             </el-row>
           </el-form-item>
@@ -193,9 +250,12 @@ export default {
   },
   data() {
     return {
+      frontUrl: '', // 正面证件照
+      backUrl: '', // 背面证件照
+      imageUrl: '', // 手持证件照
       isNameEdit: false,
       oldName: '沙枫',
-      idStyle: '', // 证件类型
+      idValue: '', // 证件类型
       certificateLists: [
         {
           value: '0',
@@ -203,13 +263,6 @@ export default {
         }, {
           value: '1',
           label: '护照',
-        }, {
-          value: '2',
-          label: '台胞证',
-        },
-        {
-          value: '3',
-          label: '回乡证',
         },
       ],
       usefulData: {
@@ -237,6 +290,10 @@ export default {
         confirmRealName: '', // 输入的实名
         realName: '', // 实名认证的实名
         realNameStatus: false, // 默认进来实名认证弹窗是不可见状态
+        idNo: '', // 身份证号
+        idStatus: true, // 身份证被选中
+        passportNo: '', // 护照号码
+        passportStatus: false, // 默认护照没有被选中
       },
       rules: {
         newTel: [
@@ -244,6 +301,12 @@ export default {
         ],
         telCode: [
           { validator: this.checkTelCode, trigger: 'blur' },
+        ],
+        idNo: [
+          { validator: this.checkIdNo, trigger: 'blur' },
+        ],
+        passportNo: [
+          { validator: this.checkPassportNo, trigger: 'blur' },
         ],
       },
     };
@@ -302,6 +365,53 @@ export default {
       }
       return result;
     },
+    handleAvatarSuccess(res, file) {
+      this.imageUrl = URL.createObjectURL(file.raw);
+    },
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === 'image/jpeg';
+      const isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (!isJPG) {
+        this.$message.error('上传头像图片只能是 JPG 格式!');
+      }
+      if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 2MB!');
+      }
+      return isJPG && isLt2M;
+    },
+    // 验证身份证号
+    checkIdNo(rule, value, callback) {
+      let result = '';
+      if (!value) {
+        result = callback(new Error('身份证号不能为空！'));
+      } else if (value && !validate.isIDNO(value)) {
+        // 如果不符合身份证号码的情况下
+        result = callback(new Error('请输入正确的身份证号！'));
+      }
+      return result;
+    },
+    // 验证护照号
+    checkPassportNo(rule, value, callback) {
+      let result = '';
+      if (!value) {
+        result = callback(new Error('护照号不能为空！'));
+      } else if (value && !validate.isPassport(value)) {
+        // 如果不符合护照号码的情况下
+        result = callback(new Error('请输入正确的护照号！'));
+      }
+      return result;
+    },
+    changeItem(item) { // 当发生选中的时候出发的
+      if (item === 0) { // 如果是身份证
+        this.usefulData.passportStatus = false;
+        this.usefulData.idStatus = true;
+      }
+      if (item === 1) { // 护照
+        this.usefulData.passportStatus = true;
+        this.usefulData.idStatus = false;
+      }
+    },
   },
 };
 </script>
@@ -309,7 +419,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 body {
-  -webkit-user-select:none;
+  -webkit-user-select :none;
   -moz-user-select:none;
   -ms-user-select:none;
   user-select:none;
@@ -459,9 +569,6 @@ body {
 .tel-code .el-button {
   padding:10px 5px!important;
 }
-.safety.el-row {
-  margin: 0 !important;
-}
 .safety.el-row span {
   display: block;
   width: 100%;
@@ -480,9 +587,6 @@ body {
 .ids .el-col-17 .el-input {
   width: 100% !important;
 }
-.ids-row {
-  margin: 0 !important;
-}
 /* .ids-row .el-col {
   padding: 0 !important;
 } */
@@ -491,5 +595,52 @@ body {
 }
 .ids-row .el-col.el-col-17 {
   padding-right: 0 !important;
+}
+.hand-photo .el-row, .el-row.two-upload, .ids-row, .safety.el-row {
+  margin: 0 !important;
+}
+.hand-photo .el-row .el-col-10 .avatar-uploader, .el-row.two-upload .avatar-uploader {
+  margin-bottom: 10px;
+  line-height: 100% !important;
+}
+.hand-photo .el-row .el-col-10 .avatar-uploader img, .el-row.two-upload .avatar-uploader img {
+  width: 100%;
+  height: auto;
+}
+.avatar-uploader-icon.upload {
+  width: 100%;
+  height: 40px;
+  background: #F4F4F4;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  border: 0 none;
+  color: #999;
+  text-align: center;
+}
+.avatar-uploader-icon.upload .el-upload {
+  letter-spacing: 1.14px;
+  line-height: 21px;
+}
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+  border-color: #20a0ff;
+}
+.avatar-uploader {
+  display: block;
+  width: 100%;
+}
+.avatar-uploader img {
+  width: 100%;
+  height: auto;
+}
+.el-form-item__content {
+  line-height: 32px !important;
 }
 </style>
