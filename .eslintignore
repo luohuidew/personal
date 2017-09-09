@@ -1,5 +1,7 @@
+.vscode/*
 build/*.js
 config/*.js
 static/*.js
 src/lib/*.js
 src/utils/tools.js
+src/service/http.js
