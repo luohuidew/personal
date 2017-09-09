@@ -1,16 +1,24 @@
 <template>
   <div class="user-personal-info">
     <div class="edit-img">
-      <img src="../../../assets/edit-img.png"/>
-      <span>编辑头像</span>
+      <el-upload
+        class="avatar-uploader"
+        action="https://jsonplaceholder.typicode.com/posts/"
+        :show-file-list="false"
+        :on-success="handleAvatarSuccess"
+        :before-upload="beforeAvatarUpload">
+        <img v-if="usefulData.portrait" :src="usefulData.portrait" class="avatar">
+        <i v-else class="avatar-uploader-icon"><img src="../../../assets/edit-img.png"/></i>
+        <span>编辑头像</span>
+      </el-upload>
     </div>
-    <div class="infos">
+    <div class="infos" :v-model="usefulData">
       <h2>基础信息</h2>
       <ul class="line1">
-        <li class="nikeName" :v-model="usefulData">
+        <li class="username">
           <span>用户昵称</span>
-          <input v-if="!isNameEdit" type="text" class="name disabled" v-model.trim="usefulData.nikeName" disabled/>
-          <input v-if="isNameEdit" type="text" class="name" v-model.trim="usefulData.nikeName"/>
+          <input v-if="!isNameEdit" type="text" class="name disabled" v-model.trim="usefulData.username" disabled/>
+          <input v-if="isNameEdit" type="text" class="name" v-model.trim="usefulData.username"/>
           <div v-if="!isNameEdit" class="edit-btn" @click="changeNameEdit">
             <i><img src="../../../assets/icon-edit.png"/></i><em>编辑</em>
           </div>
@@ -19,16 +27,16 @@
           </div>
         </li>
         <li class="common email">
-          <span>绑定邮箱</span><p>{{usefulData.xingEmail}}</p><div class="edit-btn" @click="usefulData.userPassword=true"><em>修改</em></div>
+          <span>绑定邮箱</span><p>{{usefulData.xingEmail}}</p><div class="edit-btn" @click="userPassword=true"><em>修改</em></div>
         </li>
-        <li class="common tel">
+        <li class="common phone">
           <span>绑定手机</span>
-          <p v-if="!usefulData.unlinkTel">{{usefulData.xingTel}}</p>
-          <div v-if="!usefulData.unlinkTel" class="edit-btn" @click="usefulData.userPassword=true">
+          <p v-if="!unlinkTel">{{usefulData.xingTel}}</p>
+          <div v-if="!unlinkTel" class="edit-btn" @click="userPassword=true">
             <em>解绑</em>
           </div>
-          <p v-if="usefulData.unlinkTel">未绑定</p>
-          <div v-if="usefulData.unlinkTel" class="edit-btn" @click="usefulData.linkTel=true">
+          <p v-if="unlinkTel">未绑定</p>
+          <div v-if="unlinkTel" class="edit-btn" @click="linkTel=true">
             <em>手机绑定</em>
           </div>
         </li>
@@ -36,93 +44,102 @@
       <h2>安全设置</h2>
       <ul class="line2">
         <li class="common autonym">
-          <span>实名认证</span><p>未认证</p><div class="edit-btn" @click="usefulData.realNameStatus=true"><em>实名认证</em></div>
+          <span>实名认证</span><p v-if="firstCertificateStatus || certificateFailStatus">未认证</p><p v-if="certificatingStatus">认证中</p><p v-if="certificatedStatus">已认证</p><div class="edit-btn" @click="realNameStatus=true"><em>实名认证</em></div>
         </li>
         <li class="common sign">
-          <span>签名管理</span><p><img src="../../../assets/sign-img.png"/></p><div class="edit-btn"><em>设置</em></div>
+          <span>签名管理</span><p><img :src="usefulData.signatureUrl"/></p><div class="edit-btn"><em>编辑</em></div>
         </li>
         <li class="common account">
-          <span>账号安全</span><div class="edit-btn" @click="usefulData.passwordStatus=true"><em>修改密码</em></div>
+          <span>账号安全</span><div class="edit-btn" @click="passwordStatus=true"><em>修改密码</em></div>
         </li>
       </ul>
       <div class="attention">
         <i>*</i><p>接受期权授予协议，必须要完成实名认证才能顺利签字。</br>实名认证审核时间约为1个工作日 ，请您合理安排认证时间，避免耽误签字。</p>
       </div>
       <!--修改邮箱弹窗 start-->
-      <el-dialog v-if="!usefulData.userEmail" title="修改邮箱" :visible.sync="usefulData.userPassword" size="tiny" :before-close="handleClose">
+      <el-dialog v-if="!userEmail" title="修改邮箱" :visible.sync="userPassword" size="tiny" :before-close="handleClose">
         <p class="des">为保障您的账号安全，请输入账号密码进行验证</p>
         <el-form :model="usefulData">
-          <el-form-item label="请输入密码" :label-width="usefulData.formLabelWidth">
+          <el-form-item label="请输入密码" :label-width="usefulData.formLabelWidth" required>
             <el-input v-model.trim="usefulData.password" placeholder="请输入账号密码"></el-input>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="usefulData.userPassword = false">取 消</el-button>
+          <el-button @click="userPassword = false">取 消</el-button>
           <el-button type="primary" @click="editEmail">确 定</el-button>
         </span>
       </el-dialog>
-      <el-dialog v-if="usefulData.userEmail" title="修改邮箱" :visible.sync="usefulData.userEmail" size="tiny" :before-close="handleClose">
+      <el-dialog v-if="userEmail" title="修改邮箱" :visible.sync="userEmail" size="tiny" :before-close="handleClose">
         <el-form :model="usefulData">
-          <el-form-item label="修改邮箱" :label-width="usefulData.formLabelWidth">
+          <el-form-item label="修改邮箱" :label-width="usefulData.formLabelWidth" required>
             <el-input type="email" v-model.trim="usefulData.newEmail" placeholder="请输入新的邮箱地址"></el-input>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="usefulData.userEmail = false">取 消</el-button>
-          <el-button type="primary" @click="usefulData.userEmail = false">确 定</el-button>
+          <el-button @click="userEmail = false">取 消</el-button>
+          <el-button type="primary" @click="userEmail = false">确 定</el-button>
         </span>
       </el-dialog>
       <!--修改邮箱弹窗 end-->
       <!--手机解绑弹窗 start-->
-      <el-dialog v-if="!usefulData.userTel" title="手机解绑" :visible.sync="usefulData.userPassword" size="tiny" :before-close="handleClose">
+      <el-dialog v-if="!userTel" title="手机解绑" :visible.sync="userPassword" size="tiny" :before-close="handleClose">
         <p class="des">为保障您的账号安全，请输入账号密码进行验证</p>
         <el-form :model="usefulData">
-          <el-form-item label="请输入密码" :label-width="usefulData.formLabelWidth">
+          <el-form-item label="请输入密码" :label-width="usefulData.formLabelWidth" required>
             <el-input v-model.trim="usefulData.password" placeholder="请输入账号密码"></el-input>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="usefulData.userPassword = false">取 消</el-button>
+          <el-button @click="userPassword = false">取 消</el-button>
           <el-button type="primary" @click="editTel">确 定</el-button>
         </span>
       </el-dialog>
-      <el-dialog v-if="usefulData.userTel" title="手机解绑" :visible.sync="usefulData.userTel" size="tiny" :before-close="handleClose">
+      <el-dialog v-if="userTel" title="手机解绑" :visible.sync="userTel" size="tiny" :before-close="handleClose">
         <!--这里需要处理一个逻辑，当点击确定解绑成功，当点击取消，就解绑不成功！！！-->
         <h4 class="success">验证成功!</h4>
         <p class="des">解除绑定后您将无法用当前绑定手机号继续登录股书平台并接收相关信息。<br/>是否确定要接除绑定？</p>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="usefulData.userTel = false">取 消</el-button>
+          <el-button @click="userTel = false">取 消</el-button>
           <el-button type="primary" @click="editUnlinkTel">确 定</el-button>
         </span>
       </el-dialog>
       <!--手机解绑弹窗 end-->
       <!--手机绑定弹窗 start-->
-      <el-dialog v-if="usefulData.linkTel" title="手机绑定" :visible.sync="usefulData.linkTel" size="tiny" :before-close="handleClose">
+      <el-dialog v-if="linkTel" title="手机绑定" :visible.sync="linkTel" size="tiny" :before-close="handleClose">
         <el-form :model="usefulData" :rules="rules">
-          <el-form-item prop="newTel" label="手机号" :label-width="usefulData.formLabelWidth" required="">
+          <el-form-item prop="newTel" label="手机号" :label-width="usefulData.formLabelWidth" required>
             <el-input type="tel" v-model.number.trim="usefulData.newTel" placeholder="请输入手机号"></el-input>
           </el-form-item>
-          <el-form-item required prop="telCode" label="手机验证码" :label-width="usefulData.formLabelWidth" class="tel-code">
+          <el-form-item prop="telCode" label="手机验证码" :label-width="usefulData.formLabelWidth" class="tel-code" required>
             <!--这里需要做一个处理，掉接口判断手机验证码正确与否-->
             <el-input v-model.trim="usefulData.telCode" placeholder="请输入手机验证码" class="tel-code"></el-input><el-button>发送验证码</el-button>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="usefulData.linkTel = false">取 消</el-button>
-          <el-button type="primary" @click="usefulData.linkTel = false">确 定</el-button>
+          <el-button @click="linkTel = false">取 消</el-button>
+          <el-button type="primary" @click="linkTel = false">确 定</el-button>
         </span>
       </el-dialog>
       <!--手机绑定弹窗 end-->
       <!--实名认证弹窗 start-->
-      <el-dialog v-if="usefulData.realNameStatus" title="实名认证" :visible.sync="usefulData.realNameStatus" size="small" :before-close="handleClose">
+      <el-dialog v-if="realNameStatus" title="实名认证" :visible.sync="realNameStatus" size="small" :before-close="handleClose">
         <el-form :model="usefulData" :rules="rules">
-          <el-form-item label="真实姓名" :label-width="usefulData.formLabelWidth">
-            <el-input v-model.trim="usefulData.confirmRealName" placeholder="请输入您的真实姓名"></el-input>
+          <el-form-item label="真实姓名" :label-width="usefulData.formLabelWidth" required>
+            <el-input v-if="firstCertificateStatus" v-model.trim="usefulData.confirmRealName" placeholder="请输入您的真实姓名"></el-input>
+            <el-input v-else v-model.trim="usefulData.confirmRealName" disabled></el-input>
           </el-form-item>
-          <el-form-item label="证件号" :label-width="usefulData.formLabelWidth" class="ids">
+          <el-form-item label="证件号" :label-width="usefulData.formLabelWidth" class="ids" required>
             <el-row :gutter="10" class="ids-row">
               <el-col :span="7">
-                <el-select v-model="idValue" clearable placeholder="请选择" @change="changeItem">
+                <el-select v-if="firstCertificateStatus" v-model="idValue" clearable placeholder="请选择" @change="changeItem">
+                  <el-option
+                    v-for="item in certificateLists"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+                <el-select v-else v-model="idValue" clearable placeholder="请选择" @change="changeItem" disabled>
                   <el-option
                     v-for="item in certificateLists"
                     :key="item.value"
@@ -131,20 +148,25 @@
                   </el-option>
                 </el-select>
               </el-col>
-              <el-col :span="17">
-                <el-input v-if="usefulData.passportStatus" v-model.trim="usefulData.passportNo" placeholder="请输入您的证件号"></el-input>
-                <el-input v-if="usefulData.idStatus" v-model.trim="usefulData.idNo" placeholder="请输入您的证件号"></el-input>
+              <el-col :span="17" v-if="firstCertificateStatus">
+                <el-input v-if="passportStatus" v-model.trim="usefulData.passportNo" placeholder="请输入您的证件号"></el-input>
+                <el-input v-if="idStatus" v-model.trim="usefulData.idNo" placeholder="请输入您的证件号"></el-input>
+              </el-col>
+              <el-col :span="17" v-else>
+                <el-input v-if="passportStatus" v-model.trim="usefulData.passportNo" disabled></el-input>
+                <el-input v-if="idStatus" v-model.trim="usefulData.idNo" disabled></el-input>
               </el-col>
             </el-row>
           </el-form-item>
           <el-form-item label="手持证件照" :label-width="usefulData.formLabelWidth" class="hand-photo">
             <el-row :gutter="15">
               <el-col :span="10">
-                <img v-if="imageUrl" :src="imageUrl">
+                <img v-if="usefulData.imageUrl" :src="usefulData.imageUrl">
                 <i v-else class="avatar-uploader">
                   <img src="../../../assets/hand-idphoto.png"/>
                 </i>
                 <el-upload
+                  v-if="firstCertificateStatus"
                   class="avatar-uploader-icon upload"
                   action="https://jsonplaceholder.typicode.com/posts/"
                   :show-file-list="false"
@@ -154,7 +176,7 @@
               </el-col>
               <el-col :span="14">
                 <p>注意：<br/>选取纯色干净背景拍摄<br/>手臂和脸部完全露出无遮挡<br/>证件全部信息清晰无遮挡</p>
-                <!-- <div>或
+                <!--<div>或
                   <el-tooltip placement="top">
                     <div slot="content"></div>
                     <el-button>扫描二维码拍照上传</el-button>
@@ -164,13 +186,23 @@
             </el-row>
           </el-form-item>
           <el-form-item label="证件正反面" :label-width="usefulData.formLabelWidth">
-            <el-row :gutter="30" class="two-upload">
-              <el-col :span="12">
-                <img v-if="frontUrl" :src="frontUrl">
+            <el-row :gutter="10" class="two-upload">
+              <el-col :span="10">
+                <img v-if="usefulData.idCardImgPositiveUrl" :src="usefulData.idCardImgPositiveUrl">
                 <i v-else class="avatar-uploader">
                   <img src="../../../assets/id-img.png"/>
                 </i>
+                <em v-if="certificateFailStatus" class="fail-mark">
+                  <img src="../../../assets/icon-certificateIng.png"/>
+                </em>
+                <em v-if="certificatedStatus" class="success-mark">
+                  <img src="../../../assets/icon-certificated.png"/>
+                </em>
+                <em class="ing-mark">
+                  <span>认证中</span>
+                </em>
                 <el-upload
+                  v-if="firstCertificateStatus"
                   class="avatar-uploader-icon upload"
                   action="https://jsonplaceholder.typicode.com/posts/"
                   :show-file-list="false"
@@ -178,39 +210,49 @@
                   :before-upload="beforeAvatarUpload">上传并预览
                 </el-upload>
               </el-col>
-              <el-col :span="12">
-                <img v-if="backUrl" :src="backUrl">
+              <el-col :span="10">
+                <img v-if="usefulData.idCardImgNegativeUrl" :src="usefulData.idCardImgNegativeUrl">
                 <i v-else class="avatar-uploader">
                   <img src="../../../assets/id-img.png"/>
                 </i>
                 <el-upload
+                  v-if="firstCertificateStatus"
                   class="avatar-uploader-icon upload"
                   action="https://jsonplaceholder.typicode.com/posts/"
                   :show-file-list="false"
                   :on-success="handleAvatarSuccess"
                   :before-upload="beforeAvatarUpload">上传并预览
                 </el-upload>
+              </el-col>
+              <el-col :span ="4">
+                <p>注意：</br>证件全部信息清晰无遮挡</p>
               </el-col>
             </el-row>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="usefulData.userPassword = false">取 消</el-button>
-          <el-button type="primary" @click="editTel">确 定</el-button>
+          <!--从未被认证-->
+          <el-button v-if="firstCertificateStatus" @click="firstCertificate">认证</el-button>
+          <!--认证中-->
+          <el-button v-if="certificatingStatus" @click="certificattIng">关闭</el-button>
+          <!--认证成功-->
+          <el-button v-if="certificatedStatus" @click="successCertificate">关闭</el-button>
+          <!--认证失败-->
+          <el-button v-if="certificateFailStatus" @click="reCreCertificate">重新认证</el-button>
         </span>
       </el-dialog>
       <!--实名认证弹窗 end-->
       <!--修改密码弹窗 start-->
-      <el-dialog v-if="usefulData.passwordStatus" title="修改密码" :visible.sync="usefulData.passwordStatus" size="tiny" :before-close="handleClose">
+      <el-dialog v-if="passwordStatus" title="修改密码" :visible.sync="passwordStatus" size="tiny" :before-close="handleClose">
         <p class="des">为保障您的账号安全，请输入账号密码进行验证</p>
         <el-form :model="usefulData">
-          <el-form-item label="旧密码" :label-width="usefulData.formLabelWidth">
+          <el-form-item label="旧密码" :label-width="usefulData.formLabelWidth" required>
             <el-input v-model.trim="usefulData.password" placeholder="请输入旧密码"></el-input>
           </el-form-item>
-          <el-form-item label="新密码" :label-width="usefulData.formLabelWidth">
+          <el-form-item label="新密码" :label-width="usefulData.formLabelWidth" required>
             <el-input v-model.trim="usefulData.newPassword" placeholder="请输入新密码"></el-input>
           </el-form-item>
-          <el-form-item label="确认密码" :label-width="usefulData.formLabelWidth">
+          <el-form-item label="确认密码" :label-width="usefulData.formLabelWidth" required>
             <el-input v-model.trim="usefulData.confirmPassword" placeholder="请再次输入新密码"></el-input>
           </el-form-item>
           <el-form-item label="密码安全性" :label-width="usefulData.formLabelWidth">
@@ -222,11 +264,36 @@
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="usefulData.passwordStatus = false">取 消</el-button>
-          <el-button type="primary" @click="usefulData.passwordStatus = false">确 定</el-button>
+          <el-button @click="passwordStatus = false">取 消</el-button>
+          <el-button type="primary" @click="passwordStatus = false">确 定</el-button>
         </span>
       </el-dialog>
       <!--修改密码弹窗 end-->
+      <!--签名管理弹窗 start-->
+      <el-dialog v-if="!userEmail" title="修改邮箱" :visible.sync="userPassword" size="tiny" :before-close="handleClose">
+        <p class="des">为保障您的账号安全，请输入账号密码进行验证</p>
+        <el-form :model="usefulData">
+          <el-form-item label="请输入密码" :label-width="usefulData.formLabelWidth" required>
+            <el-input v-model.trim="usefulData.password" placeholder="请输入账号密码"></el-input>
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="userPassword = false">取 消</el-button>
+          <el-button type="primary" @click="editEmail">确 定</el-button>
+        </span>
+      </el-dialog>
+      <el-dialog v-if="userEmail" title="修改邮箱" :visible.sync="userEmail" size="tiny" :before-close="handleClose">
+        <el-form :model="usefulData">
+          <el-form-item label="修改邮箱" :label-width="usefulData.formLabelWidth" required>
+            <el-input type="email" v-model.trim="usefulData.newEmail" placeholder="请输入新的邮箱地址"></el-input>
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="userEmail = false">取 消</el-button>
+          <el-button type="primary" @click="userEmail = false">确 定</el-button>
+        </span>
+      </el-dialog>
+      <!--签名管理弹窗 end-->
     </div>
   </div>
 </template>
@@ -245,17 +312,11 @@ export default {
     const xing = x.repeat(len);
     this.usefulData.xingEmail = editedEmai.replace(emailArray[0], xing);
     // 手机中间4位均为*号
-    const tel = this.usefulData.tel;
-    this.usefulData.xingTel = `${tel.substr(0, 3)}****${tel.substr(7)}`;
+    const phone = this.usefulData.phone;
+    this.usefulData.xingTel = `${phone.substr(0, 3)}****${phone.substr(7)}`;
   },
   data() {
     return {
-      frontUrl: '', // 正面证件照
-      backUrl: '', // 背面证件照
-      imageUrl: '', // 手持证件照
-      isNameEdit: false,
-      oldName: '沙枫',
-      idValue: '', // 证件类型
       certificateLists: [
         {
           value: '0',
@@ -265,35 +326,52 @@ export default {
           label: '护照',
         },
       ],
+      isNameEdit: false,
+      userPassword: false, // 默认输入用户密码弹窗是不可见的
+      userEmail: false, // 默认用户邮箱弹窗是不可见的
+      userTel: false, // 默认进来用户手机号弹窗是不可见的
+      passwordStatus: false, // 默认修改密码不可见
+      unlinkTel: false, // 默认进来手机解绑为false
+      linkTel: false, // 默认进来手机号未绑定
+      editStatus: false, // 默认输入框是不可编辑的
+      changeNick: false, // 默认昵称是不可编辑的
+      telCodeStatus: false, // 手机验证码状态
+      realNameStatus: false, // 默认进来实名认证弹窗是不可见状态
+      certificatedStatus: false, // 默认进来认证成功不可见（以下三个需要调用接口来做判断）
+      certificatingStatus: false, // 默认认证中也不可见
+      certificateFailStatus: false, // 默认认证失败也不可见
+      firstCertificateStatus: true, // 未被认证过，初次认证
+      idStatus: true, // 身份证被选中
+      passportStatus: false, // 默认护照没有被选中
       usefulData: {
-        userPassword: false, // 默认输入用户密码弹窗是不可见的
-        userEmail: false, // 默认用户邮箱弹窗是不可见的
-        userTel: false, // 默认进来用户手机号弹窗是不可见的
+        idValue: '', // 证件类型
+        oldName: '沙枫',
+        portrait: '', // 头像
+        username: '沙枫', // 用户昵称
+        id: '', // 用户id必填
+        idCardImgPositiveUrl: 'http://mpic.tiankong.com/cdd/23c/cdd23c7d1bfd4520859cfd3772772023/640.jpg', // 正面证件照
+        idCardImgNegativeUrl: 'http://mpic.tiankong.com/cbf/7a6/cbf7a638d38760e0dfc90f6b6cd6983d/640.jpg', // 背面证件照
+        imageUrl: 'http://mpic.tiankong.com/d86/95e/d8695e63c2c23f57bb7d89cb3fd2e161/640.jpg', // 手持证件照,没有这个字段
+        signatureUrl: '../../../assets/sign-img.png', // 签名
+        idNumber: '', // 证件号码
+        idType: 0, // id类型／0身份证／1护照
+        lastPasswordResetDate: '', // 最后一次修改密码的时间
+        licenseList: '', // 许可（ROLE_USER的权限)
         password: '123', // 临时账号密码
         newPassword: '', // 修改后的密码
         confirmPassword: '', // 确认的新密码
-        passwordStatus: false, // 默认修改密码不可见
-        nikeName: '沙枫',
         newEmail: '', // 变更后的邮箱地址
         email: '675714031@qq.com', // 默认邮箱地址为空
         xingEmail: '', // 被截取后的邮箱地址
-        tel: '15010841736', // 手机号
+        phone: '15010841736', // 手机号
         newTel: '', // 验证码手机号新的手机号
         xingTel: '', // 被截取后的手机号
-        unlinkTel: false, // 默认进来手机解绑为false
-        linkTel: false, // 默认进来手机号未绑定
-        editStatus: false, // 默认输入框是不可编辑的
-        changeNick: false, // 默认昵称是不可编辑的
         formLabelWidth: '95px',
         telCode: '', // 默认手机验证码
-        telCodeStatus: false, // 手机验证码状态
-        confirmRealName: '', // 输入的实名
+        confirmRealName: '沙枫', // 输入的实名
         realName: '', // 实名认证的实名
-        realNameStatus: false, // 默认进来实名认证弹窗是不可见状态
         idNo: '', // 身份证号
-        idStatus: true, // 身份证被选中
         passportNo: '', // 护照号码
-        passportStatus: false, // 默认护照没有被选中
       },
       rules: {
         newTel: [
@@ -319,29 +397,29 @@ export default {
     },
     changeNameEdit() {
       this.isNameEdit = !this.isNameEdit;
-      this.oldName = this.usefulData.nikeName;
+      this.usefulData.oldName = this.usefulData.username;
     },
     nameEditSave() {
       this.isNameEdit = !this.isNameEdit;
-      // 请求接口，如果成功的话，将nikeName值更新，要是失败的话，还是返回oldName;
+      // 请求接口，如果成功的话，将username值更新，要是失败的话，还是返回oldName;
     },
     // 编辑邮箱弹窗
     editEmail() {
-      this.usefulData.userPassword = false;
-      this.usefulData.userEmail = true; // 邮箱弹出
+      this.userPassword = false;
+      this.userEmail = true; // 邮箱弹出
       // 这个地方需要做验证，当用户密码对上了，设置userPassword为true,这样切换弹窗里的内容
     },
     // 编辑手机解绑弹窗
     editTel() {
-      this.usefulData.userPassword = false;
-      this.usefulData.userTel = true; // 邮箱弹出
+      this.userPassword = false;
+      this.userTel = true; // 邮箱弹出
       // 这个地方需要做验证，当用户密码对上了，设置userPassword为true,这样切换弹窗里的内容
     },
     // 手机解绑确认
     editUnlinkTel() {
-      this.usefulData.userTel = false;
-      this.usefulData.unlinkTel = true; // 手机解绑成功
-      // this.usefulData.linkTel = true; // 手机号未被绑定为true
+      this.userTel = false;
+      this.unlinkTel = true; // 手机解绑成功
+      // this.linkTel = true; // 手机号未被绑定为true
     },
     // 验证手机号
     checkTel(rule, value, callback) {
@@ -403,15 +481,32 @@ export default {
       }
       return result;
     },
-    changeItem(item) { // 当发生选中的时候出发的
+    changeItem(item) { // 当发生选中的时候触发的
       if (item === 0) { // 如果是身份证
-        this.usefulData.passportStatus = false;
-        this.usefulData.idStatus = true;
+        this.passportStatus = false;
+        this.idStatus = true;
       }
       if (item === 1) { // 护照
-        this.usefulData.passportStatus = true;
-        this.usefulData.idStatus = false;
+        this.passportStatus = true;
+        this.idStatus = false;
       }
+    },
+    firstCertificate() { // 第一次被认证
+      this.realNameStatus = false; // 认证弹窗关闭
+      this.firstCertificateStatus = false; // 第一次被认证设置为false
+      this.certificatingStatus = true; // 此时进入认证中阶段
+    },
+    certificattIng() { // 认证中的操作
+      this.realNameStatus = false; // 关闭认证弹窗
+    },
+    reCreCertificate() { // 认证失败，重新认证
+      this.certificatingStatus = false; // 此时认证中阶段结束
+      this.realNameStatus = true; // 此时重回未被认证阶段，显示首次认证内容
+    },
+    successCertificate() { // 认证成功
+      this.certificatingStatus = false; // 此时认证中阶段结束
+      this.certificatingStatus = false; // 认证中阶段结束
+      this.certificatedStatus = true; // 认证成功
     },
   },
 };
@@ -601,8 +696,13 @@ body {
   margin: 0 !important;
 }
 .hand-photo .el-row .el-col-10 .avatar-uploader, .el-row.two-upload .avatar-uploader {
+  padding: 20px;
   margin-bottom: 10px;
   line-height: 100% !important;
+  background: #f1f2f3;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 .hand-photo .el-row .el-col-10 .avatar-uploader img, .el-row.two-upload .avatar-uploader img {
   width: 100%;
@@ -643,5 +743,45 @@ body {
 }
 .el-form-item__content {
   line-height: 32px !important;
+}
+.el-form-item__content {
+  line-height: 40px !important;
+}
+.el-row p {
+  line-height: 20px;
+  font-size: 12px;
+  color: #a8b0c6;
+}
+.el-col-10 {
+  position: relative;
+}
+.el-col-10 img {
+  width: 100%;
+  height: auto;
+  z-index: 9;
+}
+.ing-mark {
+  position: absolute;
+  right: 5px;
+  bottom: 53px;
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
+  background: #2e76df;
+  -webkit-opacity: 0.6; 
+  -moz-opacity: 0.6;
+  -khtml-opacity: 0.6;
+  opacity: .6;
+  filter:alpha(opacity=60);
+  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=60)";
+  filter:progid:DXImageTransform.Microsoft.Alpha(Opacity=60);
+  font-style: normal;
+  z-index: 4;
+}
+.ing-mark span {
+  display: block;
+  font-size: 14px;
+  color: #fff;
+  text-align: center;
 }
 </style>

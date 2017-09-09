@@ -7,8 +7,8 @@
       <a href="javascript:void(0)" class="logo"><img src="../../assets/login-logo.png"/></a>
         <div class="apply-main">
           <el-form :model="applyData" :rules="rules" ref="applyData">
-            <el-form-item prop="userName" required>
-              <el-input type="text" v-model.trim="applyData.userName" placeholder="请输入您的名称"></el-input>
+            <el-form-item prop="username" required>
+              <el-input type="text" v-model.trim="applyData.username" placeholder="请输入您的名称"></el-input>
             </el-form-item>
             <el-form-item prop="companyName" required>
               <el-input type="text" v-model.trim="applyData.companyName" placeholder="请输入公司名称"></el-input>
@@ -16,8 +16,8 @@
             <el-form-item prop="email" required>
               <el-input type="email" v-model.trim="applyData.email" placeholder="请输入邮箱地址"></el-input>
             </el-form-item>
-            <el-form-item prop="tel" required>
-              <el-input type="tel" v-model.number.trim="applyData.tel" placeholder="请输入手机号"></el-input>
+            <el-form-item prop="phone" required>
+              <el-input type="phone" v-model.number.trim="applyData.phone" placeholder="请输入手机号"></el-input>
             </el-form-item>
             <el-form-item prop="remarks">
               <el-input type="textarea" v-model.trim="applyData.remarks" :autosize="{ minRows: 1, maxRows: 4}" placeholder="备注点什么？" class="texarea"></el-input>
@@ -40,14 +40,14 @@ export default {
   data() {
     return {
       applyData: {
-        userName: '', // 名称
+        username: '', // 名称
         companyName: '', // 公司名称
         email: '', // 邮箱地址
-        tel: '', // 电话号码
+        phone: '', // 电话号码
         remarks: '', // 备注
       },
       rules: {
-        userName: [
+        username: [
           { validator: this.checkUsername, trigger: 'blur' },
         ],
         companyName: [
@@ -56,7 +56,7 @@ export default {
         email: [
           { validator: this.checkEmail, trigger: 'blur' },
         ],
-        tel: [
+        phone: [
           { validator: this.checkTel, trigger: 'blur' },
         ],
       },
@@ -118,7 +118,7 @@ export default {
 .texarea.el-textarea .el-textarea__inner{
   border: none;
 }
-@media screen and (max-width: 1421px) {
+@media screen and (max-width: 1430px) {
   .login .el-input, .apply .el-input, .apply .el-textarea, .forget .el-input {
     margin: 10px 0 !important;
   }
