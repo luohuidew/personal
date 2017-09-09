@@ -276,8 +276,6 @@
 </template>
 
 <script>
-import { post } from '../../service/httpServer';
-
 export default {
   name: 'cust-module-doc',
   data() {
@@ -330,8 +328,6 @@ export default {
     };
   },
   mounted() {
-    const rep = post('http://rapapi.org/mockjsdata/25547/auth', { username: 'abc' });
-    console.log(rep);
   },
   methods: {
     handleClose(done) {
