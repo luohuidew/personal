@@ -72,12 +72,6 @@ export default {
     },
     handlePreview() {
     },
-//    handleRemove(file, fileList) {
-//      console.log(file, fileList);
-//    },
-//    handlePreview(file) {
-//      console.log(file);
-//    },
   },
 };
 </script>
