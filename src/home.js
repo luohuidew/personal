@@ -9,6 +9,8 @@ import './style/reset.css';
 import './style/home-common.css';
 import './theme/index.css';
 
+require('./service/http');
+
 Vue.config.productionTip = false;
 Vue.use(ElementUI);
 
