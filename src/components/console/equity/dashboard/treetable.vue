@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-table :data="treeData">
+    <el-table :data="treeData" class="stock-tree-list">
       <el-table-column type="expand">
         <template scope="props">
           <el-table ref="expandTable" :data="props.row.children" inline :show-header="false" :border="false">

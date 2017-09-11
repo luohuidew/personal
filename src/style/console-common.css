@@ -33,3 +33,20 @@ body{
 .user-personal-info .ids .el-row .el-select .el-input {
   width: 100% !important;
 }
+/* 初次登录添加股权信息页 弹窗样式 */
+.dialog-wrap__large .el-dialog__body{padding:0px!important;}
+.dialog-wrap__large .dialog-left{position: fixed;left:0;top:54px;bottom:0;width:110px;padding:20px 0 0 30px;background:#33457B;}
+.dialog-wrap__large .dialog-right{background: #F7F7F7;padding:54px 30px 0 140px;}
+.dialog-step-icon{display:inline-block;line-height:14px;width:8px;height:8px;border:2px solid #D0D1D2;border-radius: 50%;}
+.dialog-step-titel{display:inline-block;margin-left:10px;font-size: 14px;color: #D5D5D5;letter-spacing: 1.2px;}
+.dialog-step-wrap.isDone .dialog-step-icon{border-color:#52B0F6;background:#52B0F6;}
+.dialog-step-wrap.isDone .dialog-step-titel{color:#52B0F6;}
+.dialog-step-line{height:30px;border-left:1px solid #3A5092;margin-left:6px;}
+.dialog-wrap__large .el-table th{background:#fff;}
+.dialog-wrap__large .el-table__header-wrapper thead div, .el-table__footer-wrapper thead div{background:#fff;}
+.dialog-wrap__large .el-dialog--large .el-form {width:730px;margin:0;}
+.dialog-wrap__large .el-dialog--large{width:900px;}
+.dialog-wrap__large .el-table th > .cell{padding-left:10px;padding-right:10px;}
+/* 股权列表 树结构样式 */
+.stock-tree-list .el-table__expanded-cell{padding: 0px;}
+.stock-tree-list .el-table td > div{border: none;}

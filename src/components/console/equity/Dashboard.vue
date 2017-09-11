@@ -62,7 +62,144 @@
         </el-col>
       </el-row>
     </div>
-    <slot ></slot>
+    <!-- 初次登录添加股权信息页 -->
+    <el-dialog class="dialog-wrap__large" title="添加股权信息" :visible.sync="dialogVisible1" size="large" :before-close="handleClose">
+      <div class="dialog-left">
+        <div class="dialog-step-list">
+          <div class="dialog-step-wrap isDone">
+            <div class="dialog-step-icon"></div><div class="dialog-step-titel">股东信息</div>
+          </div>
+          <div class="dialog-step-line"></div>
+          <div class="dialog-step-wrap">
+            <div class="dialog-step-icon"></div><div class="dialog-step-titel">融资历史</div>
+          </div>
+        </div>
+      </div>
+      <div class="dialog-right">
+        <el-form :model="stockMap" label-width="100px">
+          <el-row type="flex" justify="space-between">
+            <el-col :span="11">
+              <el-form-item label="股东名称" required>
+                <el-input v-model="stockMap" size="small" auto-complete="off"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="11">
+              <el-form-item label="股东类型" required>
+                <el-select v-model="stockMap" size="small" placeholder="请选择活动区域">
+                  <el-option label="区域一" value="shanghai"></el-option>
+                  <el-option label="区域二" value="beijing"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row type="flex" justify="space-between">
+            <el-col :span="11">
+              <el-form-item label="投资轮次" required>
+                <el-select v-model="stockMap" size="small" placeholder="请选择活动区域">
+                  <el-option label="区域一" value="shanghai"></el-option>
+                  <el-option label="区域二" value="beijing"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="11">
+              <el-form-item label="注册资本" required>
+                <el-input v-model="stockMap" size="small" auto-complete="off"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row type="flex" justify="space-between">
+            <el-col :span="11">
+              <el-form-item label="总注册资本" required>
+                <el-input v-model="stockMap" size="small" auto-complete="off"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="11">
+              <el-form-item label="股份比例" required>
+                <el-input v-model="stockMap" size="small" auto-complete="off"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button>保存</el-button>
+          <el-button type="primary" @click="dialogVisible1 = false;dialogVisible2 = true">下一步</el-button>
+        </span>
+        <div class="dialog-table-wrap">
+          <el-table :data="stockList">
+            <el-table-column type="index" label="序号"></el-table-column>
+            <el-table-column label="股东名称"></el-table-column>
+            <el-table-column label="股东类型"></el-table-column>
+            <el-table-column label="投资轮次"></el-table-column>
+            <el-table-column label="注册资本"></el-table-column>
+            <el-table-column label="股份比例"></el-table-column>
+          </el-table>
+        </div>
+      </div>
+    </el-dialog>
+    <!-- 初次登录添加融资信息页 -->
+    <el-dialog class="dialog-wrap__large" title="添加融资信息" :visible.sync="dialogVisible2" size="large" :before-close="handleClose">
+      <div class="dialog-left">
+        <div class="dialog-step-list">
+          <div class="dialog-step-wrap isDone">
+            <div class="dialog-step-icon"></div><div class="dialog-step-titel">股东信息</div>
+          </div>
+          <div class="dialog-step-line"></div>
+          <div class="dialog-step-wrap isDone">
+            <div class="dialog-step-icon"></div><div class="dialog-step-titel">融资历史</div>
+          </div>
+        </div>
+        <div>
+          ul>li 
+        </div>
+      </div>
+      <div class="dialog-right">
+        <el-form :model="stockMap" label-width="100px">
+          <el-row type="flex" justify="space-between">
+            <el-col :span="11">
+              <el-form-item label="融资轮次" required>
+                <el-select v-model="stockMap" size="small" placeholder="请选择活动区域">
+                  <el-option label="区域一" value="shanghai"></el-option>
+                  <el-option label="区域二" value="beijing"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="11">
+              <el-form-item label="融资时间" required>
+                <el-select v-model="stockMap" size="small" placeholder="请选择活动区域">
+                  <el-option label="区域一" value="shanghai"></el-option>
+                  <el-option label="区域二" value="beijing"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row type="flex" justify="space-between">
+            <el-col :span="11">
+              <el-form-item label="融资金额" required>
+                <el-input v-model="stockMap" size="small" auto-complete="off"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="11">
+              <el-form-item label="投资方" required>
+                <el-input v-model="stockMap" size="small" auto-complete="off"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button>保存</el-button>
+          <el-button type="primary" @click="dialogVisible2 = false">完成</el-button>
+        </span>
+        <div class="dialog-table-wrap">
+          <el-table :data="stockList">
+            <el-table-column type="index" label="序号"></el-table-column>
+            <el-table-column label="融资轮次"></el-table-column>
+            <el-table-column label="融资时间"></el-table-column>
+            <el-table-column label="融资金额"></el-table-column>
+            <el-table-column label="投资方"></el-table-column>
+          </el-table>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -75,12 +212,16 @@ import 'echarts/lib/chart/bar';
 import 'echarts/lib/component/tooltip';
 import 'echarts/lib/component/title';
 
-
 export default {
   name: 'equity-dashboard',
   data() {
     return {
+      messagetest: 'I love programming', // 测试
+      dialogVisible1: true,
+      dialogVisible2: false,
       myChartDiv: undefined,
+      stockMap: undefined,
+      stockList: undefined,
       stepList: [{   // 测试
         title: '2017-07-06',
         finance: 'A轮',
@@ -129,6 +270,11 @@ export default {
         }],
       });
     },
+    handleClose(done) {
+      this.$confirm('确认关闭？').then(() => {
+        done();
+      }).catch(() => {});
+    },
   },
 };
 </script>
@@ -153,4 +299,6 @@ export default {
 .step-title{font-size: 14px;}
 .step-description{font-size: 16px;color: #999;padding-right:10px;line-height: 66px;}
 .step-description .bold{font-weight: bold;color: #666;}
+.dialog-table-wrap{padding:30px 0 30px 30px;}
+.dialog-footer{display:block;text-align:right;}
 </style>
