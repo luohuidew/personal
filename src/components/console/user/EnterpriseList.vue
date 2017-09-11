@@ -68,11 +68,9 @@ export default {
     save() {
       this.dialogVisible = false;
     },
-    handleRemove(file, fileList) {
-      console.log(file, fileList);
+    handleRemove() {
     },
-    handlePreview(file) {
-      console.log(file);
+    handlePreview() {
     },
   },
 };
