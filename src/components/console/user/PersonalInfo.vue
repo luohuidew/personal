@@ -161,7 +161,7 @@
           <el-form-item label="手持证件照" :label-width="usefulData.formLabelWidth" class="hand-photo">
             <el-row :gutter="15">
               <el-col :span="10">
-                <img v-if="usefulData.imageUrl" :src="usefulData.imageUrl">
+                <img v-if="usefulData.handheldIdCardImgUrl" :src="usefulData.handheldIdCardImgUrl">
                 <i v-else class="avatar-uploader">
                   <img src="../../../assets/hand-idphoto.png"/>
                 </i>
@@ -448,7 +448,8 @@ export default {
         idCardImgPositiveUrl: 'http://mpic.tiankong.com/cdd/23c/cdd23c7d1bfd4520859cfd3772772023/640.jpg', // 正面证件照
         idCardImgNegativeUrl: 'http://mpic.tiankong.com/cbf/7a6/cbf7a638d38760e0dfc90f6b6cd6983d/640.jpg', // 背面证件照
         imageUrl: 'http://mpic.tiankong.com/d86/95e/d8695e63c2c23f57bb7d89cb3fd2e161/640.jpg', // 手持证件照,没有这个字段
-        signatureUrl: '../../../assets/sign-img.png', // 签名
+        handheldIdCardImgUrl: '', // 手持证件照地址默认为空
+        signatureUrl: 'http://mpic.tiankong.com/d86/95e/d8695e63c2c23f57bb7d89cb3fd2e161/640.jpg', // 签名
         idNumber: '', // 证件号码
         idType: 0, // id类型／0身份证／1护照
         lastPasswordResetDate: '', // 最后一次修改密码的时间
