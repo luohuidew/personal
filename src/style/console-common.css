@@ -33,3 +33,14 @@ body{
 .user-personal-info .ids .el-row .el-select .el-input {
   width: 100% !important;
 }
+.user-personal-info .first .el-input__inner {
+  display: block !important;
+  height: 100% !important;
+  padding: 5px !important;
+  line-height: 80%;
+  font-size: 40px;
+  text-align: center;
+}
+.user-personal-info .el-tooltip__popper.is-light {
+  border: 1px solid #EBEBEB !important;
+}

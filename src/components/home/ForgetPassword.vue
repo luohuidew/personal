@@ -73,17 +73,23 @@ export default {
       } else if (!validate.isPhoneAvailable(value) && !validate.isEmailAvailable(value)) {
         // 如果不符合邮箱也不符合电话号码的情况下
         result = callback(new Error('请输入正确的手机号/邮箱！'));
+      } else {
+        callback();
       }
       return result;
     },
     checkPassword(rule, value, callback) {
       if (value === '') {
         callback(new Error('密码不能为空'));
+      } else {
+        callback();
       }
     },
     checkCaptcha(rule, value, callback) {
       if (value === '') {
         callback(new Error('验证码不能为空'));
+      } else {
+        callback();
       }
     },
   },
