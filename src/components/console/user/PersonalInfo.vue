@@ -47,7 +47,7 @@
           <span>实名认证</span><p v-if="firstCertificateStatus || certificateFailStatus">未认证</p><p v-if="certificatingStatus">认证中</p><p v-if="certificatedStatus">已认证</p><div class="edit-btn" @click="realNameStatus=true"><em>实名认证</em></div>
         </li>
         <li class="common sign">
-          <span>签名管理</span><p><img :src="usefulData.signatureUrl"/></p><div class="edit-btn"><em>编辑</em></div>
+          <span>签名管理</span><p><img :src="usefulData.signatureUrl"/></p><div class="edit-btn" @click="signatureStatus=true"><em>编辑</em></div>
         </li>
         <li class="common account">
           <span>账号安全</span><div class="edit-btn" @click="passwordStatus=true"><em>修改密码</em></div>
@@ -131,7 +131,7 @@
           <el-form-item label="证件号" :label-width="usefulData.formLabelWidth" class="ids" required>
             <el-row :gutter="10" class="ids-row">
               <el-col :span="7">
-                <el-select v-if="firstCertificateStatus" v-model="idValue" clearable placeholder="请选择" @change="changeItem">
+                <el-select v-if="firstCertificateStatus" v-model="usefulData.idValue" clearable placeholder="请选择" @change="changeItem">
                   <el-option
                     v-for="item in certificateLists"
                     :key="item.value"
@@ -139,7 +139,7 @@
                     :value="item.value">
                   </el-option>
                 </el-select>
-                <el-select v-else v-model="idValue" clearable placeholder="请选择" @change="changeItem" disabled>
+                <el-select v-else v-model="usefulData.idValue" clearable placeholder="请选择" @change="changeItem" disabled>
                   <el-option
                     v-for="item in certificateLists"
                     :key="item.value"
@@ -165,6 +165,18 @@
                 <i v-else class="avatar-uploader">
                   <img src="../../../assets/hand-idphoto.png"/>
                 </i>
+                <!--认证失败icon-->
+                <em v-if="certificateFailStatus" class="fail-mark">
+                  <img src="../../../assets/icon-certificateIng.png"/>
+                </em>
+                <!--认证成功icon-->
+                <em v-if="certificatedStatus" class="success-mark">
+                  <img src="../../../assets/icon-certificated.png"/>
+                </em>
+                <!--认证中icon-->
+                <em v-if="certificatingStatus" class="ing-mark">
+                  <div><span>认证中</span></div>
+                </em>
                 <el-upload
                   v-if="firstCertificateStatus"
                   class="avatar-uploader-icon upload"
@@ -192,14 +204,17 @@
                 <i v-else class="avatar-uploader">
                   <img src="../../../assets/id-img.png"/>
                 </i>
+                <!--认证失败icon-->
                 <em v-if="certificateFailStatus" class="fail-mark">
                   <img src="../../../assets/icon-certificateIng.png"/>
                 </em>
+                <!--认证成功icon-->
                 <em v-if="certificatedStatus" class="success-mark">
                   <img src="../../../assets/icon-certificated.png"/>
                 </em>
-                <em class="ing-mark">
-                  <span>认证中</span>
+                <!--认证中icon-->
+                <em v-if="certificatingStatus" class="ing-mark">
+                  <div><span>认证中</span></div>
                 </em>
                 <el-upload
                   v-if="firstCertificateStatus"
@@ -215,6 +230,18 @@
                 <i v-else class="avatar-uploader">
                   <img src="../../../assets/id-img.png"/>
                 </i>
+                <!--认证失败icon-->
+                <em v-if="certificateFailStatus" class="fail-mark">
+                  <img src="../../../assets/icon-certificateIng.png"/>
+                </em>
+                <!--认证成功icon-->
+                <em v-if="certificatedStatus" class="success-mark">
+                  <img src="../../../assets/icon-certificated.png"/>
+                </em>
+                <!--认证中icon-->
+                <em v-if="certificatingStatus" class="ing-mark">
+                  <div><span>认证中</span></div>
+                </em>
                 <el-upload
                   v-if="firstCertificateStatus"
                   class="avatar-uploader-icon upload"
@@ -270,19 +297,81 @@
       </el-dialog>
       <!--修改密码弹窗 end-->
       <!--签名管理弹窗 start-->
-      <el-dialog v-if="!userEmail" title="修改邮箱" :visible.sync="userPassword" size="tiny" :before-close="handleClose">
-        <p class="des">为保障您的账号安全，请输入账号密码进行验证</p>
-        <el-form :model="usefulData">
-          <el-form-item label="请输入密码" :label-width="usefulData.formLabelWidth" required>
-            <el-input v-model.trim="usefulData.password" placeholder="请输入账号密码"></el-input>
-          </el-form-item>
+      <el-dialog v-if="signatureStatus" title="签名管理" :visible.sync="signatureStatus" size="tiny" :before-close="handleClose">
+        <!--初始进来的签名-->
+        <p class="des" v-if="firstSinStatus">当前签名样式为：</p>
+        <el-form v-if="firstSinStatus" :model="usefulData">
+          <div class="sign-border"></div>
         </el-form>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="userPassword = false">取 消</el-button>
-          <el-button type="primary" @click="editEmail">确 定</el-button>
+        <span v-if="firstSinStatus" slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="editSign">编辑签名</el-button>
+          <el-button @click="signatureStatus = false">关闭</el-button>
+        </span>
+        <!--签名编辑-->
+        <h4 class="des" v-if="editSinStatus">您可通过以下3种方式提供您的签名</h4>
+        <el-form v-if="editSinStatus" :model="usefulData" class="edit-sign">
+          <!-- <el-tabs v-model="defaultItem" type="card" @tab-click="handleClick"> -->
+          <el-tabs v-model="usefulData" type="card">
+            <el-tab-pane label="输入签名" name="first">
+              <div class="first">
+                <el-input type="text"></el-input>
+                <span>您在此输入您的真实姓名以完成数字签名</span>
+              </div>
+            </el-tab-pane>
+            <el-tab-pane label="微信扫描签名" name="second">
+              <div class="second">
+                <p>使用手机扫描
+                  <el-tooltip class="item" effect="light" placement="right-start">
+                    <div slot="content">
+                      <img src="../../../assets/id-img.png"/>
+                      <p>使用手机扫描以上二维码,在手机上完成拍摄</p>
+                    </div>
+                    <el-button>二维码</el-button>
+                  </el-tooltip>
+                  ,在手机上完成签名后可在右侧预览</p>
+                <h5>预览</h5>
+                <div class="border"></div>
+              </div>
+            </el-tab-pane>
+            <el-tab-pane label="上传签名" name="third">
+              <div class="third">
+                <p>请将您的签名写到 A4 纸上，然后用相机或手机拍照再上传。目前只支持背景透明的 png 图片与白色背景的 jpg 图片。请确保上传的图片为纯白色或透明背景。</p>
+                <p>
+                  <el-upload
+                    action="https://jsonplaceholder.typicode.com/posts/"
+                    :show-file-list="false"
+                    :on-success="handleAvatarSuccess"
+                    :before-upload="beforeAvatarUpload"><el-button type="primary">上传</el-button>
+                  </el-upload>
+                  <el-tooltip class="item" effect="light" placement="right-start">
+                    <div slot="content">
+                      <img src="../../../assets/id-img.png"/>
+                      <p>使用手机扫描以上二维码,在手机上完成拍照</p>
+                    </div>
+                    <el-button>或扫描二维码</el-button>
+                  </el-tooltip>上传
+                </p>
+                <div class="up-des">
+                  <h5>预览</h5>
+                  <em @click="rotateImg">旋转纠正图层</em>
+                </div>
+                <div class="border avatar-uploader">
+                  <img v-if="usefulData.upLoadSignImg" :src="usefulData.upLoadSignImg" ref="realSignImg">
+                  <img v-else :src="usefulData.upLoadSignImg1" ref="realSignImg1"/>
+                  <!-- <i v-else class="avatar-uploader">
+                    <img src="../../../assets/id-img.png"/>
+                  </i> -->
+                </div>
+              </div>
+            </el-tab-pane>
+          </el-tabs>
+        </el-form>
+        <span v-if="editSinStatus" slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="saveEditSign">保存</el-button>
+          <el-button @click="closeEditSign">关闭</el-button>
         </span>
       </el-dialog>
-      <el-dialog v-if="userEmail" title="修改邮箱" :visible.sync="userEmail" size="tiny" :before-close="handleClose">
+      <!-- <el-dialog v-if="userEmail" title="修改邮箱" :visible.sync="userEmail" size="tiny" :before-close="handleClose">
         <el-form :model="usefulData">
           <el-form-item label="修改邮箱" :label-width="usefulData.formLabelWidth" required>
             <el-input type="email" v-model.trim="usefulData.newEmail" placeholder="请输入新的邮箱地址"></el-input>
@@ -292,7 +381,7 @@
           <el-button @click="userEmail = false">取 消</el-button>
           <el-button type="primary" @click="userEmail = false">确 定</el-button>
         </span>
-      </el-dialog>
+      </el-dialog> -->
       <!--签名管理弹窗 end-->
     </div>
   </div>
@@ -326,6 +415,10 @@ export default {
           label: '护照',
         },
       ],
+      defaultItem: 'first', // 默认进来第一个展示
+      signatureStatus: false, // 默认进来签名管理弹窗是不可见的
+      firstSinStatus: true, // 默认进来首次签名结果是展示的
+      editSinStatus: false, // 默认进来编辑签名不可见
       isNameEdit: false,
       userPassword: false, // 默认输入用户密码弹窗是不可见的
       userEmail: false, // 默认用户邮箱弹窗是不可见的
@@ -344,6 +437,9 @@ export default {
       idStatus: true, // 身份证被选中
       passportStatus: false, // 默认护照没有被选中
       usefulData: {
+        upLoadSignImg: '', // 上传的签名图片地址
+        rotate: 0, // 默认进来没有做旋转
+        upLoadSignImg1: 'http://static9.photo.sina.com.cn/orignal/4af8a5e8856933841a998', // 临时房的一个签名图片地址
         idValue: '', // 证件类型
         oldName: '沙枫',
         portrait: '', // 头像
@@ -501,12 +597,34 @@ export default {
     },
     reCreCertificate() { // 认证失败，重新认证
       this.certificatingStatus = false; // 此时认证中阶段结束
-      this.realNameStatus = true; // 此时重回未被认证阶段，显示首次认证内容
+      this.certificateFailStatus = false; // 此时认证失败已经结束
+      this.firstCertificateStatus = true; // 此时重回未被认证阶段，显示首次认证内容
     },
     successCertificate() { // 认证成功
       this.certificatingStatus = false; // 此时认证中阶段结束
-      this.certificatingStatus = false; // 认证中阶段结束
       this.certificatedStatus = true; // 认证成功
+      this.realNameStatus = false; // 认证弹窗关闭
+    },
+    editSign() { // 编辑签名
+      this.editSinStatus = true; // 编辑签名弹窗打开
+      this.firstSinStatus = false; // 编辑签名打开后，初始进来签名不可见
+    },
+    closeEditSign() { // 关闭编辑签名
+      this.firstSinStatus = true; // 编辑签名关闭后，初始签名以后打开仍然是可见的
+      this.editSinStatus = false; // 编辑签名弹窗关闭
+      this.signatureStatus = false; // 签名窗口关闭
+    },
+    saveEditSign() { // 保存编辑签名
+      // 此时调用签名的update接口
+      this.firstSinStatus = true; // 编辑签名关闭后，初始签名以后打开仍然是可见的
+      this.editSinStatus = false; // 编辑签名弹窗关闭
+      this.signatureStatus = false; // 签名窗口关闭
+    },
+    rotateImg() { // 图片旋转功能
+      this.usefulData.rotate = (this.usefulData.rotate + 90) % 360;
+      console.log(this.$refs);
+      // this.$refs.realSignImg.style.transform = `rotate(${this.usefulData.rotate}deg)`;
+      this.$refs.realSignImg1.style.transform = `rotate(${this.usefulData.rotate}deg)`;
     },
   },
 };
@@ -724,7 +842,7 @@ body {
   line-height: 21px;
 }
 .avatar-uploader .el-upload {
-  border: 1px dashed #d9d9d9;
+  border: 1px dashed #EBEBEB;
   border-radius: 6px;
   cursor: pointer;
   position: relative;
@@ -758,12 +876,18 @@ body {
 .el-col-10 img {
   width: 100%;
   height: auto;
-  z-index: 9;
 }
 .ing-mark {
   position: absolute;
-  right: 5px;
-  bottom: 53px;
+  right: 0;
+  bottom: 12px;
+  width: 100%;
+  padding: 0 5px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.ing-mark div {
   width: 100%;
   height: 40px;
   line-height: 40px;
@@ -776,12 +900,99 @@ body {
   -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=60)";
   filter:progid:DXImageTransform.Microsoft.Alpha(Opacity=60);
   font-style: normal;
-  z-index: 4;
+
 }
 .ing-mark span {
   display: block;
   font-size: 14px;
   color: #fff;
   text-align: center;
+}
+.success-mark, .fail-mark {
+  position: absolute;
+  right: 5px;
+  bottom: 0;
+  width: 40%;
+}
+.success-mark img, .fail-mark img {
+  width: 100%;
+  height: auto;
+}
+.el-tabs__item.is-active {
+  color: #546AAC;
+}
+.first .el-input {
+  width: 100% !important;
+  height: 100px !important;
+}
+.first span {
+  display: block;
+  text-align: center;
+  margin: 5px 0 10px;
+}
+.second span {
+  color: #546AAC;
+}
+.second h5 {
+  margin: 10px 0;
+}
+.second .border {
+  width: 100%;
+  height: 140px;
+  padding: 10px;
+  margin-bottom: 20px;
+  text-align: center;
+  border: 1px solid #EBEBEB;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.el-tooltip__popper div {
+  padding: 10px 15px !important;
+}
+.el-tooltip__popper div img {
+  width: 100%;
+  height: auto;
+}
+.el-tooltip__popper div p{
+  margin: 10px 0;
+  color: #546AAC;
+  text-align: center;
+}
+.second .el-button, .third p>button {
+  padding: 0 !important;
+  border: 0 none;
+  color: #546AAC !important;
+}
+.third p div, .third p button {
+  display: inline-block;
+}
+.up-des {
+  overflow: hidden;
+  margin: 10px 0 8px;
+}
+.up-des h5 {
+  float: left;
+}
+.up-des em {
+  float: right;
+  font-style: normal;
+  color: #546AAC;
+}
+.border.avatar-uploader, .sign-border {
+  height: 140px;
+  padding: 10px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  border: 1px solid #EBEBEB;
+  text-align: center;
+}
+.border.avatar-uploader img, .second .border img, .sign-border img {
+  width: 120px;
+  height: 120px;
+}
+.el-tooltip__popper.is-light {
+  border: 1px solid #EBEBEB !important;
 }
 </style>
