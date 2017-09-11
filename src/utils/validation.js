@@ -39,9 +39,20 @@ function isPassport(str) { // 护照验证
   }
   return status;
 }
+function isPasswordAvailable(str) { // 密码校验
+  const reg = /^[a-zA-Z0-9_]{6,16}$/;
+  let status = '';
+  if (!reg.test(str)) {
+    status = false;
+  } else {
+    status = true;
+  }
+  return status;
+}
 export default {
   isPhoneAvailable,
   isEmailAvailable,
   isIDNO,
   isPassport,
+  isPasswordAvailable,
 };
