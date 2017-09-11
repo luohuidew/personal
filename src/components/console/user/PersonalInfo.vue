@@ -449,7 +449,7 @@ export default {
         idCardImgNegativeUrl: 'http://mpic.tiankong.com/cbf/7a6/cbf7a638d38760e0dfc90f6b6cd6983d/640.jpg', // 背面证件照
         imageUrl: 'http://mpic.tiankong.com/d86/95e/d8695e63c2c23f57bb7d89cb3fd2e161/640.jpg', // 手持证件照,没有这个字段
         handheldIdCardImgUrl: '', // 手持证件照地址默认为空
-        signatureUrl: 'http://mpic.tiankong.com/d86/95e/d8695e63c2c23f57bb7d89cb3fd2e161/640.jpg', // 签名
+        signatureUrl: '../../../assets/sign-img.png', // 签名
         idNumber: '', // 证件号码
         idType: 0, // id类型／0身份证／1护照
         lastPasswordResetDate: '', // 最后一次修改密码的时间
