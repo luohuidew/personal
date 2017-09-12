@@ -23,11 +23,15 @@
             <i><img src="../../../assets/icon-edit.png"/></i><em>编辑</em>
           </div>
           <div v-if="isNameEdit" class="edit-btn" @click="nameEditSave">
-            <i><img src="../../../assets/icon-save.png"/></i><em>保存</em>
+            <i><img src="../../../assets/icon-save.png"/></i><em @click="update(updateUserName)">保存</em>
           </div>
         </li>
         <li class="common email">
-          <span>绑定邮箱</span><p>{{usefulData.xingEmail}}</p><div class="edit-btn" @click="userPassword=true"><em>修改</em></div>
+          <span>绑定邮箱</span>
+          <p v-if="!unlinkEmail">{{usefulData.xingEmail}}</p>
+          <div v-if="!unlinkEmail" class="edit-btn" @click="userPassword=true"><em>修改</em></div>
+          <p v-if="unlinkEmail">未绑定</p>
+          <div v-if="unlinkEmail" class="edit-btn" @click="userPassword=true"><em>邮箱绑定</em></div>
         </li>
         <li class="common phone">
           <span>绑定手机</span>
@@ -56,6 +60,31 @@
       <div class="attention">
         <i>*</i><p>接受期权授予协议，必须要完成实名认证才能顺利签字。</br>实名认证审核时间约为1个工作日 ，请您合理安排认证时间，避免耽误签字。</p>
       </div>
+      <!--邮箱绑定 start-->
+      <el-dialog v-if="unlinkEmail" title="修改邮箱" :visible.sync="userPassword" size="tiny" :before-close="handleClose">
+        <p class="des">为保障您的账号安全，请输入账号密码进行验证</p>
+        <el-form :model="usefulData">
+          <el-form-item label="请输入密码" :label-width="usefulData.formLabelWidth" required>
+            <el-input v-model.trim="usefulData.password" placeholder="请输入账号密码"></el-input>
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="userPassword = false">取 消</el-button>
+          <el-button type="primary" @click="editEmail">确 定</el-button>
+        </span>
+      </el-dialog>
+      <el-dialog v-if="userEmail" title="修改邮箱" :visible.sync="userEmail" size="tiny" :before-close="handleClose">
+        <el-form :model="usefulData">
+          <el-form-item label="修改邮箱" :label-width="usefulData.formLabelWidth" required>
+            <el-input type="email" v-model.trim="usefulData.newEmail" placeholder="请输入新的邮箱地址"></el-input>
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="userEmail = false">取 消</el-button>
+          <el-button type="primary" @click="userEmail = false">确 定</el-button>
+        </span>
+      </el-dialog>
+      <!--邮箱绑定 end-->
       <!--修改邮箱弹窗 start-->
       <el-dialog v-if="!userEmail" title="修改邮箱" :visible.sync="userPassword" size="tiny" :before-close="handleClose">
         <p class="des">为保障您的账号安全，请输入账号密码进行验证</p>
@@ -389,20 +418,39 @@
 
 <script>
 import validate from '../../../utils/validation';
+import user from '../../../service/user';
+import personal from '../../../service/personalInfo';
+
 
 export default {
   name: 'user-personal-info',
   created() {
+    // 默认进来获得用户id从而调用getOne接口默认渲染页面
+    this.usefulData.id = user.getUser().id; // 调用用户id
+    personal.findOne(this.usefulData.id).then((r) => {
+      this.usefulData.email = r.email;
+      this.usefulData.username = r.username;
+      console.log(this.usefulData.username);
+      this.usefulData.enabled = r.enabled;
+      this.usefulData.lastPasswordResetDate = r.lastPasswordResetDate;
+    });
+    // 为了更新编辑修改而设置的数据
+    this.updateUserName.id = this.usefulData.id;
+    this.updateUserName.username = this.usefulData.username;
     // 邮箱@前均为*号
-    const emailArray = this.usefulData.email.split('@');
-    const editedEmai = emailArray.join('@');
-    const len = emailArray[0].length;
-    const x = '*';
-    const xing = x.repeat(len);
-    this.usefulData.xingEmail = editedEmai.replace(emailArray[0], xing);
+    if (this.usefulData.email.length > 0) {
+      const emailArray = this.usefulData.email.split('@');
+      const editedEmai = emailArray.join('@');
+      const len = emailArray[0].length;
+      const x = '*';
+      const xing = x.repeat(len);
+      this.usefulData.xingEmail = editedEmai.replace(emailArray[0], xing);
+    }
     // 手机中间4位均为*号
     const phone = this.usefulData.phone;
-    this.usefulData.xingTel = `${phone.substr(0, 3)}****${phone.substr(7)}`;
+    if (phone.length > 0) {
+      this.usefulData.xingTel = `${phone.substr(0, 3)}****${phone.substr(7)}`;
+    }
   },
   data() {
     return {
@@ -424,7 +472,9 @@ export default {
       userEmail: false, // 默认用户邮箱弹窗是不可见的
       userTel: false, // 默认进来用户手机号弹窗是不可见的
       passwordStatus: false, // 默认修改密码不可见
-      unlinkTel: false, // 默认进来手机解绑为false
+      unlinkTel: true, // 默认进来手机解绑为false
+      unlinkEmail: true, // 默认进来邮箱为false，未绑定
+      linkEmail: false, // 默认进来邮箱绑定弹窗不可见
       linkTel: false, // 默认进来手机号未绑定
       editStatus: false, // 默认输入框是不可编辑的
       changeNick: false, // 默认昵称是不可编辑的
@@ -437,6 +487,7 @@ export default {
       idStatus: true, // 身份证被选中
       passportStatus: false, // 默认护照没有被选中
       usefulData: {
+        enabled: '',
         upLoadSignImg: '', // 上传的签名图片地址
         rotate: 0, // 默认进来没有做旋转
         upLoadSignImg1: 'http://static9.photo.sina.com.cn/orignal/4af8a5e8856933841a998', // 临时房的一个签名图片地址
@@ -458,9 +509,9 @@ export default {
         newPassword: '', // 修改后的密码
         confirmPassword: '', // 确认的新密码
         newEmail: '', // 变更后的邮箱地址
-        email: '675714031@qq.com', // 默认邮箱地址为空
+        email: '', // 默认邮箱地址为空
         xingEmail: '', // 被截取后的邮箱地址
-        phone: '15010841736', // 手机号
+        phone: '', // 手机号
         newTel: '', // 验证码手机号新的手机号
         xingTel: '', // 被截取后的手机号
         formLabelWidth: '95px',
@@ -469,6 +520,10 @@ export default {
         realName: '', // 实名认证的实名
         idNo: '', // 身份证号
         passportNo: '', // 护照号码
+      },
+      updateUserName: {
+        id: '', // 必填
+        username: '', // 用户名昵称
       },
       rules: {
         newTel: [
@@ -624,8 +679,10 @@ export default {
     rotateImg() { // 图片旋转功能
       this.usefulData.rotate = (this.usefulData.rotate + 90) % 360;
       console.log(this.$refs);
-      // this.$refs.realSignImg.style.transform = `rotate(${this.usefulData.rotate}deg)`;
       this.$refs.realSignImg1.style.transform = `rotate(${this.usefulData.rotate}deg)`;
+    },
+    update(params) {
+      personal.update(params);
     },
   },
 };
