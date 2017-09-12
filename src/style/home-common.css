@@ -147,7 +147,7 @@
     -webkit-transform: translate(-50%, -50%);
     -moz-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
-    width: 500px;
+    width: 500px !important;
     padding-bottom: 70px;
     background: #fff;
     -webkit-box-shadow: 0 0 30px 0 rgba(70,70,93,0.50);

@@ -23,7 +23,7 @@
               <el-input type="textarea" v-model.trim="applyData.remarks" :autosize="{ minRows: 1, maxRows: 4}" placeholder="备注点什么？" class="texarea"></el-input>
             </el-form-item>
             <el-form-item>
-              <a href="javascript:void(0)" class="apply-now">申请试用</a>
+              <a class="apply-now" @click="applyLogin('applyData')">申请试用</a>
             </el-form-item>
           </el-form>
         </div>
@@ -34,6 +34,7 @@
 <script>
 import canvasbg from '../../lib/canvasbg';
 import validate from '../../utils/validation';
+import apply from '../../service/apply';
 
 export default {
   name: 'apply',
@@ -118,6 +119,14 @@ export default {
         callback();
       }
       return r;
+    },
+    applyLogin(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          apply.apply(formName);
+          this.$router.push({ name: 'login' });
+        }
+      });
     },
   },
 };
