@@ -87,6 +87,7 @@ export default {
     },
     loginRequest(formName) {
       this.$refs[formName].validate((valid) => {
+        console.log(valid);
         if (valid) {
           user.login(this.loginData).then(() => {
             window.location.href = `http://${window.location.host}/console/equity/dashboard`;
