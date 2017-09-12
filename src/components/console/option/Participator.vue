@@ -63,7 +63,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogAddPerson = false">确 定</el-button>
+        <el-button type="primary" @click="AddPerson()">确 定</el-button>
       </div>
     </el-dialog>
     <!---->
@@ -77,14 +77,20 @@ export default {
     return {
       dialogAddPerson: false,
       formLabelWidth: '120px',
+      person: {
+        username: undefined,
+        idType: undefined,
+        idNumber: undefined,
+        email: undefined,
+      },
     };
   },
   methods: {
-    handleClose(done) {
-      this.$confirm('确认新增参与方？').then(() => {
-        done();
-      }).catch(() => {});
-    },
+    // handleClose(done) {
+    //   this.$confirm('确认新增参与方？').then(() => {
+    //     done();
+    //   }).catch(() => {});
+    // },
   },
 };
 </script>
