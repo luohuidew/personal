@@ -4,8 +4,7 @@ import api from './http';
 export default {
   apply(params) {
     return api.post(' /userInfo/add', params).then((resp) => {
-      // TODO 处理TOKEN
-      console.log(123);
+      console.log(resp);
       return resp;
     });
   },
