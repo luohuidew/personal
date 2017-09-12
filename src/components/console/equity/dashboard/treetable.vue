@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-table :data="treeData">
+    <el-table :data="treeDataMap" class="stock-tree-list">
       <el-table-column type="expand">
         <template scope="props">
           <el-table ref="expandTable" :data="props.row.children" inline :show-header="false" :border="false">
@@ -17,8 +17,6 @@
       </el-table-column>
       <el-table-column v-for="(column, index) in treeClomns" :label="column.text" :key="column.dataIndex">
         <template scope="scope">
-          <!-- <span class="el-icon-arrow-right"></span>
-          <span class="el-icon-arrow-down"></span> -->
           {{scope.row[column.dataIndex]}}
         </template>
       </el-table-column>
@@ -27,59 +25,36 @@
   </div>
 </template>
 <script>
+import stockServer from '../../../../service/stock';
+
 export default {
   name: 'tree-table',
   data() {
     return {
       totalMoney: '140000',
-      treeData: [],
+      treeDataMap: [],
     };
   },
   props: {
     treeClomns: {},
   },
   created() {
-    const testdata = [{
-      shareholderAbbreviation: '真格基金',
-      rounds: '天使轮',
-      registeredCapital: '80000',
-      children: [
-        {
-          shareholderName: '某某某科技有限公司',
-          rounds: '天使轮',
-          registeredCapital: '34000',
-        }, {
-          shareholderName: '锤子科技有限公司',
-          rounds: '天使轮',
-          registeredCapital: '46000',
-        },
-      ],
-    }, {
-      shareholderAbbreviation: '真格基金',
-      rounds: '天使轮',
-      registeredCapital: '60000',
-      children: [
-        {
-          shareholderName: '某某某科技有限公司',
-          rounds: '天使轮',
-          registeredCapital: '20000',
-        }, {
-          shareholderName: '某某某科技有限公司',
-          rounds: '天使轮',
-          registeredCapital: '40000',
-        },
-      ],
-    }];
-    this.treeData = testdata;
-    testdata.forEach((value, index) => {
-      if (value.children.length !== 0) {
-        value.children.forEach((key, i) => {
-          const rate = this.getPercent(key.registeredCapital, this.totalMoney);
-          this.treeData[index].children[i].rate = rate;
-        });
-      }
-      const r = this.getPercent(value.registeredCapital, this.totalMoney);
-      this.treeData[index].rate = r;
+    // console.log('1111111111', this.treeDataMap);
+    const id = '123456';
+    stockServer.getAll(id).then((resp) => {
+      this.treeDataMap = resp.data;
+      resp.data.forEach((value, index) => {
+        if (value.children.length !== 0) {
+          value.children.forEach((key, i) => {
+            const rate = this.getPercent(key.registeredCapital, this.totalMoney);
+            this.treeDataMap[index].children[i].rate = rate;
+          });
+        }
+        const r = this.getPercent(value.registeredCapital, this.totalMoney);
+        this.treeDataMap[index].rate = r;
+      });
+    }, (resp) => {
+      console.log('aaaaaaaaaa', resp);
     });
   },
   methods: {

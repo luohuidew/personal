@@ -22,41 +22,34 @@
         </div>
         <div class="table-wrap">
           <tree-table :treeClomns="treeClomns"></tree-table>
-          <!-- <el-table :data="tableData">
-            <el-table-column label="股东名称"></el-table-column>
-            <el-table-column label="投资轮次"></el-table-column>
-            <el-table-column label="注册资本"></el-table-column>
-            <el-table-column label="股份比例"></el-table-column>
-            <el-table-column label="操作"></el-table-column>
-          </el-table> -->
         </div>
       </div>
     </div>
     <!-- 新增股东 -->
     <el-dialog title="添加股权信息" :visible.sync="dialogVisible" size="small" :before-close="handleClose">
-      <el-form :model="stockMap">
-        <el-form-item label="股东名称" :label-width="formLabelWidth" required>
+      <el-form :model="stockMap" label-width="120px">
+        <el-form-item label="股东名称" required>
           <el-input v-model="stockMap.name" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="股东类型" :label-width="formLabelWidth" required>
+        <el-form-item label="股东类型" required>
           <el-select v-model="stockMap.region" placeholder="请选择活动区域">
             <el-option label="区域一" value="shanghai"></el-option>
             <el-option label="区域二" value="beijing"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="投资轮次" :label-width="formLabelWidth" required>
+        <el-form-item label="投资轮次" required>
           <el-select v-model="stockMap.region" placeholder="请选择活动区域">
             <el-option label="区域一" value="shanghai"></el-option>
             <el-option label="区域二" value="beijing"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="注册资本" :label-width="formLabelWidth" required>
+        <el-form-item label="注册资本" required>
           <el-input v-model="stockMap.name" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="总注册资本" :label-width="formLabelWidth" required>
+        <el-form-item label="总注册资本" required>
           <el-input v-model="stockMap.name" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="股份比例" :label-width="formLabelWidth" required>
+        <el-form-item label="股份比例" required>
           <el-input v-model="stockMap.name" auto-complete="off"></el-input>
         </el-form-item>
       </el-form>
@@ -69,12 +62,14 @@
 </template>
 <script>
 import treeTable from './treetable';
+// import stockServer from '../../../../service/stock';
 
 export default {
   name: 'stock-detail',
   data() {
     return {
-      stockMap: {
+      stockListMap: {},
+      stockMap: { // 测试
         name: undefined,
       },
       treeClomns: [
@@ -92,12 +87,17 @@ export default {
           dataIndex: 'rate',
         },
       ],
-      tableData: [],  // 测试
       dialogVisible: false,
-      formLabelWidth: '120px',
     };
   },
   created() {
+    // const id = '123456';
+    // stockServer.getAll(id).then((resp) => {
+    //   console.log('2222222222222222', resp);
+    //   this.stockListMap = resp.data;
+    // }, (resp) => {
+    //   console.log('aaaaaaaaaa', resp);
+    // });
   },
   methods: {
     handleClose(done) {
