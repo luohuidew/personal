@@ -77,16 +77,22 @@ export default {
     checkPassword(rule, value, callback) {
       if (value === '') {
         callback(new Error('密码不能为空'));
+      } else {
+        callback();
       }
     },
     checkUsername(rule, value, callback) {
       if (value === '') {
         callback(new Error('请输入您的名称'));
+      } else {
+        callback();
       }
     },
     checkCompanyName(rule, value, callback) {
       if (value === '') {
         callback(new Error('请输入公司名称'));
+      } else {
+        callback();
       }
     },
     checkEmail(rule, value, callback) {
@@ -96,6 +102,8 @@ export default {
       } else if (!validate.isEmailAvailable(value)) {
         // 如果不符合邮箱的情况下
         r = callback(new Error('请输入正确的邮箱！'));
+      } else {
+        callback();
       }
       return r;
     },
@@ -106,6 +114,8 @@ export default {
       } else if (!validate.isPhoneAvailable(value)) {
         // 如果不符合电话号码的情况下
         r = callback(new Error('请输入正确的手机号！'));
+      } else {
+        callback();
       }
       return r;
     },

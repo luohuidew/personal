@@ -22,13 +22,6 @@
         </div>
         <div class="table-wrap">
           <tree-table :treeClomns="treeClomns"></tree-table>
-          <!-- <el-table :data="tableData">
-            <el-table-column label="股东名称"></el-table-column>
-            <el-table-column label="投资轮次"></el-table-column>
-            <el-table-column label="注册资本"></el-table-column>
-            <el-table-column label="股份比例"></el-table-column>
-            <el-table-column label="操作"></el-table-column>
-          </el-table> -->
         </div>
       </div>
     </div>
@@ -69,12 +62,14 @@
 </template>
 <script>
 import treeTable from './treetable';
+// import stockServer from '../../../../service/stock';
 
 export default {
   name: 'stock-detail',
   data() {
     return {
-      stockMap: {
+      stockListMap: {},
+      stockMap: { // 测试
         name: undefined,
       },
       treeClomns: [
@@ -92,11 +87,17 @@ export default {
           dataIndex: 'rate',
         },
       ],
-      tableData: [],  // 测试
       dialogVisible: false,
     };
   },
   created() {
+    // const id = '123456';
+    // stockServer.getAll(id).then((resp) => {
+    //   console.log('2222222222222222', resp);
+    //   this.stockListMap = resp.data;
+    // }, (resp) => {
+    //   console.log('aaaaaaaaaa', resp);
+    // });
   },
   methods: {
     handleClose(done) {

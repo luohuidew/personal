@@ -1,6 +1,5 @@
 <template>
   <div class="equity-dashboard">
-    <!-- <div id="ddbox" style="width:600px;height:600px;border:1px solid #f00;"></div> -->
     <div class="equity-head">
       <el-row :gutter="20">
         <el-col :span="8">
@@ -30,10 +29,16 @@
               <router-link class="more" :to="{ path: '/equity/dashboard/stockdetail' }">更多详情&gt;</router-link>
             </div>
             <div class="main-wrap">
-              <el-table :data="tableData">
-                <el-table-column label="股东名称"></el-table-column>
-                <el-table-column label="投资轮次"></el-table-column>
-                <el-table-column label="股份比例"></el-table-column>
+              <el-table :data="stockMap">
+                <el-table-column prop="shareholderAbbreviation" label="股东名称"></el-table-column>
+                <el-table-column label="投资轮次">
+                  <template scope="scope">
+                    <ul class="round-wrap">
+                      <li v-for="item in roundType" v-bind:class="{active: checkRound(item.text, scope.row.rounds)}">{{item.text}}</li>
+                    </ul>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="rate" label="股份比例"></el-table-column>
               </el-table>
             </div>
           </div>
@@ -212,16 +217,20 @@ import 'echarts/lib/chart/bar';
 import 'echarts/lib/component/tooltip';
 import 'echarts/lib/component/title';
 
+import stockServer from '../../../service/stock';
+import { ROUND_TYPE } from '../../../data/constants';
+
 export default {
   name: 'equity-dashboard',
   data() {
     return {
-      messagetest: 'I love programming', // 测试
-      dialogVisible1: true,
+      dialogVisible1: false,
       dialogVisible2: false,
       myChartDiv: undefined,
-      stockMap: undefined,
+      totalMoney: 140000,
+      stockMap: undefined, // 股权概况
       stockList: undefined,
+      roundType: ROUND_TYPE,
       stepList: [{   // 测试
         title: '2017-07-06',
         finance: 'A轮',
@@ -240,10 +249,20 @@ export default {
         compony: '经纬中国投资',
         money: '500万',
       }],
-      tableData: [],   // 测试
     };
   },
   created() {
+    const id = '123456';
+    // console.log(stockServer.get());
+    stockServer.get(id).then((resp) => {
+      this.stockMap = resp.data;
+      resp.data.forEach((value, index) => {
+        const r = this.getPercent(value.registeredCapital, this.totalMoney);
+        this.stockMap[index].rate = r;
+      });
+    }, (resp) => {
+      console.log(resp);
+    });
   },
   mounted() {
     // this.myChartDiv = document.getElementById('ddbox');
@@ -275,6 +294,10 @@ export default {
         done();
       }).catch(() => {});
     },
+    checkRound(r, rounds) {
+      const roundList = rounds.split(',');
+      return roundList.includes(r);
+    },
   },
 };
 </script>
@@ -301,4 +324,6 @@ export default {
 .step-description .bold{font-weight: bold;color: #666;}
 .dialog-table-wrap{padding:30px 0 30px 30px;}
 .dialog-footer{display:block;text-align:right;}
+.round-wrap li{display:inline-block;margin-right:5px;padding:0 3px;height:16px;text-align:center;line-height:16px;background:#F1F1F3;border-radius:2px;font-size: 8px;color: #ADADAD;}
+.round-wrap li.active{background:#8BD7FF;color:#FFFFFF;}
 </style>

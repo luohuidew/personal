@@ -33,6 +33,17 @@ body{
 .user-personal-info .ids .el-row .el-select .el-input {
   width: 100% !important;
 }
+.user-personal-info .first .el-input__inner {
+  display: block !important;
+  height: 100% !important;
+  padding: 5px !important;
+  line-height: 80%;
+  font-size: 40px;
+  text-align: center;
+}
+.user-personal-info .el-tooltip__popper.is-light {
+  border: 1px solid #EBEBEB !important;
+}
 /* 初次登录添加股权信息页 弹窗样式 */
 .dialog-wrap__large .el-dialog__body{padding:0px!important;}
 .dialog-wrap__large .dialog-left{position: fixed;left:0;top:54px;bottom:0;width:110px;padding:20px 0 0 30px;background:#33457B;}
@@ -50,3 +61,4 @@ body{
 /* 股权列表 树结构样式 */
 .stock-tree-list .el-table__expanded-cell{padding: 0px;}
 .stock-tree-list .el-table td > div{border: none;}
+
