@@ -30,7 +30,7 @@ import ModuleDoc from '../components/console/doc';
 Vue.use(Router);
 
 export default new Router({
-  mode: 'history',
+  // mode: 'history',
   routes: [
     // 权益管理
     {
