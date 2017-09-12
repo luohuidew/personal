@@ -36,7 +36,7 @@
     </div>
     <!---->
     <el-dialog title="新增参与方" :visible.sync="dialogAddPerson" size="small" :before-close="handleClose">
-      <el-form :label-position='right'>
+      <el-form label-position='right'>
         <el-form-item label="参与方名称" :label-width="formLabelWidth">
           <el-input auto-complete="off"></el-input>
         </el-form-item>
