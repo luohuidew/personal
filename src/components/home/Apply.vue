@@ -23,7 +23,7 @@
               <el-input type="textarea" v-model.trim="applyData.remarks" :autosize="{ minRows: 1, maxRows: 4}" placeholder="备注点什么？" class="texarea"></el-input>
             </el-form-item>
             <el-form-item>
-              <a href="javascript:void(0)" class="apply-now">申请试用</a>
+              <a href="javascript:void(0)" class="apply-now" @click="applyLogin('applyData')">申请试用</a>
             </el-form-item>
           </el-form>
         </div>
@@ -119,7 +119,19 @@ export default {
       }
       return r;
     },
-
+    applyLogin(formName) {
+      this.$refs[formName].validate((valid) => {
+        const r = '',
+        if(valid) {
+          console.log('apply!');
+          r = true;
+        } else {
+          console.log('error apply!!');
+          r = false;
+        }
+        return r;
+      });
+    },
   },
 };
 </script>
