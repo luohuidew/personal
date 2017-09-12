@@ -34,7 +34,7 @@
 <script>
 import canvasbg from '../../lib/canvasbg';
 import validate from '../../utils/validation';
-import apply from '../../service/apply';
+import Apply from '../../service/apply';
 
 export default {
   name: 'apply',
@@ -123,8 +123,9 @@ export default {
     applyLogin(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          apply.apply(formName);
-          this.$router.push({ name: 'login' });
+          Apply.apply(this.applyData).then(() => {
+            this.$router.push({ name: 'Login' });
+          });
         }
       });
     },
