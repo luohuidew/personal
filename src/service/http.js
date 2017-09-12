@@ -13,7 +13,7 @@ const axiosIns = axios.create({
 axiosIns.interceptors.request.use(
   config => {
     if (AUTH_TOKEN) {
-      config.headers.authorization = AUTH_TOKEN;
+      config.headers.Authorization = AUTH_TOKEN;
     }
     return config;
   },
@@ -54,6 +54,6 @@ ajaxMethod.forEach((method)=> {
   }
 });
 
-Vue.prototype.$API = api;
+export default  api;
 
 
