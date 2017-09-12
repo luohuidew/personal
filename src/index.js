@@ -10,7 +10,6 @@ import './style/console-common.css';
 import './theme/index.css';
 
 require('./utils/tools');
-require('./service/http');
 
 Vue.config.productionTip = false;
 Vue.use(ElementUI);

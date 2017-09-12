@@ -1,9 +1,8 @@
 // created by lyx @ 2017-09-09
 
-import Vue from 'vue'
 import axios from 'axios';
-
-let AUTH_TOKEN = '';
+import user from './user';
+import { MessageBox, Message } from 'element-ui';
 
 const axiosIns = axios.create({
   timeout: 60000,
@@ -12,8 +11,8 @@ const axiosIns = axios.create({
 
 axiosIns.interceptors.request.use(
   config => {
-    if (AUTH_TOKEN) {
-      config.headers.Authorization = AUTH_TOKEN;
+    if (user.getToken()) {
+      config.headers.Authorization = user.getToken();
     }
     return config;
   },
@@ -26,9 +25,14 @@ axiosIns.interceptors.response.use(
   res => {
     let data = res.data;
     let status = res.status;
+    let statusText = res.statusText;
+
     if (status === 200) {
       return Promise.resolve(data);
     } else {
+      MessageBox(`错误码：${status}; 错误描述：${statusText}`, '异常提示', {
+        confirmButtonText: '确定'
+      });
       return Promise.reject(res);
     }
   },
