@@ -26,19 +26,24 @@ export default {
     };
   },
   mounted() {
+    this.hasLogin();
     this.getUsession();
   },
   methods: {
     handleSelect(key) {
       if (key === 'logout') {
-        user.logout().then(() => {
-          window.location.href = `http://${window.location.host}/home.html#/`;
-        });
+        user.logout();
       }
     },
     getUsession() {
       const usession = user.getUser();
       this.username = usession.username;
+    },
+    hasLogin() {
+      const token = user.getToken();
+      if (!token) {
+        user.logout();
+      }
     },
   },
 };

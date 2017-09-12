@@ -27,6 +27,7 @@ export default {
     return api.get('/logout').then((resp) => {
       localStorage.removeItem(TOKEN);
       localStorage.removeItem(USER_KEY);
+      window.location.href = `http://${window.location.host}/home.html#/`;
       return resp;
     });
   },
