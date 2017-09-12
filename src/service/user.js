@@ -1,7 +1,6 @@
 import api from './http';
 
 const TOKEN = '_TOKEN';
-const AUTHORITY = '_AUTHORITY';
 const USER_KEY = '_USER_KEY';
 
 export default {
@@ -14,13 +13,6 @@ export default {
       }
       if (resp.user) {
         const itemStr = {
-          authorities: resp.user.authorities,
-          licenseList: resp.user.licenseList,
-        };
-        localStorage.setItem(AUTHORITY, JSON.stringify(itemStr));
-      }
-      if (resp.user) {
-        const itemStr = {
           id: resp.user.id,
           username: resp.user.username,
           phone: resp.user.phone,
@@ -28,6 +20,13 @@ export default {
         };
         localStorage.setItem(USER_KEY, JSON.stringify(itemStr));
       }
+      return resp;
+    });
+  },
+  logout() {
+    return api.get('/logout').then((resp) => {
+      localStorage.removeItem(TOKEN);
+      localStorage.removeItem(USER_KEY);
       return resp;
     });
   },

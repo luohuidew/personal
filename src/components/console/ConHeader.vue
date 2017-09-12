@@ -1,11 +1,11 @@
 <template>
   <div class="con-header">
     <span class="title"></span>
-    <p class="user"><img class="u-img" src="../../assets/icon-toggle.png" alt=""><span>{{uusessions_name}}</span></p>
+    <p class="user" v-if="hasCompany"><img class="u-img" src="../../assets/icon-toggle.png" alt=""><span>{{company_name}}</span></p>
     <p class="msg"><img v-if="!hasInfo" class="u-img" src="../../assets/icon-info.png" alt=""><img v-if="hasInfo" class="u-img" src="../../assets/icon-hasinfo.png" alt=""></p>
     <el-menu theme="dark" class="el-menu-user" mode="horizontal" @select="handleSelect">
       <el-submenu index="1">
-        <template slot="title">沙枫，你好 <span class="title-img"></span></template>
+        <template slot="title">{{username}}，你好 <span class="title-img"></span></template>
         <el-menu-item index="logout">退出</el-menu-item>
       </el-submenu>
     </el-menu>
@@ -13,17 +13,32 @@
 </template>
 
 <script>
+import user from '../../service/user';
+
 export default {
   name: 'con-header',
   data() {
     return {
-      uusessions_name: '镜化论科技-境内有限责任公司',
-      hasInfo: true,
+      company_name: '镜化论科技-境内有限责任公司',
+      username: '',
+      hasCompany: true,
+      hasInfo: false,
     };
   },
+  mounted() {
+    this.getUsession();
+  },
   methods: {
-    handleSelect() {
-      window.location.href = `http://${window.location.host}/home.html#/`;
+    handleSelect(key) {
+      if (key === 'logout') {
+        user.logout().then(() => {
+          window.location.href = `http://${window.location.host}/home.html#/`;
+        });
+      }
+    },
+    getUsession() {
+      const usession = user.getUser();
+      this.username = usession.username;
     },
   },
 };
