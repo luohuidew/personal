@@ -89,7 +89,10 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           user.login(this.loginData).then(() => {
-            window.location.href = `http://${window.location.host}/console/#/user/enterprise_list`;
+            const rt = localStorage.getItem('_PerRouter');
+            if (rt) {
+              window.location.href = `http://${window.location.host}/console/#${rt}`;
+            }
           });
         }
       });
