@@ -8,4 +8,7 @@ export default {
   update(params) {
     return api.post('/userInfo/update', params).then(resp => resp);
   },
+  sendMsg(params) { // 邮箱、电话验证
+    return api.post('/sendMsg/', params).then(resp => resp);
+  },
 };

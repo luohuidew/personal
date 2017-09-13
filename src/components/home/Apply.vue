@@ -138,9 +138,9 @@ export default {
 .texarea.el-textarea .el-textarea__inner{
   border: none;
 }
-@media screen and (max-width: 1430px) {
+@media screen and (max-width: 1435px) {
   .login .el-input, .apply .el-input, .apply .el-textarea, .forget .el-input {
-    margin: 10px 0 !important;
+    margin: 8px 0 !important;
   }
   .apply .apply-inner {
     padding-bottom: 50px !important;
