@@ -14,8 +14,8 @@
         <span class="wfk" v-if="item.pay == 1">未付款</span>
       </p>
       <p class="row"><img src="../../../assets/icon-manager.png" alt=""><span>管理员：</span><span>{{item.adminName}}</span></p>
-      <p class="row"><img src="../../../assets/business-type.png" alt=""><span>企业类型：</span><span>{{item.companyType}}</span></p>
-      <p class="row"><img src="../../../assets/capital-currency.png" alt=""><span>资本币种：</span><span>{{item.currency}}</span></p>
+      <p class="row"><img src="../../../assets/business-type.png" alt=""><span>企业类型：</span><span>{{item.companyType | filter('COMPENY_TYPE')}}</span></p>
+      <p class="row"><img src="../../../assets/capital-currency.png" alt=""><span>资本币种：</span><span>{{item.currency | filter('MONEY_TYPE')}}</span></p>
     </div>
     <!---->
     <el-dialog title="新建企业" :visible.sync="dialogVisible" size="small" :before-close="handleClose">
@@ -52,6 +52,7 @@
 
 <script>
 import company from '../../../service/company';
+import filters from '../../../utils/filters';
 
 export default {
   name: 'user-enterprise-list',
@@ -66,6 +67,11 @@ export default {
       },
       fileList: [],
     };
+  },
+  filters: {
+    filter(avg1, avg2) {
+      return filters.constantsFilter(avg1, avg2);
+    },
   },
   mounted() {
     this.initData();

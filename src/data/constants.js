@@ -26,3 +26,11 @@ export const MONEY_TYPE = [
   { id: '1', text: '欧元' },
   { id: '2', text: '美元' },
 ];
+
+export default {
+  ROUND_TYPE,
+  SHAREHOLDER_TYPE,
+  COMPENY_TYPE,
+  MONEY_TYPE,
+};
+
