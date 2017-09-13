@@ -5,13 +5,12 @@
       <span>新建企业</span>
     </div>
     <div class="enterprise-box">
-      <p class="e-title"><span>深圳市净化论科技有限公司</span><span>管理员</span></p>
-      <p class="row"><img src="../../../assets/icon-manager.png" alt=""><span>管理员：</span><span>沙枫</span></p>
-      <p class="row"><img src="../../../assets/business-type.png" alt=""><span>企业类型：</span><span>境内有限责任公司</span></p>
-      <p class="row"><img src="../../../assets/capital-currency.png" alt=""><span>资本币种：</span><span>人民币</span></p>
-    </div>
-    <div class="enterprise-box">
-      <p class="e-title"><span>深圳市净化论科技有限公司</span><span>管理员</span></p>
+      <p class="e-title">
+        <span class="e-title-name" title="深圳市净化论科技有限公司">深圳市净化论科技有限公司</span>
+        <span class="author">管理员</span>
+        <span class="wrz">未认证</span>
+        <span class="wfk">未付款</span>
+      </p>
       <p class="row"><img src="../../../assets/icon-manager.png" alt=""><span>管理员：</span><span>沙枫</span></p>
       <p class="row"><img src="../../../assets/business-type.png" alt=""><span>企业类型：</span><span>境内有限责任公司</span></p>
       <p class="row"><img src="../../../assets/capital-currency.png" alt=""><span>资本币种：</span><span>人民币</span></p>
@@ -89,8 +88,13 @@ export default {
     padding-bottom: 30px;
   }
 
-  .add-new,.enterprise-box{
+  .add-new,.enterprise-box {
     float: left;
+  }
+
+  .add-new,.enterprise-box:hover {
+    background: #FCFCFC;
+    cursor: pointer;
   }
 
   .add-new {
@@ -125,18 +129,35 @@ export default {
     background: #eee;
     font-size: 16px;
   }
-  .e-title span:first-child{
+
+  .e-title span.e-title-name{
     float: left;
     margin-left: 30px;
     letter-spacing: 0.8px;
   }
 
-  .e-title span:last-child{
+  .e-title span.author{
     float: right;
     margin-right: 20px;
     color: #2E76E0;
     letter-spacing: 0.8px;
     cursor: pointer;
+  }
+
+  .e-title span.wrz, .e-title span.wfk{
+    float: right;
+    margin-right: 10px;
+    font-size: 14px;
+    color: #FF5151;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .e-title span.wrz:hover,.e-title span.wfk:hover{
+    color: #BC5231;
+  }
+
+  .e-content:hover {
+    background: #FDFDFD;
   }
 
   .row {
@@ -164,6 +185,13 @@ export default {
     color: #BDBDBD;
     letter-spacing: 0.59px;
     line-height: 20px;
+  }
+
+  .e-title-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width:210px;
   }
 
 </style>
