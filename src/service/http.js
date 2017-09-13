@@ -3,6 +3,7 @@
 import axios from 'axios';
 import user from './user';
 import { MessageBox, Message } from 'element-ui';
+import router from '../router/index';
 
 const axiosIns = axios.create({
   timeout: 60000,
@@ -26,9 +27,11 @@ axiosIns.interceptors.response.use(
     let data = res.data;
     let status = res.status;
     let statusText = res.statusText;
-
     if (status === 200) {
       return Promise.resolve(data);
+    } else if(status === 401) {
+      localStorage.setItem('_PerRouter', router.history.current.fullPath);
+      user.logout();
     } else {
       MessageBox(`错误码：${status}; 错误描述：${statusText}`, '异常提示', {
         confirmButtonText: '确定'
