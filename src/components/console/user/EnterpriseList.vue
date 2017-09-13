@@ -91,6 +91,7 @@ export default {
         authority: cItem.authority,
         licenseList: cItem.licenseList,
         companyList: {
+          companyId: cItem.id,
           companyName: cItem.companyName,
           companyType: cItem.companyType,
         },
