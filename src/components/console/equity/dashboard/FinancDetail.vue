@@ -33,17 +33,17 @@
     </div>
     <!-- 新增股东 -->
     <el-dialog title="添加融资信息" :visible.sync="dialogVisible" size="small" :before-close="handleClose">
-      <el-form :model="stockMap">
-        <el-form-item label="融资轮次" :label-width="formLabelWidth" required>
+      <el-form :model="stockMap" label-width="120px">
+        <el-form-item label="融资轮次" required>
           <el-input v-model="stockMap.name" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="融资时间" :label-width="formLabelWidth" required>
+        <el-form-item label="融资时间" required>
           <el-input v-model="stockMap.name" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="融资金额" :label-width="formLabelWidth" required>
+        <el-form-item label="融资金额" required>
           <el-input v-model="stockMap.name" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="投资方" :label-width="formLabelWidth" required>
+        <el-form-item label="投资方" required>
           <el-input v-model="stockMap.name" auto-complete="off"></el-input>
         </el-form-item>
       </el-form>
@@ -64,7 +64,6 @@ export default {
       },
       tableData: [],  // 测试
       dialogVisible: false,
-      formLabelWidth: '120px',
     };
   },
   created() {
