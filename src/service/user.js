@@ -20,11 +20,16 @@ export default {
         };
         sessionStorage.setItem(USER_KEY, JSON.stringify(itemStr));
       }
+      window.location.href = `http://${window.location.host}/console/#/user/enterprise_list`;
       return resp;
     });
   },
-  logout() {
+  logout(statue) {
     sessionStorage.clear();
-    window.location.href = `http://${window.location.host}/home.html#/`;
+    if (statue === '401') {
+      window.location.href = `http://${window.location.host}/home.html#/login`;
+    } else {
+      window.location.href = `http://${window.location.host}/home.html`;
+    }
   },
 };

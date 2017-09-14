@@ -27,9 +27,10 @@ export default {
       hasInfo: false,
     };
   },
-  mounted() {
-    this.hasLogin();
+  created() {
     this.getUsession();
+  },
+  mounted() {
     bus.$on('COMPANY_CHANGED', () => {
       this.getCompanyInfo();
     });
@@ -42,13 +43,7 @@ export default {
     },
     getUsession() {
       const usession = user.getUser();
-      this.username = usession.username;
-    },
-    hasLogin() {
-      const token = user.getToken();
-      if (!token) {
-        user.logout();
-      }
+      this.username = usession ? usession.username : '';
     },
     getCompanyInfo() {
       const store = company.getStoredCompany();

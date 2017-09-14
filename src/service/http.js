@@ -30,8 +30,7 @@ axiosIns.interceptors.response.use(
     if (status === 200) {
       return Promise.resolve(data);
     } else if(status === 401) {
-      localStorage.setItem('_PerRouter', router.history.current.fullPath);
-      user.logout();
+      user.logout('401');
     } else {
       MessageBox(`错误码：${status}; 错误描述：${statusText}`, '异常提示', {
         confirmButtonText: '确定'
