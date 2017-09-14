@@ -4,18 +4,20 @@
       <img src="../../../assets/icon-add.png" alt="">
       <span>新建企业</span>
     </div>
-    <div class="enterprise-box">
-      <p class="e-title"><span>深圳市净化论科技有限公司</span><span>管理员</span></p>
-      <p class="row"><img src="../../../assets/icon-manager.png" alt=""><span>管理员：</span><span>沙枫</span></p>
-      <p class="row"><img src="../../../assets/business-type.png" alt=""><span>企业类型：</span><span>境内有限责任公司</span></p>
-      <p class="row"><img src="../../../assets/capital-currency.png" alt=""><span>资本币种：</span><span>人民币</span></p>
+    <!---->
+    <div class="enterprise-box" v-for="item in companyList" @click="selectCompany(item)">
+      <p class="e-title">
+        <span class="e-title-name" :title=item.companyName>{{item.companyName}}</span>
+        <span class="author">管理员</span>
+        <span class="wrz" v-if="item.authentication == 1">未认证</span>
+        <span class="wrz" v-if="item.authentication == 3">认证失败</span>
+        <span class="wfk" v-if="item.pay == 1">未付款</span>
+      </p>
+      <p class="row"><img src="../../../assets/icon-manager.png" alt=""><span>管理员：</span><span>{{item.adminName}}</span></p>
+      <p class="row"><img src="../../../assets/business-type.png" alt=""><span>企业类型：</span><span>{{item.companyType | filter('COMPENY_TYPE')}}</span></p>
+      <p class="row"><img src="../../../assets/capital-currency.png" alt=""><span>资本币种：</span><span>{{item.currency | filter('MONEY_TYPE')}}</span></p>
     </div>
-    <div class="enterprise-box">
-      <p class="e-title"><span>深圳市净化论科技有限公司</span><span>管理员</span></p>
-      <p class="row"><img src="../../../assets/icon-manager.png" alt=""><span>管理员：</span><span>沙枫</span></p>
-      <p class="row"><img src="../../../assets/business-type.png" alt=""><span>企业类型：</span><span>境内有限责任公司</span></p>
-      <p class="row"><img src="../../../assets/capital-currency.png" alt=""><span>资本币种：</span><span>人民币</span></p>
-    </div>
+    <!---->
     <el-dialog title="新建企业" :visible.sync="dialogVisible" size="small" :before-close="handleClose">
       <el-form :model="form">
         <el-form-item label="企业全称" :label-width="formLabelWidth" required>
@@ -49,24 +51,60 @@
 </template>
 
 <script>
+import company from '../../../service/company';
+import filters from '../../../utils/filters';
+
 export default {
   name: 'user-enterprise-list',
   data() {
     return {
+      companyList: [],
       dialogVisible: false,
       formLabelWidth: '120px',
       form: {
         a: '',
         b: '',
       },
+      fileList: [],
     };
   },
+  filters: {
+    filter(avg1, avg2) {
+      return filters.constantsFilter(avg1, avg2);
+    },
+  },
+  mounted() {
+    this.initData();
+  },
   methods: {
+    initData() {
+      company.getCompanyListByUid().then((resp) => {
+        this.companyList = resp.data;
+      });
+    },
+    selectCompany(cItem) {
+      this.storeSelectedCompany(cItem);
+      this.$router.push({ name: 'OptionManagementList' });
+    },
+    storeSelectedCompany(cItem) {
+      const obj = {
+        authority: cItem.authority,
+        licenseList: cItem.licenseList,
+        companyList: {
+          companyId: cItem.id,
+          companyName: cItem.companyName,
+          companyType: cItem.companyType,
+        },
+      };
+      company.setStoreCompany(obj);
+    },
     openDialog() {
       this.dialogVisible = true;
     },
     save() {
       this.dialogVisible = false;
+    },
+    handleClose() {
     },
     handleRemove() {
     },
@@ -89,8 +127,13 @@ export default {
     padding-bottom: 30px;
   }
 
-  .add-new,.enterprise-box{
+  .add-new,.enterprise-box {
     float: left;
+  }
+
+  .add-new,.enterprise-box:hover {
+    background: #FCFCFC;
+    cursor: pointer;
   }
 
   .add-new {
@@ -125,18 +168,35 @@ export default {
     background: #eee;
     font-size: 16px;
   }
-  .e-title span:first-child{
+
+  .e-title span.e-title-name{
     float: left;
     margin-left: 30px;
     letter-spacing: 0.8px;
   }
 
-  .e-title span:last-child{
+  .e-title span.author{
     float: right;
     margin-right: 20px;
     color: #2E76E0;
     letter-spacing: 0.8px;
     cursor: pointer;
+  }
+
+  .e-title span.wrz, .e-title span.wfk{
+    float: right;
+    margin-right: 10px;
+    font-size: 14px;
+    color: #FF5151;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .e-title span.wrz:hover,.e-title span.wfk:hover{
+    color: #BC5231;
+  }
+
+  .e-content:hover {
+    background: #FDFDFD;
   }
 
   .row {
@@ -164,6 +224,13 @@ export default {
     color: #BDBDBD;
     letter-spacing: 0.59px;
     line-height: 20px;
+  }
+
+  .e-title-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width:210px;
   }
 
 </style>
