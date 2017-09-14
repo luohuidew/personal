@@ -24,7 +24,7 @@
                   <div class="f-group" v-for="(rd, rdIndex) in r.ruleDetailedList">
                     <el-row :gutter="20">
                       <el-col :span="16"><span class="branch-title">{{rd.text}}</span></el-col>
-                      <el-col :span="8"><el-switch v-model="rd.option" on-text="" off-text="" v-on:change="selectOne(rIndex, rdIndex)"></el-switch></el-col>
+                      <el-col :span="8"><el-switch v-model="rd.option" on-text="" off-text=""></el-switch></el-col>
                     </el-row>
                   </div>
                 </form>
@@ -38,8 +38,10 @@
   </div>
 </template>
 <script>
+import pService from '../../../../service/participator';
+
 export default {
-  name: '',
+  name: 'OptionPermission',
   data() {
     return {
       ruleList: [
@@ -52,7 +54,7 @@ export default {
             {
               ruleId: '1-1',
               text: '权益管理',
-              key: 'equity_dashboard',
+              key: 'equity.dashboard',
               option: false,
             },
           ],
@@ -65,22 +67,22 @@ export default {
             {
               ruleId: '2-1',
               text: '期权管理',
-              key: 'option_management_list',
+              key: 'option.management_list',
               option: false,
             }, {
               ruleId: '2-2',
               text: '激励计划',
-              key: 'option_incentive_plan',
+              key: 'option.incentive_plan',
               option: false,
             }, {
               ruleId: '2-3',
               text: '持股平台',
-              key: 'option_holding_platform',
+              key: 'option.holding_platform',
               option: false,
             }, {
               ruleId: '2-4',
               text: '参与方',
-              key: 'option_participator',
+              key: 'option.participator',
               option: false,
             },
           ],
@@ -93,7 +95,7 @@ export default {
             {
               ruleId: '3-1',
               text: '文档管理',
-              key: 'doc_management_list',
+              key: 'doc.management_list',
               option: false,
             },
           ],
@@ -106,29 +108,35 @@ export default {
             {
               ruleId: '4-1',
               text: '个人信息',
-              key: 'user_personal_info',
+              key: 'user.personal_info',
               option: false,
             }, {
               ruleId: '4-2',
               text: '我的订单',
-              key: 'user_my_order',
+              key: 'user.my_order',
               option: false,
             }, {
               ruleId: '4-3',
               text: '企业列表',
-              key: 'user_enterprise_list',
+              key: 'user.enterprise_list',
               option: false,
             },
           ],
         },
       ],
-      licenseList: '{"equity":true,"equity_dashboard":true,"option":false,"option_management_list":false,"option_incentive_plan":false,"option_holding_platform":false,"option_participator":false,"doc":false,"doc_management_list":false,"user":false,"user_personal_info":false,"user_my_order":true,"user_enterprise_list":false}',
+      permission: {
+        licenseList: undefined,
+      },
     };
   },
   created() {
-    // const id = this.$route.params.userId;
+    this.permission.userId = this.$route.params.id;
     this.typeTest = this.$route.params.type;
-    this.dataProcessing(this.licenseList);
+    pService.findOne(this.permission.userId).then((resp) => {
+      // console.log(resp);
+      this.licenseList = resp.licenseList;
+      this.dataProcessing(this.licenseList);
+    });
   },
   computed: {
     isEdit() {
@@ -140,15 +148,29 @@ export default {
   },
   methods: {
     Save() {
-      const data = this.getThisPageData();
-      console.log(data);
+      this.permission.licenseList = this.getThisPageData();
+      // console.log(this.permission);
+      pService.update(this.permission).then(() => {
+        this.$message({
+          message: '权限设置成功',
+          type: 'success',
+        });
+        // 之后增加跳回原页面
+      });
     },
+    // 获取权限列表的值
     getThisPageData() {
       const ruleList = this.ruleList;
       const ruleLen = ruleList.length;
       const map = {};
       const licenseList = [];
       for (let i = 0; i < ruleLen; i += 1) {
+        const optionStatus = this.ruleList[i].ruleDetailedList.map(item => item.option);
+        if (optionStatus.indexOf(true) === -1) {
+          this.ruleList[i].option = false;
+        } else {
+          this.ruleList[i].option = true;
+        }
         map[ruleList[i].key] = ruleList[i].option;
         const ruleDetailedList = ruleList[i].ruleDetailedList;
         const ruleDetailedLen = ruleDetailedList.length;
@@ -159,33 +181,22 @@ export default {
       licenseList.push(JSON.stringify(map));
       return licenseList.toString();
     },
-    selectOne(rIndex) {
-      const s = new RegExp('false', 'gi');
-      const ruleDetailedList = this.ruleList[rIndex].ruleDetailedList;
-      const ruleDetailedListJson = JSON.stringify(ruleDetailedList);
-      const tureList = ruleDetailedListJson.match(s);
-      if (!tureList) {
-        this.ruleList[rIndex].option = true;
-      } else {
-        this.ruleList[rIndex].option = false;
-      }
-    },
     // 此处待完善
     dataProcessing(licenseList) {
       const datalist = JSON.parse(licenseList);
       this.ruleList[0].option = datalist.equity;
-      this.ruleList[0].ruleDetailedList[0].option = datalist.equity_dashboard;
+      this.ruleList[0].ruleDetailedList[0].option = datalist['equity.dashboard'];
       this.ruleList[1].option = datalist.option;
-      this.ruleList[1].ruleDetailedList[0].option = datalist.option_management_list;
-      this.ruleList[1].ruleDetailedList[1].option = datalist.option_incentive_plan;
-      this.ruleList[1].ruleDetailedList[2].option = datalist.option_holding_platform;
-      this.ruleList[1].ruleDetailedList[3].option = datalist.option_participator;
+      this.ruleList[1].ruleDetailedList[0].option = datalist['option.management_list'];
+      this.ruleList[1].ruleDetailedList[1].option = datalist['option.incentive_plan'];
+      this.ruleList[1].ruleDetailedList[2].option = datalist['option.holding_platform'];
+      this.ruleList[1].ruleDetailedList[3].option = datalist['option.participator'];
       this.ruleList[2].option = datalist.doc;
-      this.ruleList[2].ruleDetailedList[0].option = datalist.doc_management_list;
+      this.ruleList[2].ruleDetailedList[0].option = datalist['doc.management_list'];
       this.ruleList[3].option = datalist.user;
-      this.ruleList[3].ruleDetailedList[0].option = datalist.user_personal_info;
-      this.ruleList[3].ruleDetailedList[1].option = datalist.user_my_order;
-      this.ruleList[3].ruleDetailedList[2].option = datalist.user_enterprise_list;
+      this.ruleList[3].ruleDetailedList[0].option = datalist['user.personal_info'];
+      this.ruleList[3].ruleDetailedList[1].option = datalist['user.my_order'];
+      this.ruleList[3].ruleDetailedList[2].option = datalist['user.enterprise_list'];
     },
   },
 };

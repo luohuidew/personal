@@ -17,3 +17,7 @@ export const SHAREHOLDER_TYPE = [
   { id: '0', text: '个人' },
   { id: '1', text: '团体' },
 ];
+export const ID_TYPES = [
+  { id: '0', text: '身份证' },
+  { id: '1', text: '护照' },
+];
