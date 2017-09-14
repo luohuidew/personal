@@ -22,11 +22,16 @@ export const COMPENY_TYPE = [
   { id: '1', text: '境外有限责任公司' },
 ];
 export const MONEY_TYPE = [
-  { id: '0', text: '人民币' },
-  { id: '1', text: '欧元' },
-  { id: '2', text: '美元' },
+  { id: 'RMB', text: '人民币' },
+  { id: 'USD', text: '欧元' },
+  { id: 'EUR', text: '美元' },
 ];
 
+export const QINIU_BUCKET_DOMAIN = 'http://ow9hvlmOa.bkt.clouddn.com';
+
+export const QINIU_SERVER = 'http://up-z1.qiniu.com/';
+
+// 需要用于filter的必须加到default里
 export default {
   ROUND_TYPE,
   SHAREHOLDER_TYPE,
