@@ -21,36 +21,38 @@
           <el-button class="addbtn" type="primary" @click="dialogVisible = true">新增融资</el-button>
         </div>
         <div class="table-wrap">
-          <el-table :data="tableData">
-            <el-table-column label="融资轮次"></el-table-column>
-            <el-table-column label="融资金额"></el-table-column>
-            <el-table-column label="融资时间"></el-table-column>
-            <el-table-column label="投资方"></el-table-column>
-            <el-table-column label="操作"></el-table-column>
+          <el-table :data="financlistdata">
+            <el-table-column  prop="rounds" label="融资轮次"></el-table-column>
+            <el-table-column  prop="financedAccount" label="融资金额"></el-table-column>
+            <el-table-column  prop="financedDate" label="融资时间"></el-table-column>
+            <el-table-column  prop="shareholderName" label="投资方"></el-table-column>
+            <el-table-column label="操作">
+              <template scope="scope"><el-button @click="deleteFinanc(scope.row)">删除</el-button></template>
+            </el-table-column>
           </el-table>
         </div>
       </div>
     </div>
-    <!-- 新增股东 -->
+    <!-- 新增融资 -->
     <el-dialog title="添加融资信息" :visible.sync="dialogVisible" size="small" :before-close="handleClose">
-      <el-form :model="stockMap" label-width="120px">
-        <el-form-item label="融资轮次" required>
-          <el-input v-model="stockMap.name" auto-complete="off"></el-input>
+      <el-form :model="financAddMap" ref="stockAddForm" label-width="120px">
+        <el-form-item label="融资轮次" required prop="shareholderName" :rules="[{ required: true, message: '股东名称不能为空'}]">
+          <el-input v-model="financAddMap.shareholderName"></el-input>
         </el-form-item>
-        <el-form-item label="融资时间" required>
-          <el-input v-model="stockMap.name" auto-complete="off"></el-input>
+        <el-form-item label="融资时间" required prop="financedDate" :rules="[{ required: true, message: '股东名称不能为空'}]">
+          <el-input v-model="financAddMap.financedDate"></el-input>
         </el-form-item>
-        <el-form-item label="融资金额" required>
-          <el-input v-model="stockMap.name" auto-complete="off"></el-input>
+        <el-form-item label="融资金额" required prop="financedAccount" :rules="[{ required: true, message: '股东名称不能为空'}, { type: 'number', message: '注册资本必须为数字值'}]">
+          <el-input v-model.number="financAddMap.financedAccount"></el-input>
         </el-form-item>
-        <el-form-item label="投资方" required>
-          <el-input v-model="stockMap.name" auto-complete="off"></el-input>
+        <el-form-item label="投资方" required prop="shareholderName" :rules="[{ required: true, message: '股东名称不能为空'}]">
+          <el-input v-model="financAddMap.shareholderName"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-            <el-button @click="dialogVisible = false">继续添加</el-button>
-            <el-button type="primary" @click="dialogVisible = false">确认保存</el-button>
-          </span>
+        <el-button @click="checkForm('stockAddForm')">继续添加</el-button>
+        <el-button type="primary" @click="checkForm('stockAddForm');dialogVisible=false;">确认保存</el-button>
+      </span>
     </el-dialog>
   </div>
 </template>
@@ -59,20 +61,22 @@ export default {
   name: 'stock-detail',
   data() {
     return {
-      stockMap: {
-        name: undefined,
+      companyId: '123123123',  // 从缓存读取
+      financlistdata: {},
+      financAddMap: {
+        shareholderName: '',
+        shareholderType: '',
+        rounds: '',
+        registeredCapital: '',
       },
-      tableData: [],  // 测试
       dialogVisible: false,
     };
   },
   created() {
   },
   methods: {
-    handleClose(done) {
-      this.$confirm('确认关闭？').then(() => {
-        done();
-      }).catch(() => {});
+    deleteFinanc(row) {
+      console.log(row);
     },
   },
 };

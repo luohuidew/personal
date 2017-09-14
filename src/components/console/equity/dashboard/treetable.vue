@@ -6,26 +6,40 @@
           <el-table ref="expandTable" :data="props.row.children" inline :show-header="false" :border="false">
             <el-table-column type="index" width="55"></el-table-column>
             <el-table-column prop="shareholderName"></el-table-column>
-            <el-table-column prop="rounds"></el-table-column>
+            <el-table-column>
+              <template scope="scope">
+                <ul class="round-wrap">
+                  <li v-for="item in roundType" v-bind:class="{active: checkRound(item.id, scope.row.rounds)}">{{item.text}}</li>
+                </ul>
+              </template>
+            </el-table-column>
             <el-table-column prop="registeredCapital"></el-table-column>
             <el-table-column prop="rate"></el-table-column>
             <el-table-column>
-              <template scope="scope"></template>
+              <template scope="scope"><el-button @click="delete(scope.row)">删除</el-button></template>
             </el-table-column>
           </el-table>
         </template>
       </el-table-column>
-      <el-table-column v-for="(column, index) in treeClomns" :label="column.text" :key="column.dataIndex">
+      <el-table-column prop="shareholderAbbreviation" label="股东名称"></el-table-column>
+      <el-table-column label="投资轮次">
         <template scope="scope">
-          {{scope.row[column.dataIndex]}}
+          <ul class="round-wrap">
+            <li v-for="item in roundType" v-bind:class="{active: checkRound(item.id, scope.row.rounds)}">{{item.text}}</li>
+          </ul>
         </template>
       </el-table-column>
-      <el-table-column label="操作"></el-table-column>
+      <el-table-column prop="registeredCapital" label="注册资本"></el-table-column>
+      <el-table-column prop="rate" label="股份比例"></el-table-column>
+      <el-table-column label="操作">
+        <template scope="scope"><el-button @click="delete(scope.row)">删除</el-button></template>
+      </el-table-column>
     </el-table>
   </div>
 </template>
 <script>
-import stockServer from '../../../../service/stock';
+// import stockServer from '../../../../service/stock';
+import { ROUND_TYPE } from '../../../../data/constants';
 
 export default {
   name: 'tree-table',
@@ -33,29 +47,12 @@ export default {
     return {
       totalMoney: '140000',
       treeDataMap: [],
+      roundType: ROUND_TYPE,
     };
   },
-  props: {
-    treeClomns: {},
-  },
+  props: ['treelistdata'],
   created() {
-    // console.log('1111111111', this.treeDataMap);
-    const id = '123456';
-    stockServer.getAll(id).then((resp) => {
-      this.treeDataMap = resp.data;
-      resp.data.forEach((value, index) => {
-        if (value.children.length !== 0) {
-          value.children.forEach((key, i) => {
-            const rate = this.getPercent(key.registeredCapital, this.totalMoney);
-            this.treeDataMap[index].children[i].rate = rate;
-          });
-        }
-        const r = this.getPercent(value.registeredCapital, this.totalMoney);
-        this.treeDataMap[index].rate = r;
-      });
-    }, (resp) => {
-      console.log('aaaaaaaaaa', resp);
-    });
+    this.treeDataMap = this.treelistdata;
   },
   methods: {
     getPercent(num, total) {
@@ -70,6 +67,13 @@ export default {
       const rate = Math.round((number / totals) * 10000) / 100.00;
       return `${rate}%`;
       // return totals <= 0 ? '0%' : ((Math.round((number / totals) * 10000) / 100.00) + '%');
+    },
+    delete(row) {
+      console.log(row);
+    },
+    checkRound(r, rounds) {
+      const roundList = rounds.split(',');
+      return roundList.includes(r);
     },
   },
 };

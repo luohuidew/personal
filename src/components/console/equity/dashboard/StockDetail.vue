@@ -21,93 +21,113 @@
           <el-button class="addbtn" type="primary" @click="dialogVisible = true">新增股东</el-button>
         </div>
         <div class="table-wrap">
-          <tree-table :treeClomns="treeClomns"></tree-table>
+          <treelist-table :treelistdata="stocklistdata" v-if="isloading"></treelist-table>
         </div>
       </div>
     </div>
     <!-- 新增股东 -->
     <el-dialog title="添加股权信息" :visible.sync="dialogVisible" size="small" :before-close="handleClose">
-      <el-form :model="stockMap" label-width="120px">
-        <el-form-item label="股东名称" required>
-          <el-input v-model="stockMap.name" auto-complete="off"></el-input>
+      <el-form :model="stockAddMap" ref="stockAddForm" label-width="120px">
+        <el-form-item label="股东名称" required prop="shareholderName" :rules="[{ required: true, message: '股东名称不能为空'}]">
+          <el-input v-model="stockAddMap.shareholderName"></el-input>
         </el-form-item>
-        <el-form-item label="股东类型" required>
-          <el-select v-model="stockMap.region" placeholder="请选择活动区域">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+        <el-form-item label="股东类型" required prop="shareholderType" :rules="[{ required: true, message: '股东类型不能为空', trigger: 'change'}]">
+          <el-select v-model="stockAddMap.shareholderType" placeholder="请选择股东类型">
+            <el-option v-for="item in shareholderType" :label="item.text" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="投资轮次" required>
-          <el-select v-model="stockMap.region" placeholder="请选择活动区域">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+        <el-form-item label="投资轮次" required prop="rounds" :rules="[{ required: true, message: '股东轮次不能为空', trigger: 'change'}]">
+          <el-select v-model="stockAddMap.rounds" placeholder="请选择投资轮次">
+            <el-option v-for="item in roundType" :label="item.text" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="注册资本" required>
-          <el-input v-model="stockMap.name" auto-complete="off"></el-input>
+        <el-form-item label="注册资本" required prop="registeredCapital" :rules="[{ required: true, message: '注册资本不能为空'}, { type: 'number', message: '注册资本必须为数字值'}]">
+          <el-input v-model.number="stockAddMap.registeredCapital"></el-input>
         </el-form-item>
-        <el-form-item label="总注册资本" required>
-          <el-input v-model="stockMap.name" auto-complete="off"></el-input>
+        <el-form-item label="总注册资本" required> <!-- 这里有个问题 -->
+          <el-input></el-input>
         </el-form-item>
         <el-form-item label="股份比例" required>
-          <el-input v-model="stockMap.name" auto-complete="off"></el-input>
+          <el-input v-model="stockScale" :disabled="true"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-            <el-button @click="dialogVisible = false">继续添加</el-button>
-            <el-button type="primary" @click="dialogVisible = false">确认保存</el-button>
-          </span>
+        <el-button @click="checkForm('stockAddForm')">继续添加</el-button>
+        <el-button type="primary" @click="checkForm('stockAddForm');dialogVisible=false;">确认保存</el-button>
+      </span>
     </el-dialog>
   </div>
 </template>
 <script>
-import treeTable from './treetable';
-// import stockServer from '../../../../service/stock';
+import treelistTable from './treetable';
+import { SHAREHOLDER_TYPE, ROUND_TYPE } from '../../../../data/constants';
+import stockServer from '../../../../service/stock';
 
 export default {
   name: 'stock-detail',
   data() {
     return {
-      stockListMap: {},
-      stockMap: { // 测试
-        name: undefined,
+      companyId: '123123123',  // 从缓存读取
+      isloading: false, // 判断axios加载是否完成,加载完成后才渲染组件
+      stocklistdata: {},
+      shareholderType: SHAREHOLDER_TYPE, // 股东类型
+      roundType: ROUND_TYPE, // 投资轮次
+      stockAddMap: {
+        shareholderName: '',
+        shareholderType: '',
+        rounds: '',
+        registeredCapital: '',
       },
-      treeClomns: [
-        {
-          text: '股东名称',
-          dataIndex: 'shareholderAbbreviation',
-        }, {
-          text: '投资轮次',
-          dataIndex: 'rounds',
-        }, {
-          text: '注册资本',
-          dataIndex: 'registeredCapital',
-        }, {
-          text: '股份比例',
-          dataIndex: 'rate',
-        },
-      ],
       dialogVisible: false,
     };
   },
   created() {
-    // const id = '123456';
-    // stockServer.getAll(id).then((resp) => {
-    //   console.log('2222222222222222', resp);
-    //   this.stockListMap = resp.data;
-    // }, (resp) => {
-    //   console.log('aaaaaaaaaa', resp);
-    // });
+    this.getStockList();
+    this.stockAddMap.companyId = this.companyId;
+  },
+  mounted() {
   },
   methods: {
-    handleClose(done) {
-      this.$confirm('确认关闭？').then(() => {
-        done();
-      }).catch(() => {});
+    checkForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.addStock(formName);
+        }
+        return false;
+      });
+    },
+    addStock(formName) {
+      stockServer.add(this.stockAddMap).then(() => {
+        this.resetForm(formName);
+        this.$message({
+          message: '添加成功',
+          type: 'success',
+        });
+      }, () => {
+        this.$message.error('添加失败');
+      });
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+    },
+    handleClose() {
+      this.resetForm('stockAddForm');
+      this.dialogVisible = false;
+    },
+    getStockList() {
+      stockServer.getAll(this.companyId).then((resp) => {
+        this.stocklistdata = resp;
+        this.isloading = true;
+      });
+    },
+  },
+  computed: {
+    stockScale() {
+      return stockServer.getPercent(this.stockAddMap.registeredCapital, this.totalMoney);
     },
   },
   components: {
-    treeTable,
+    treelistTable,
   },
 };
 </script>

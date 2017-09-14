@@ -34,7 +34,7 @@
                 <el-table-column label="投资轮次">
                   <template scope="scope">
                     <ul class="round-wrap">
-                      <li v-for="item in roundType" v-bind:class="{active: checkRound(item.text, scope.row.rounds)}">{{item.text}}</li>
+                      <li v-for="item in roundType" v-bind:class="{active: checkRound(item.id, scope.row.rounds)}">{{item.text}}</li>
                     </ul>
                   </template>
                 </el-table-column>
@@ -68,7 +68,7 @@
       </el-row>
     </div>
     <!-- 初次登录添加股权信息页 -->
-    <el-dialog class="dialog-wrap__large" title="添加股权信息" :visible.sync="dialogVisible1" size="large" :before-close="handleClose">
+    <el-dialog class="dialog-wrap__large" title="添加股权信息" :visible.sync="dialogVisible1" size="large">
       <div class="dialog-left">
         <div class="dialog-step-list">
           <div class="dialog-step-wrap isDone">
@@ -130,7 +130,7 @@
           <el-button type="primary" @click="dialogVisible1 = false;dialogVisible2 = true">下一步</el-button>
         </span>
         <div class="dialog-table-wrap">
-          <el-table :data="stockList">
+          <el-table :data="stockAddList">
             <el-table-column type="index" label="序号"></el-table-column>
             <el-table-column label="股东名称"></el-table-column>
             <el-table-column label="股东类型"></el-table-column>
@@ -142,7 +142,7 @@
       </div>
     </el-dialog>
     <!-- 初次登录添加融资信息页 -->
-    <el-dialog class="dialog-wrap__large" title="添加融资信息" :visible.sync="dialogVisible2" size="large" :before-close="handleClose">
+    <el-dialog class="dialog-wrap__large" title="添加融资信息" :visible.sync="dialogVisible2" size="large">
       <div class="dialog-left">
         <div class="dialog-step-list">
           <div class="dialog-step-wrap isDone">
@@ -195,7 +195,7 @@
           <el-button type="primary" @click="dialogVisible2 = false">完成</el-button>
         </span>
         <div class="dialog-table-wrap">
-          <el-table :data="stockList">
+          <el-table :data="financAddList">
             <el-table-column type="index" label="序号"></el-table-column>
             <el-table-column label="融资轮次"></el-table-column>
             <el-table-column label="融资时间"></el-table-column>
@@ -224,12 +224,14 @@ export default {
   name: 'equity-dashboard',
   data() {
     return {
+      companyId: '123123123',  // 从缓存读取
       dialogVisible1: false,
       dialogVisible2: false,
       myChartDiv: undefined,
       totalMoney: 140000,
       stockMap: undefined, // 股权概况
-      stockList: undefined,
+      stockAddList: undefined,
+      financAddList: undefined,
       roundType: ROUND_TYPE,
       stepList: [{   // 测试
         title: '2017-07-06',
@@ -252,16 +254,8 @@ export default {
     };
   },
   created() {
-    const id = '123456';
-    // console.log(stockServer.get());
-    stockServer.get(id).then((resp) => {
-      this.stockMap = resp.data;
-      resp.data.forEach((value, index) => {
-        const r = this.getPercent(value.registeredCapital, this.totalMoney);
-        this.stockMap[index].rate = r;
-      });
-    }, (resp) => {
-      console.log(resp);
+    stockServer.get(this.companyId).then((resp) => {
+      this.stockMap = resp;
     });
   },
   mounted() {
@@ -289,14 +283,22 @@ export default {
         }],
       });
     },
-    handleClose(done) {
-      this.$confirm('确认关闭？').then(() => {
-        done();
-      }).catch(() => {});
-    },
     checkRound(r, rounds) {
       const roundList = rounds.split(',');
       return roundList.includes(r);
+    },
+    getPercent(num, total) {
+      const number = parseFloat(num);
+      const totals = parseFloat(total);
+      if (isNaN(number) || isNaN(totals)) {
+        return '-';
+      }
+      if (totals < 0) {
+        return '0%';
+      }
+      const rate = Math.round((number / totals) * 10000) / 100.00;
+      return `${rate}%`;
+      // return totals <= 0 ? '0%' : ((Math.round((number / totals) * 10000) / 100.00) + '%');
     },
   },
 };
@@ -324,6 +326,4 @@ export default {
 .step-description .bold{font-weight: bold;color: #666;}
 .dialog-table-wrap{padding:30px 0 30px 30px;}
 .dialog-footer{display:block;text-align:right;}
-.round-wrap li{display:inline-block;margin-right:5px;padding:0 3px;height:16px;text-align:center;line-height:16px;background:#F1F1F3;border-radius:2px;font-size: 8px;color: #ADADAD;}
-.round-wrap li.active{background:#8BD7FF;color:#FFFFFF;}
 </style>
