@@ -11,7 +11,7 @@
       </el-row>
     </div>
     <div class="stock-cont">
-      <div class="echart-warp bgcolor">
+      <div class="echart-warp bgcolor" id="stockChart">
       </div>
     </div>
     <div class="stock-cont">
@@ -44,21 +44,19 @@
         <el-form-item label="注册资本" required prop="registeredCapital" :rules="[{ required: true, message: '注册资本不能为空'}, { type: 'number', message: '注册资本必须为数字值'}]">
           <el-input v-model.number="stockAddMap.registeredCapital"></el-input>
         </el-form-item>
-        <el-form-item label="总注册资本" required> <!-- 这里有个问题 -->
-          <el-input></el-input>
-        </el-form-item>
         <el-form-item label="股份比例" required>
           <el-input v-model="stockScale" :disabled="true"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="checkForm('stockAddForm')">继续添加</el-button>
-        <el-button type="primary" @click="checkForm('stockAddForm');dialogVisible=false;">确认保存</el-button>
+        <el-button type="primary" @click="checkForm('stockAddForm');resetForm('financAddForm');dialogVisible=false;">确认保存</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 <script>
+import echarts from 'echarts';
 import treelistTable from './treetable';
 import { SHAREHOLDER_TYPE, ROUND_TYPE } from '../../../../data/constants';
 import stockServer from '../../../../service/stock';
@@ -68,7 +66,9 @@ export default {
   data() {
     return {
       companyId: '123123123',  // 从缓存读取
+      totalMoney: 140000,  // 调取接口
       isloading: false, // 判断axios加载是否完成,加载完成后才渲染组件
+      myChartDiv: undefined,
       stocklistdata: {},
       shareholderType: SHAREHOLDER_TYPE, // 股东类型
       roundType: ROUND_TYPE, // 投资轮次
@@ -77,6 +77,10 @@ export default {
         shareholderType: '',
         rounds: '',
         registeredCapital: '',
+      },
+      eChartList: {
+        xAxiasMap: [],
+        yAxiasMap: [],
       },
       dialogVisible: false,
     };
@@ -88,11 +92,61 @@ export default {
   mounted() {
   },
   methods: {
+    createEchart() {
+      this.xyEchartData();
+      this.myChartDiv = document.getElementById('stockChart');
+      if (this.myChartDiv) {
+        this.onEchart();
+      }
+    },
+    onEchart() {
+      // 基于准备好的dom，初始化echarts实例
+      const myChart = echarts.init(this.myChartDiv);
+      // 绘制图表
+      myChart.setOption({
+        color: '#4F6BBF',
+        backgroundColor: '#ffffff',
+        textStyle: {
+          color: '#666666',
+        },
+        tooltip: {},
+        xAxis: {
+          data: this.eChartList.xAxiasMap,
+          axisLine: {
+            show: false,
+            lineStyle: {
+              color: '#ffffff',
+              width: '0',
+            },
+          },
+        },
+        yAxis: {
+          show: false,
+        },
+        series: [{
+          type: 'bar',
+          data: this.eChartList.yAxiasMap,
+          itemstyle: {
+          },
+          barWidth: '10%',
+          barMinHeight: '10',
+        }],
+      });
+    },
+    xyEchartData() {
+      this.stocklistdata.forEach((value) => {
+        this.eChartList.xAxiasMap.push(value.shareholderAbbreviation);
+        this.eChartList.yAxiasMap.push(value.registeredCapital);
+      });
+      console.log(this.eChartList.xAxiasMap);
+      console.log(this.eChartList.yAxiasMap);
+    },
     checkForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.addStock(formName);
         }
+        this.$message.error('添加失败');
         return false;
       });
     },
@@ -118,6 +172,7 @@ export default {
       stockServer.getAll(this.companyId).then((resp) => {
         this.stocklistdata = resp;
         this.isloading = true;
+        this.createEchart();
       });
     },
   },
@@ -136,7 +191,7 @@ export default {
 .head-menu .title{font-weight:bold;font-size: 16px;color: #666;letter-spacing: 1.97px;line-height: 60px;}
 .head-menu .return{position: absolute;top:20px;left:20px;font-size: 14px;color: #999999;letter-spacing: 1.14px;line-height: 14px;}
 .stock-cont{margin:20px 0 0;}
-.echart-warp{min-height: 180px;}
+.echart-warp{min-height: 180px;width:100%;}
 .stock-list{min-height:500px;padding:30px 30px 0 30px;}
 .main-title .title{float:left;display: inline;font-size: 16px;color: #666666;letter-spacing:1px;font-weight:bold;line-height:36px;}
 .main-title .addbtn{float:right;display: inline;font-size: 14px;color: #FFFFFF;letter-spacing: 1px;}

@@ -3,7 +3,7 @@
     <el-table :data="treeDataMap" class="stock-tree-list">
       <el-table-column type="expand">
         <template scope="props">
-          <el-table ref="expandTable" :data="props.row.children" inline :show-header="false" :border="false">
+          <el-table ref="expandTable" :data="props.row.equities" inline :show-header="false" :border="false">
             <el-table-column type="index" width="55"></el-table-column>
             <el-table-column prop="shareholderName"></el-table-column>
             <el-table-column>
@@ -55,19 +55,6 @@ export default {
     this.treeDataMap = this.treelistdata;
   },
   methods: {
-    getPercent(num, total) {
-      const number = parseFloat(num);
-      const totals = parseFloat(total);
-      if (isNaN(number) || isNaN(totals)) {
-        return '-';
-      }
-      if (totals < 0) {
-        return '0%';
-      }
-      const rate = Math.round((number / totals) * 10000) / 100.00;
-      return `${rate}%`;
-      // return totals <= 0 ? '0%' : ((Math.round((number / totals) * 10000) / 100.00) + '%');
-    },
     delete(row) {
       console.log(row);
     },

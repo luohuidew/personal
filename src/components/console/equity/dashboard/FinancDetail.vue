@@ -22,12 +22,18 @@
         </div>
         <div class="table-wrap">
           <el-table :data="financlistdata">
-            <el-table-column  prop="rounds" label="融资轮次"></el-table-column>
+            <el-table-column label="融资轮次">
+              <template scope="scope">
+                <ul class="round-wrap">
+                  <li v-for="item in roundType" v-bind:class="{active: scope.row.round == item.id}">{{item.text}}</li>
+                </ul>
+              </template>
+            </el-table-column>
             <el-table-column  prop="financedAccount" label="融资金额"></el-table-column>
             <el-table-column  prop="financedDate" label="融资时间"></el-table-column>
-            <el-table-column  prop="shareholderName" label="投资方"></el-table-column>
+            <el-table-column  prop="equity.shareholderName" label="投资方"></el-table-column>
             <el-table-column label="操作">
-              <template scope="scope"><el-button @click="deleteFinanc(scope.row)">删除</el-button></template>
+              <template scope="scope"><el-button @click="delete(scope.row)">删除</el-button></template>
             </el-table-column>
           </el-table>
         </div>
@@ -35,48 +41,95 @@
     </div>
     <!-- 新增融资 -->
     <el-dialog title="添加融资信息" :visible.sync="dialogVisible" size="small" :before-close="handleClose">
-      <el-form :model="financAddMap" ref="stockAddForm" label-width="120px">
-        <el-form-item label="融资轮次" required prop="shareholderName" :rules="[{ required: true, message: '股东名称不能为空'}]">
-          <el-input v-model="financAddMap.shareholderName"></el-input>
+      <el-form :model="financAddMap" ref="financAddForm" label-width="120px">
+        <el-form-item label="融资轮次" required prop="round" :rules="[{ required: true, message: '融资轮次不能为空'}]">
+          <el-select v-model="financAddMap.round" placeholder="请选择融资轮次">
+            <el-option v-for="item in roundType" :label="item.text" :value="item.id"></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="融资时间" required prop="financedDate" :rules="[{ required: true, message: '股东名称不能为空'}]">
-          <el-input v-model="financAddMap.financedDate"></el-input>
+        <el-form-item label="融资时间" required prop="financedDate" :rules="[{ required: true, message: '融资时间不能为空'}]">
+          <el-date-picker v-model="financAddMap.financedDate" type="date" placeholder="选择日期"></el-date-picker>
         </el-form-item>
-        <el-form-item label="融资金额" required prop="financedAccount" :rules="[{ required: true, message: '股东名称不能为空'}, { type: 'number', message: '注册资本必须为数字值'}]">
+        <el-form-item label="融资金额" required prop="financedAccount" :rules="[{ required: true, message: '融资金额不能为空'}, { type: 'number', message: '融资金额必须为数字值'}]">
           <el-input v-model.number="financAddMap.financedAccount"></el-input>
         </el-form-item>
-        <el-form-item label="投资方" required prop="shareholderName" :rules="[{ required: true, message: '股东名称不能为空'}]">
-          <el-input v-model="financAddMap.shareholderName"></el-input>
+        <el-form-item label="投资方" required prop="equityid" :rules="[{ required: true, message: '投资方不能为空'}]">
+          <el-select v-model="financAddMap.equityid" placeholder="请选择投资方">
+            <el-option v-for="item in shareholderMap" :label="item.shareholderName" :value="item.id"></el-option>
+          </el-select>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="checkForm('stockAddForm')">继续添加</el-button>
-        <el-button type="primary" @click="checkForm('stockAddForm');dialogVisible=false;">确认保存</el-button>
+        <el-button @click="checkForm('financAddForm')">继续添加</el-button>
+        <el-button type="primary" @click="checkForm('financAddForm');resetForm('financAddForm');dialogVisible=false;">确认保存</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 <script>
+import financServer from '../../../../service/financ';
+import stockServer from '../../../../service/stock';
+import { ROUND_TYPE } from '../../../../data/constants';
+
 export default {
   name: 'stock-detail',
   data() {
     return {
       companyId: '123123123',  // 从缓存读取
-      financlistdata: {},
+      financlistdata: [],
+      shareholderMap: [],
       financAddMap: {
-        shareholderName: '',
-        shareholderType: '',
-        rounds: '',
-        registeredCapital: '',
+        equityid: '',
+        financedAccount: '',
+        round: '',
+        financedDate: '',
       },
+      roundType: ROUND_TYPE,
       dialogVisible: false,
     };
   },
   created() {
+    financServer.get(this.companyId).then((resp) => {
+      console.log(resp);
+      this.financlistdata = resp;
+    });
+    this.getShareholderList();
   },
   methods: {
-    deleteFinanc(row) {
+    checkForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.addFinanc(formName);
+        }
+        this.$message.error('添加失败');
+        return false;
+      });
+    },
+    addFinanc(formName) {
+      financServer.add(this.financAddMap).then(() => {
+        this.resetForm(formName);
+        this.$message({
+          message: '添加成功',
+          type: 'success',
+        });
+      }, () => {
+        this.$message.error('添加失败');
+      });
+    },
+    delete(row) {
       console.log(row);
+    },
+    handleClose() {
+      this.resetForm('financAddForm');
+      this.dialogVisible = false;
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+    },
+    getShareholderList() {
+      stockServer.get(this.companyId).then((resp) => {
+        this.shareholderMap = resp;
+      });
     },
   },
 };

@@ -30,7 +30,7 @@
             </div>
             <div class="main-wrap">
               <el-table :data="stockMap">
-                <el-table-column prop="shareholderAbbreviation" label="股东名称"></el-table-column>
+                <el-table-column prop="shareholderName" label="股东名称"></el-table-column>
                 <el-table-column label="投资轮次">
                   <template scope="scope">
                     <ul class="round-wrap">
@@ -209,14 +209,6 @@
 </template>
 
 <script>
-// 引入 ECharts 主模块
-import echarts from 'echarts/lib/echarts';
-// 引入柱状图
-import 'echarts/lib/chart/bar';
-// 引入提示框和标题组件
-import 'echarts/lib/component/tooltip';
-import 'echarts/lib/component/title';
-
 import stockServer from '../../../service/stock';
 import { ROUND_TYPE } from '../../../data/constants';
 
@@ -227,11 +219,9 @@ export default {
       companyId: '123123123',  // 从缓存读取
       dialogVisible1: false,
       dialogVisible2: false,
-      myChartDiv: undefined,
-      totalMoney: 140000,
       stockMap: undefined, // 股权概况
-      stockAddList: undefined,
-      financAddList: undefined,
+      stockAddList: undefined, // 新建股权
+      financAddList: undefined, // 新建融资
       roundType: ROUND_TYPE,
       stepList: [{   // 测试
         title: '2017-07-06',
@@ -259,46 +249,11 @@ export default {
     });
   },
   mounted() {
-    // this.myChartDiv = document.getElementById('ddbox');
-    // if (this.myChartDiv) {
-    //   this.onEchart();
-    // }
   },
   methods: {
-    onEchart() {
-      // 基于准备好的dom，初始化echarts实例
-      const myChart = echarts.init(this.myChartDiv);
-      // 绘制图表
-      myChart.setOption({
-        title: { text: 'ECharts 入门示例' },
-        tooltip: {},
-        xAxis: {
-          data: ['衬衫', '羊毛衫', '雪纺衫', '裤子', '高跟鞋', '袜子'],
-        },
-        yAxis: {},
-        series: [{
-          name: '销量',
-          type: 'bar',
-          data: [5, 20, 36, 10, 10, 20],
-        }],
-      });
-    },
     checkRound(r, rounds) {
       const roundList = rounds.split(',');
       return roundList.includes(r);
-    },
-    getPercent(num, total) {
-      const number = parseFloat(num);
-      const totals = parseFloat(total);
-      if (isNaN(number) || isNaN(totals)) {
-        return '-';
-      }
-      if (totals < 0) {
-        return '0%';
-      }
-      const rate = Math.round((number / totals) * 10000) / 100.00;
-      return `${rate}%`;
-      // return totals <= 0 ? '0%' : ((Math.round((number / totals) * 10000) / 100.00) + '%');
     },
   },
 };

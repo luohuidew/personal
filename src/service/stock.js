@@ -5,8 +5,8 @@ export default {
     const totalMoney = 140000;  // 从缓存读取
     return api.get(`/equity/findAllWithGroup/${id}`).then((resp) => {
       resp.data.forEach((value) => {
-        if (value.children.length !== 0) {
-          value.children.forEach((key) => {
+        if (value.equities.length !== 0) {
+          value.equities.forEach((key) => {
             const keytest = key;
             const rate = this.getPercent(key.registeredCapital, totalMoney);
             keytest.rate = rate;
@@ -17,8 +17,6 @@ export default {
         valuetest.rate = r;
       });
       return resp.data;
-    }, (resp) => {
-      this.$message.error(resp.errMsg);
     });
   },
   get(id) {
