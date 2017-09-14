@@ -7,13 +7,13 @@ import router from '../router/index';
 
 const axiosIns = axios.create({
   timeout: 60000,
-  baseURL: '/api',
+  baseURL: 'http://rapapi.org/mockjsdata/25547',
 });
 
 axiosIns.interceptors.request.use(
   config => {
     if (user.getToken()) {
-      config.headers.Authorization = user.getToken();
+      // config.headers.Authorization = user.getToken();
     }
     return config;
   },
