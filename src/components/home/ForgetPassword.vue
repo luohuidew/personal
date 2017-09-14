@@ -19,7 +19,7 @@
           <el-form-item prop="newPassword" required>
             <el-input type="password" v-model.trim="forgetData.newPassword" placeholder="设置新密码"></el-input>
           </el-form-item>
-          <el-form-item>
+          <el-form-item class="submit-btn">
             <a href="javascript:void(0)" class="submit-now">提交</a>
           </el-form-item>
         </el-form>
@@ -120,5 +120,8 @@ export default {
   border-left: 2px solid #EAEAEA;
   text-align: right;
   cursor: default;
+}
+.el-form-item.submit-btn {
+  margin-bottom: 0 !important;
 }
 </style>

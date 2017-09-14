@@ -293,9 +293,9 @@
           </el-form-item>
           <el-form-item label="密码安全性" :label-width="usefulData.formLabelWidth">
             <el-row :gutter="10" class="safety">
-              <el-col :span="8" class="active"><span></span></el-col>
-              <el-col :span="8" class="active"><span></span></el-col>
-              <el-col :span="8"><span></span></el-col>
+              <el-col :span="8" ref="weakLen"><span></span></el-col>
+              <el-col :span="8" ref="midLen"><span></span></el-col>
+              <el-col :span="8" ref="larLen"><span></span></el-col>
             </el-row>
           </el-form-item>
         </el-form>
@@ -399,6 +399,7 @@
 <script>
 import validate from '../../../utils/validation';
 import user from '../../../service/user';
+import filters from '../../../utils/filters';
 import personal from '../../../service/personalInfo';
 
 
@@ -408,7 +409,8 @@ export default {
     // 默认进来获得用户id从而调用getOne接口默认渲染页面
     this.usefulData.id = user.getUser().id; // 调用用户id
     this.sendPhoneCode.id = this.usefulData.id;
-    personal.findOne(this.usefulData.id).then((r) => {
+    // 执行findOne接口返回的数据
+    personal.findOne().then((r) => {
       console.log(r);
       this.usefulData.username = r.username;
       this.usefulData.enabled = r.enabled;
@@ -493,7 +495,7 @@ export default {
         upLoadSignImg1: 'http://static9.photo.sina.com.cn/orignal/4af8a5e8856933841a998', // 临时房的一个签名图片地址
         idValue: '', // 证件类型
         portrait: '', // 头像
-        username: '沙枫', // 用户昵称
+        username: '', // 用户昵称
         id: '', // 用户id必填
         idCardImgPositiveUrl: 'http://mpic.tiankong.com/cdd/23c/cdd23c7d1bfd4520859cfd3772772023/640.jpg', // 正面证件照
         idCardImgNegativeUrl: 'http://mpic.tiankong.com/cbf/7a6/cbf7a638d38760e0dfc90f6b6cd6983d/640.jpg', // 背面证件照
@@ -555,6 +557,11 @@ export default {
         ],
       },
     };
+  },
+  filters: {
+    filter(avg1, avg2) {
+      return filters.constantsFilter(avg1, avg2);
+    },
   },
   methods: {
     // handleClose(done) {

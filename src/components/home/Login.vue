@@ -14,7 +14,7 @@
           <el-form-item prop="password" required>
             <el-input type="password" v-model.trim="loginData.password" placeholder="请输入密码"></el-input>
           </el-form-item>
-          <el-form-item>
+          <el-form-item class="login-edit">
             <el-row type="flex" justify="end">
               <el-col :span="12" class="forget-pass"><router-link to="/forget_password">忘记密码？</router-link></el-col>
             </el-row>
@@ -130,5 +130,8 @@ export default {
 }
 .login-now {
   cursor: pointer;
+}
+.el-form-item.login-edit {
+  margin-bottom: 0 !important;
 }
 </style>

@@ -7,5 +7,6 @@
   "emmet.syntaxProfiles": {
     "vue-html": "html",
     "vue": "html"
-  }
+  },
+  "git.ignoreLimitWarning": true
 }
