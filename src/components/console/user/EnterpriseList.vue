@@ -144,6 +144,10 @@ export default {
         }
       });
     },
+    handleClose() {
+      this.$refs.form.resetFields();
+      this.dialogVisible = false;
+    },
     getQiNiuToken() {
       base.getQiNiuToken().then((resp) => {
         this.uploadData.token = resp.token;
@@ -172,10 +176,6 @@ export default {
     },
     handleError(res) {
       this.$message.error(res);
-    },
-    handleClose() {
-      this.$refs.form.resetFields();
-      this.dialogVisible = false;
     },
     handleRemove() {
     },
