@@ -17,6 +17,10 @@ export const SHAREHOLDER_TYPE = [  // 股东类型
   { id: '0', text: '个人' },
   { id: '1', text: '团体' },
 ];
+export const ID_TYPES = [
+  { id: '0', text: '身份证' },
+  { id: '1', text: '护照' },
+];
 export const COMPENY_TYPE = [
   { id: '0', text: '境内有限责任公司' },
   { id: '1', text: '境外有限责任公司' },
@@ -38,4 +42,3 @@ export default {
   COMPENY_TYPE,
   MONEY_TYPE,
 };
-
