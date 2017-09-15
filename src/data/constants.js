@@ -37,7 +37,7 @@ export const ID_TYPE = [ // 证件类型
 
 export const QINIU_BUCKET_DOMAIN = 'http://ow9hvlmOa.bkt.clouddn.com';
 
-export const QINIU_SERVER = 'http://up-z1.qiniu.com/';
+export const QINIU_SERVER = 'http://upload-z1.qiniu.com';
 
 // 需要用于filter的必须加到default里
 export default {
