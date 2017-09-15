@@ -3,7 +3,7 @@ import api from './http';
 import user from '../service/user';
 
 export default {
-  findOne() {
+  findOne() { // 默认进来获得的用户信息
     const userId = user.getUser().id;
     return api.get(`/user/findOne/${userId}`).then((resp) => {
       // 处理邮箱*
@@ -25,5 +25,11 @@ export default {
   },
   sendMsg(params) { // 邮箱、电话验证
     return api.post('/sendMsg/', params).then(resp => resp);
+  },
+  getImgCode(phone) { // 获得图形验证
+    return api.post(`/validateCode/${phone}`).then(resp => resp);
+  },
+  checkImgCode(phone, validateCode) { // 验证图形验证码
+    return api.post(`/checkCode/${phone}/${validateCode}`).then(resp => resp);
   },
 };

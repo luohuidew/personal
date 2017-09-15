@@ -189,7 +189,7 @@
     display: block;
     width: 100%;
     height: 40px;
-    margin: 40px auto 27px;
+    margin: 30px auto 27px;
     line-height: 40px;
     text-align: center;
     background: #546AAC;
@@ -224,9 +224,48 @@
 }
 .login .el-input, .apply .el-input, .apply .el-textarea, .forget .el-input{
     width: 100%;
-    margin: 20px 0;
+    margin: 20px 0 0;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
+}
+.login .el-form-item__error, .apply .el-form-item__error, .forget .el-form-item__error {
+    padding: 10px 10px 0;
+}
+.login ::-webkit-input-placeholder { /* WebKit browsers */
+    color:#BDBDBD !important;
+}
+.login :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color:#BDBDBD !important;
+}
+.login ::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color:#BDBDBD !important;
+}
+.login :-ms-input-placeholder { /* Internet Explorer 10+ */
+    color:#BDBDBD !important;
+}
+.apply ::-webkit-input-placeholder { /* WebKit browsers */
+    color:#BDBDBD !important;
+}
+.apply :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color:#BDBDBD !important;
+}
+.apply ::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color:#BDBDBD !important;
+}
+.apply :-ms-input-placeholder { /* Internet Explorer 10+ */
+    color:#BDBDBD !important;
+}
+.forget ::-webkit-input-placeholder { /* WebKit browsers */
+    color:#BDBDBD !important;
+}
+.forget :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color:#BDBDBD !important;
+}
+.forget ::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color:#BDBDBD !important;
+}
+.forget :-ms-input-placeholder { /* Internet Explorer 10+ */
+    color:#BDBDBD !important;
 }
 .forget .get-code .el-input {
     margin: 0;
