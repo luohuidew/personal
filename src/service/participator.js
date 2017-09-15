@@ -14,7 +14,7 @@ export default {
     return api.get(`/userInfo/findOne/${id}`);
   },
   // findAll
-  findAll(params) {
-    return api.post('/userInfo/findAll', params);
+  findAll(params, pageNumber, size) {
+    return api.post('/userInfo/findAll', { params, pageNumber, size });
   },
 };

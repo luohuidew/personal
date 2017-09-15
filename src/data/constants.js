@@ -36,4 +36,5 @@ export default {
   SHAREHOLDER_TYPE,
   COMPENY_TYPE,
   MONEY_TYPE,
+  ID_TYPES,
 };
