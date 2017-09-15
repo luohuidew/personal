@@ -17,6 +17,9 @@ export default {
       if (resp.email.length > 0) {
         findOneObj.email = editedEmail.replace(emailArray[0], xing);
       }
+      if (resp.phone.length > 0) {
+        findOneObj.phone = `${resp.phone.substr(0, 3)}****${resp.phone.substr(7)}`;
+      }
       return findOneObj;
     });
   },
@@ -27,7 +30,7 @@ export default {
     return api.post('/sendMsg/', params).then(resp => resp);
   },
   getImgCode(phone) { // 获得图形验证
-    return api.post(`/validateCode/${phone}`).then(resp => resp);
+    return api.get(`/validateCode/${phone}`).then(resp => resp);
   },
   checkImgCode(phone, validateCode) { // 验证图形验证码
     return api.post(`/checkCode/${phone}/${validateCode}`).then(resp => resp);

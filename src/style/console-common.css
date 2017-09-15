@@ -44,6 +44,18 @@ body{
 .user-personal-info .el-tooltip__popper.is-light {
   border: 1px solid #EBEBEB !important;
 }
+::-webkit-input-placeholder { /* WebKit browsers */
+  color:#BDBDBD !important;
+}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+  color:#BDBDBD !important;
+}
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+  color:#BDBDBD !important;
+}
+:-ms-input-placeholder { /* Internet Explorer 10+ */
+  color:#BDBDBD !important;
+}
 /* 初次登录添加股权信息页 弹窗样式 */
 .dialog-wrap__large .el-dialog__body{padding:0px!important;}
 .dialog-wrap__large .dialog-left{position: fixed;left:0;top:54px;bottom:0;width:110px;padding:20px 0 0 30px;background:#33457B;}
