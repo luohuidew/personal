@@ -30,6 +30,10 @@ export const MONEY_TYPE = [
   { id: 'USD', text: '欧元' },
   { id: 'EUR', text: '美元' },
 ];
+export const ID_TYPE = [ // 证件类型
+  { id: '0', text: '身份证' },
+  { id: '1', text: '护照' },
+];
 
 export const QINIU_BUCKET_DOMAIN = 'http://ow9hvlmOa.bkt.clouddn.com';
 
@@ -41,4 +45,5 @@ export default {
   SHAREHOLDER_TYPE,
   COMPENY_TYPE,
   MONEY_TYPE,
+  ID_TYPE,
 };
