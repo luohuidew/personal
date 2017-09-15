@@ -85,7 +85,7 @@ export default new Router({
       component: OptionParticipator,
     },
     {
-      path: '/option/participator/permission/:id/:type',
+      path: '/option/participator/permission/:id/:type/:page',
       name: 'OptionPermission',
       component: OptionPermission,
     },
