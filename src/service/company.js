@@ -6,8 +6,13 @@ const COMPANY_KEY = '_COMPANY_KEY';
 
 export default {
   getCompanyListByUid() {
-    const adminId = user.getUser().id;
-    return api.post(`/company/getMyCompanyList/${adminId}`).then(resp => resp);
+    const id = user.getUser().id;
+    return api.post(`/company/getMyCompanyList/${id}`).then(resp => resp);
+  },
+  addCompany(params) {
+    const pm = params;
+    pm.adminId = user.getUser().id;
+    return api.post('/company/addCompany', pm).then(resp => resp);
   },
   getStoredCompany: () => JSON.parse(sessionStorage.getItem(COMPANY_KEY)),
   setStoreCompany: (obj) => {
