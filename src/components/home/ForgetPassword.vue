@@ -4,7 +4,7 @@
       <canvas id="demo-canvas"></canvas>
     </div>
     <section class="forget-inner">
-      <a href="javascript:void(0)" class="logo"><img src="../../assets/login-logo.png"/></a>
+      <a :href="homeUrl" class="logo"><img src="../../assets/login-logo.png"/></a>
       <div class="forget-main">
         <el-form :model="forgetData" :rules="rules" ref="forgetData">
           <el-form-item prop="userName" required>
@@ -36,6 +36,7 @@ export default {
   name: 'forget_password',
   data() {
     return {
+      homeUrl: 'http://localhost:8000/home.html',
       forgetData: {
         userName: '', // 用户名
         captcha: '', // 验证码

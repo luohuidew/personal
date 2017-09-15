@@ -26,11 +26,16 @@ export const MONEY_TYPE = [
   { id: '1', text: '欧元' },
   { id: '2', text: '美元' },
 ];
+export const ID_TYPE = [ // 证件类型
+  { id: '0', text: '身份证' },
+  { id: '1', text: '护照' },
+];
 
 export default {
   ROUND_TYPE,
   SHAREHOLDER_TYPE,
   COMPENY_TYPE,
   MONEY_TYPE,
+  ID_TYPE,
 };
 

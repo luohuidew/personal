@@ -5,7 +5,7 @@
       <canvas id="demo-canvas"></canvas>
     </div>
     <section class="login-inner">
-      <a class="logo"><img src="../../assets/login-logo.png"/></a>
+      <a class="logo" :href="homeUrl"><img src="../../assets/login-logo.png"/></a>
       <div class="login-main">
         <el-form :model="loginData" :rules="rules" ref="loginData">
           <el-form-item prop="username" required>
@@ -38,6 +38,7 @@ export default {
   name: 'login',
   data() {
     return {
+      homeUrl: 'http://localhost:8000/home.html',
       loginData: {
         username: '', // 用户名
         password: '', // 密码
@@ -88,9 +89,7 @@ export default {
     loginRequest(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          user.login(this.loginData).then(() => {
-            window.location.href = `http://${window.location.host}/console/#/user/enterprise_list`;
-          });
+          user.login(this.loginData);
         }
       });
     },

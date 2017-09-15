@@ -6,6 +6,7 @@ export default {
   findOne() {
     const userId = user.getUser().id;
     return api.get(`/user/findOne/${userId}`).then((resp) => {
+      // 处理邮箱*
       let findOneObj = {};
       const emailArray = (resp.email).split('@');
       const editedEmail = emailArray.join('@');

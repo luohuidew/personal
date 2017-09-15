@@ -21,17 +21,15 @@
           <div v-if="!isNameEdit" class="edit-btn" @click="changeNameEdit">
             <i><img src="../../../assets/icon-edit.png"/></i><em>编辑</em>
           </div>
-          <input v-if="isNameEdit" type="text" class="name" v-model.trim="updateUserName.username"/>
+          <input v-if="isNameEdit" type="text" class="name" v-model.trim="usefulData.username"/>
           <div v-if="isNameEdit" class="edit-btn" @click="nameEditSave">
             <i><img src="../../../assets/icon-save.png"/></i><em>保存</em>
           </div>
         </li>
         <li class="common email">
           <span>绑定邮箱</span>
-          <p v-if="emailStatus===0">未绑定</p>
-          <div v-if="emailStatus===0" class="edit-btn" @click="emailShow=true"><em>邮箱绑定</em></div>
-          <p v-if="emailStatus===1">{{usefulData.xingEmail}}</p>
-          <div v-if="emailStatus===1" class="edit-btn" @click="changeEmailShow=true"><em>修改</em></div>
+          <p>{{usefulData.emailType}}</p>
+          <div class="edit-btn" @click="emailEdit(usefulData.email)"><em>{{usefulData.emailBtn}}</em></div>
         </li>
         <li class="common phone">
           <span>绑定手机</span>
@@ -61,32 +59,18 @@
         <i>*</i><p>接受期权授予协议，必须要完成实名认证才能顺利签字。</br>实名认证审核时间约为1个工作日 ，请您合理安排认证时间，避免耽误签字。</p>
       </div>
       <!--邮箱弹窗 start-->
-      <el-dialog v-if="emailShow && this.emailStatus === 0" title="绑定邮箱" :visible.sync="emailShow" size="tiny">
-        <el-form :model="updateEmail" :rules="rules" ref="updateEmail">
-          <el-form-item label="请输入绑定的邮箱" prop="email" :label-width="usefulData.formLabelSmall" required>
-            <el-input type="email" v-model.trim="updateEmail.email" placeholder="请输入您要绑定的邮箱地址"></el-input>
+      <el-dialog v-if="emailShow" title="绑定邮箱" :visible.sync="emailShow" size="tiny">
+        <el-form :model="usefulData" :rules="rules" ref="usefulData">
+          <el-form-item label="请输入绑定的邮箱" prop="newEmail" :label-width="usefulData.formLabelSmall" required>
+            <el-input type="email" v-model.trim="usefulData.newEmail" placeholder="请输入您要绑定的邮箱地址"></el-input>
           </el-form-item>
-          <el-form-item prop="emailCode" label="邮箱验证码" :label-width="usefulData.formLabelWidth" class="tel-code" required>
-            <!--这里需要做一个处理，掉接口判断手机验证码正确与否-->
+          <!-- <el-form-item prop="emailCode" label="邮箱验证码" :label-width="usefulData.formLabelWidth" class="tel-code" required>
             <el-input v-model.trim="usefulData.emailCode" placeholder="请输入邮箱验证码" class="tel-code"></el-input><el-button @click="sendEmailMsgs('updateEmail')">发送验证码</el-button>
-          </el-form-item>
+          </el-form-item> -->
         </el-form>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="emailShow = false">取 消</el-button>
-          <el-button type="primary" @click="editNewEmail('updateEmail')">确 定</el-button>
-        </span>
-      </el-dialog>
-      <el-dialog v-if="changeEmailShow && this.emailStatus === 1" title="修改绑定邮箱" :visible.sync="changeEmailShow" size="small">
-        <el-form :model="updateEmail" :rules="rules" ref="updateEmail">
-          <el-form-item label="请输入修改的邮箱" prop="newEmail" :label-width="usefulData.formLabelSmall" required>
-            <el-input type="email" v-model.trim="updateEmail.email" placeholder="请输入您要修改的邮箱地址"></el-input>
-          </el-form-item>
-          <el-form-item>
-          </el-form-item>
-        </el-form>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="changeEmailShow = false">取 消</el-button>
-          <el-button type="primary" @click="editNewEmail('updateEmail')">确 定</el-button>
+          <el-button @click="closeEmail">取 消</el-button>
+          <el-button type="primary" @click="editNewEmail('usefulData')">确 定</el-button>
         </span>
       </el-dialog>
       <!--邮箱弹窗 end-->
@@ -411,38 +395,20 @@ export default {
     this.sendPhoneCode.id = this.usefulData.id;
     // 执行findOne接口返回的数据
     personal.findOne().then((r) => {
-      console.log(r);
       this.usefulData.username = r.username;
       this.usefulData.enabled = r.enabled;
       this.usefulData.phone = r.phone;
       this.usefulData.email = r.email;
       this.usefulData.lastPasswordResetDate = r.lastPasswordResetDate;
+      // 编辑处理邮箱
+      this.editEmail();
     });
-    // 根据邮箱是否为空来判断是否已经被绑定
-    if (this.usefulData.email) {
-      this.emailStatus = 1; // 0表示邮箱未绑定，1表示邮箱已绑定
-      // 将邮箱*处理
-      // 邮箱@前均为*号
-      if (this.usefulData.email.length > 0) {
-        const emailArray = this.usefulData.email.split('@');
-        const editedEmail = emailArray.join('@');
-        const len = emailArray[0].length;
-        const x = '*';
-        const xing = x.repeat(len);
-        this.usefulData.xingEmail = editedEmail.replace(emailArray[0], xing);
-      }
-    } else {
-      this.emailStatus = 0;
-    }
     // 根据手机号是否为空来判断是否已经被绑定
-    if (this.updateEmail.phone) {
-      this.emailStatus = 1; // 0表示邮箱未绑定，1表示邮箱已绑定
-    } else {
-      this.emailStatus = 0;
-    }
-    // 为了更新编辑修改而设置的数据
-    this.updateUserName.id = this.usefulData.id;
-    this.updateEmail.id = this.usefulData.id;
+    // if (this.updateEmail.phone) {
+    //   this.emailStatus = 1; // 0表示邮箱未绑定，1表示邮箱已绑定
+    // } else {
+    //   this.emailStatus = 0;
+    // }
     // this.updateEmail.email = this.usefulData.newEmail;
     // 手机中间4位均为*号
     const phone = this.usefulData.phone;
@@ -461,8 +427,8 @@ export default {
           label: '护照',
         },
       ],
-      isNameEdit: false, // 默认进来用户名称是不可编辑的
-      emailShow: false, // 默认进来邮箱绑定弹窗不显示
+      isNameEdit: false, // 默认进来用户名称是不可编辑状态
+      emailShow: false, // 默认进来邮箱弹窗不显示
       changeEmailShow: false, // 默认进来修改邮箱绑定不显示
       emailStatus: 0, // 未绑定 0表示未绑定,1已绑定
       phoneShow: false, // 默认进来手机绑定弹窗不显示绑定不显示
@@ -489,13 +455,15 @@ export default {
       idStatus: true, // 身份证被选中
       passportStatus: false, // 默认护照没有被选中
       usefulData: {
+        username: '', // 用户名称
+        emailType: '', // 星处理之后的邮箱
+        emailBtn: '', // 编辑邮箱btn
         enabled: '',
         upLoadSignImg: '', // 上传的签名图片地址
         rotate: 0, // 默认进来没有做旋转
         upLoadSignImg1: 'http://static9.photo.sina.com.cn/orignal/4af8a5e8856933841a998', // 临时房的一个签名图片地址
         idValue: '', // 证件类型
         portrait: '', // 头像
-        username: '', // 用户昵称
         id: '', // 用户id必填
         idCardImgPositiveUrl: 'http://mpic.tiankong.com/cdd/23c/cdd23c7d1bfd4520859cfd3772772023/640.jpg', // 正面证件照
         idCardImgNegativeUrl: 'http://mpic.tiankong.com/cbf/7a6/cbf7a638d38760e0dfc90f6b6cd6983d/640.jpg', // 背面证件照
@@ -524,14 +492,6 @@ export default {
         idNo: '', // 身份证号
         passportNo: '', // 护照号码
       },
-      updateUserName: {
-        id: '', // 必填
-        username: '', // 用户名昵称
-      },
-      updateEmail: {
-        id: '', // 必填
-        email: '', // 用户绑定的邮箱地址
-      },
       sendEmailCode: {
         email: '', // 需要发送验证码的邮箱
       },
@@ -552,7 +512,7 @@ export default {
         passportNo: [
           { validator: this.checkPassportNo, trigger: 'blur' },
         ],
-        email: [
+        newEmail: [
           { validator: this.validateEmail, trigger: 'blur' },
         ],
       },
@@ -564,11 +524,11 @@ export default {
     },
   },
   methods: {
-    // handleClose(done) {
-    //   this.$confirm('确认关闭？').then(() => {
-    //     done();
-    //   }).catch(() => {});
-    // },
+    handleClose(done) {
+      this.$confirm('确认关闭？').then(() => {
+        done();
+      }).catch(() => {});
+    },
     // 点击用户名称编辑
     changeNameEdit() {
       this.isNameEdit = !this.isNameEdit;
@@ -576,38 +536,69 @@ export default {
     // 修改过用户名称后，点击保存
     nameEditSave() {
       this.isNameEdit = !this.isNameEdit;
-      if (this.updateUserName.username) {
-        personal.update(this.updateUserName).then((r) => {
-          console.log(r);
-          this.usefulData.username = this.updateUserName.username;
-        });
+      const updateUserName = {
+        id: this.usefulData.id,
+        username: this.usefulData.username,
+      };
+      personal.update(updateUserName).then((r) => {
+        console.log(r);
+        console.log('用户名称更改成功！');
+      });
+    },
+    // 编辑渲染邮箱展示
+    editEmail() {
+      // 根据邮箱是否为空来区别渲染
+      if (this.usefulData.email.length > 0) {
+        this.usefulData.emailType = this.usefulData.email;
+        this.usefulData.emailBtn = '修改邮箱';
+      } else {
+        this.usefulData.emailType = '未绑定';
+        this.usefulData.emailBtn = '邮箱绑定';
       }
+    },
+    // 根据邮箱是否为空区别来做弹窗处理
+    emailEdit(email) {
+      if (email.length > 0) {
+        this.changeEmailShow = true;
+      }
+      this.emailShow = true;
     },
     // 点击确定编辑绑定邮箱弹窗
     editNewEmail(formName) {
-      console.log();
       this.$refs[formName].validate((valid) => {
         if (valid) {
           // 当邮箱验证通过
           this.emailShow = false; // 关闭绑定邮箱弹窗
-          this.changeEmailShow = false; // 修改邮箱弹窗关闭
-           // 将绑定的邮箱给到updateEmail
-          personal.update(this.updateEmail).then((r) => {
+          // 将绑定的邮箱给到updateEmail
+          const updateEmail = {
+            id: this.usefulData.id,
+            email: this.usefulData.newEmail,
+          };
+          personal.update(updateEmail).then((r) => {
             // 调用update接口成功
             console.log(r);
-            this.emailStatus = 1; // 绑定邮箱成功
-            this.usefulData.email = this.updateEmail.email; // 将变更后的邮箱给到渲染的邮箱
-            this.xingEmails(); // 将绑定的邮箱*处理
+            this.usefulData.emailType = updateEmail.email; // 将变更后的邮箱给到渲染的邮箱
+            // 将绑定的邮箱*处理
+            const emailArray = this.usefulData.emailType.split('@');
+            const editedEmai = emailArray.join('@');
+            const len = emailArray[0].length;
+            const x = '*';
+            const xing = x.repeat(len);
+            this.usefulData.emailType = editedEmai.replace(emailArray[0], xing);
           });
         }
       });
+    },
+    // 关闭邮箱弹窗
+    closeEmail() {
+      this.emailShow = false;
     },
     // 点击获得邮箱验证码
     sendEmailMsgs(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           // 当邮箱验证通过
-          this.sendEmailCode.email = this.updateEmail.email;
+          // this.sendEmailCode.email = this.updateEmail.email;
           personal.sendMsg(this.sendEmailCode).then((r) => {
             // 这里是调用获得邮箱验证码成功，然后再比较输入的验证码跟返回的验证码是否相等，相等就表示验证正确，否则，重新获得验证码，手机同这个
             console.log(r);
@@ -617,8 +608,9 @@ export default {
     },
     xingEmails() {
     // 邮箱@前均为*号
-      if (this.usefulData.email.length > 0) {
-        const emailArray = this.usefulData.email.split('@');
+      console.log(this.usefulData.emailType);
+      if (this.usefulData.emailType.length > 0) {
+        const emailArray = this.usefulData.emailType.split('@');
         const editedEmai = emailArray.join('@');
         const len = emailArray[0].length;
         const x = '*';
@@ -770,7 +762,6 @@ export default {
     },
     rotateImg() { // 图片旋转功能
       this.usefulData.rotate = (this.usefulData.rotate + 90) % 360;
-      console.log(this.$refs);
       this.$refs.realSignImg1.style.transform = `rotate(${this.usefulData.rotate}deg)`;
     },
   },

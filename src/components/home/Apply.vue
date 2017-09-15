@@ -4,7 +4,7 @@
       <canvas id="demo-canvas"></canvas>
     </div>
     <div class="apply-inner">
-      <a href="javascript:void(0)" class="logo"><img src="../../assets/login-logo.png"/></a>
+      <a :href="homeUrl" class="logo"><img src="../../assets/login-logo.png"/></a>
         <div class="apply-main">
           <el-form :model="applyData" :rules="rules" ref="applyData">
             <el-form-item prop="username" required>
@@ -40,6 +40,7 @@ export default {
   name: 'apply',
   data() {
     return {
+      homeUrl: 'http://localhost:8000/home.html',
       applyData: {
         username: '', // 名称
         companyName: '', // 公司名称
