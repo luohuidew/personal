@@ -4,7 +4,7 @@
       <div class="option-list bgcolor">
         <div class="main-title clearfix">
           <span class="title">
-            <el-input placeholder="搜索姓名/邮箱/员工ID" icon="search" v-model="searchMsg.inputMsg" :on-icon-click="searchBtn"></el-input>
+            <el-input placeholder="搜索姓名/邮箱/员工ID" icon="search" v-model="searchMsg.inputMsg" @click="searchBtn(1)"></el-input>
           </span>
           <el-button class="addbtn" type="primary" @click="dialogAddPerson = true">添加参与方</el-button>
           <el-button class="addbtn" type="info">批量导入</el-button>
@@ -33,12 +33,12 @@
           </el-table>
         </div>
         <div class="page-con">
-          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pagination.current_page" :page-size="10" layout="total, prev, pager, next, jumper" :total="pagination.title"></el-pagination>
+          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pagination.currentPage" :page-size="pagination.pageSize" :total="pagination.totalNum" layout="total, prev, pager, next, jumper"></el-pagination>
         </div>
       </div>
     </div>
     <!--新增参与方弹框-->
-    <el-dialog title="新增参与方" :visible.sync="dialogAddPerson" :before-close="handleClose" size="small">
+    <el-dialog title="新增参与方" :visible.sync="dialogAddPerson" :before-close="cleanContent" size="small">
       <el-form label-position='right' :model="person" :rules="rules" ref="person">
         <el-form-item label="参与方名称" prop="username" :label-width="formLabelWidth">
           <el-input v-model="person.username"></el-input>
@@ -115,24 +115,19 @@
 
 <script>
 import pService from '../../../service/participator';
+import companyService from '../../../service/company';
 import { ID_TYPES } from '../../../data/constants';
 import validate from '../../../utils/validation';
 
 export default {
   name: 'option-participator',
   created() {
-    this.searchMsg.companyId = JSON.parse(sessionStorage.getItem('_COMPANY_KEY')).companyList.companyId;
-    this.pageTag = this.$route.params.page;
-    if (this.$route.params.page) {
-      this.pagination.current_page = this.pageTag;
-    } else {
-      this.pagination.current_page = 1;
-    }
-    this.searchBtn(this.pagination.current_page);
+    this.initData();
   },
   data() {
     return {
       searchMsg: {
+        companyId: undefined, // 公司id
         inputMsg: undefined, // 输入框信息
       },
       dialogAddPerson: false,
@@ -150,8 +145,9 @@ export default {
         position: undefined, // 职位
       },
       pagination: {
-        current_page: 1,
-        title: undefined,
+        currentPage: 1,
+        totalNum: undefined,
+        pageSize: 10,
       },
       id_type: ID_TYPES,
       rules: {
@@ -159,7 +155,7 @@ export default {
           { required: true, message: '请输入参与方名称', trigger: 'blur' },
         ],
         idNumber: [
-          { required: true, validator: this.validIDCard, trigger: 'change' },
+          { required: true, message: '请输入证件号', validator: this.validIDCard, trigger: 'blur' },
         ],
         email: [
           { required: true, message: '请输入邮箱地址', trigger: 'blur' },
@@ -169,13 +165,27 @@ export default {
     };
   },
   methods: {
+    // 初始化数据
+    initData() {
+      // companyId
+      this.searchMsg.companyId = companyService.getStoredCompany().companyList.companyId;
+      this.pageTag = this.$route.params.page;
+      if (this.$route.params.page) {
+        this.pagination.currentPage = this.pageTag;
+      } else {
+        this.pagination.currentPage = 1;
+      }
+      this.searchBtn(this.pagination.currentPage);
+    },
     // 添加
     addPerson() {
       // console.log(this.person);
       this.$refs.person.validate((valid) => {
         if (valid) {
-          pService.add(this.person).then(() => {
+          pService.addParticipator(this.person).then(() => {
             this.$message({ message: '添加成功', type: 'success' });
+            this.dialogAddPerson = false;
+            this.searchBtn(1);
           });
         } else {
           this.$message.error('填写信息有误');
@@ -187,23 +197,27 @@ export default {
       // console.log(this.person);
       this.$refs.dialogEditData.validate((valid) => {
         if (valid) {
-          pService.update(this.person).then(() => {
+          pService.updateParticipator(this.person).then(() => {
             this.$message({ message: '编辑成功', type: 'success' });
+            this.dialogEditPerson = false;
+            this.searchBtn(this.pagination.currentPage);
           });
         } else {
           this.$message.error('填写信息有误');
         }
       });
     },
-    handleClose(done) {
-      this.person = {};
+    // 关闭表单，清空数据
+    cleanContent(done) {
+      this.$refs.person.resetFields();
+      // this.$nextTick(() => { this.$refs.person.resetFields(); });
       done();
     },
     // 分页
     handleSizeChange() {
     },
     handleCurrentChange(val) {
-      this.pagination.current_page = val;
+      this.pagination.currentPage = val;
       this.searchBtn(val);
     },
     // 查询
@@ -211,10 +225,10 @@ export default {
       if (!this.searchMsg.inputMsg) {
         this.searchMsg.inputMsg = undefined;
       }
-      pService.findAll(this.searchMsg, pageIndex, 10).then((resp) => {
-        // console.log(resp);
+      pService.findAllParticipator(this.searchMsg, pageIndex, this.pagination.pageSize)
+      .then((resp) => {
         this.account = resp.data;
-        this.pagination.title = resp.totalElements;
+        this.pagination.totalNum = resp.pagination.totalNum;
       });
     },
     // 操作
@@ -228,11 +242,11 @@ export default {
           break;
         case 'permissionCheck':
           // console.log(command.id);
-          this.$router.push({ name: 'OptionPermission', params: { id: command.id, type: 'check', page: this.pagination.current_page } });
+          this.$router.push({ name: 'OptionPermission', params: { id: command.id, type: 'check', page: this.pagination.currentPage } });
           break;
         case 'permissionSet':
           this.account = command;
-          this.$router.push({ name: 'OptionPermission', params: { id: command.id, type: 'edit', page: this.pagination.current_page } });
+          this.$router.push({ name: 'OptionPermission', params: { id: command.id, type: 'edit', page: this.pagination.currentPage } });
           break;
         default:
           break;

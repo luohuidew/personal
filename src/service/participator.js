@@ -2,19 +2,19 @@ import api from './http';
 
 export default {
   // add
-  add(params) {
+  addParticipator(params) {
     return api.post('/userInfo/add', params);
   },
   // update
-  update(params) {
+  updateParticipator(params) {
     return api.post('/userInfo/update', params);
   },
   // findOne
-  findOne(id) {
+  findOneParticipatorById(id) {
     return api.get(`/userInfo/findOne/${id}`);
   },
   // findAll
-  findAll(params, pageNumber, size) {
-    return api.post('/userInfo/findAll', { params, pageNumber, size });
+  findAllParticipator(params, currentPage, pageSize) {
+    return api.post('/userInfo/findAll', { params, currentPage, pageSize });
   },
 };
