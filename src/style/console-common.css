@@ -73,4 +73,6 @@ body{
 /* 股权列表 树结构样式 */
 .stock-tree-list .el-table__expanded-cell{padding: 0px;}
 .stock-tree-list .el-table td > div{border: none;}
+.round-wrap li{display:inline-block;margin-right:5px;padding:0 3px;height:16px;text-align:center;line-height:16px;background:#F1F1F3;border-radius:2px;font-size: 8px;color: #ADADAD;}
+.round-wrap li.active{background:#8BD7FF;color:#FFFFFF;}
 

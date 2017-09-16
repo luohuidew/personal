@@ -30,11 +30,11 @@
             </div>
             <div class="main-wrap">
               <el-table :data="stockMap">
-                <el-table-column prop="shareholderAbbreviation" label="股东名称"></el-table-column>
+                <el-table-column prop="shareholderName" label="股东名称"></el-table-column>
                 <el-table-column label="投资轮次">
                   <template scope="scope">
                     <ul class="round-wrap">
-                      <li v-for="item in roundType" v-bind:class="{active: checkRound(item.text, scope.row.rounds)}">{{item.text}}</li>
+                      <li v-for="item in roundType" v-bind:class="{active: checkRound(item.id, scope.row.rounds)}">{{item.text}}</li>
                     </ul>
                   </template>
                 </el-table-column>
@@ -68,7 +68,7 @@
       </el-row>
     </div>
     <!-- 初次登录添加股权信息页 -->
-    <el-dialog class="dialog-wrap__large" title="添加股权信息" :visible.sync="dialogVisible1" size="large" :before-close="handleClose">
+    <el-dialog class="dialog-wrap__large" title="添加股权信息" :visible.sync="dialogVisible1" size="large">
       <div class="dialog-left">
         <div class="dialog-step-list">
           <div class="dialog-step-wrap isDone">
@@ -130,7 +130,7 @@
           <el-button type="primary" @click="dialogVisible1 = false;dialogVisible2 = true">下一步</el-button>
         </span>
         <div class="dialog-table-wrap">
-          <el-table :data="stockList">
+          <el-table :data="stockAddList">
             <el-table-column type="index" label="序号"></el-table-column>
             <el-table-column label="股东名称"></el-table-column>
             <el-table-column label="股东类型"></el-table-column>
@@ -142,7 +142,7 @@
       </div>
     </el-dialog>
     <!-- 初次登录添加融资信息页 -->
-    <el-dialog class="dialog-wrap__large" title="添加融资信息" :visible.sync="dialogVisible2" size="large" :before-close="handleClose">
+    <el-dialog class="dialog-wrap__large" title="添加融资信息" :visible.sync="dialogVisible2" size="large">
       <div class="dialog-left">
         <div class="dialog-step-list">
           <div class="dialog-step-wrap isDone">
@@ -195,7 +195,7 @@
           <el-button type="primary" @click="dialogVisible2 = false">完成</el-button>
         </span>
         <div class="dialog-table-wrap">
-          <el-table :data="stockList">
+          <el-table :data="financAddList">
             <el-table-column type="index" label="序号"></el-table-column>
             <el-table-column label="融资轮次"></el-table-column>
             <el-table-column label="融资时间"></el-table-column>
@@ -209,14 +209,6 @@
 </template>
 
 <script>
-// 引入 ECharts 主模块
-import echarts from 'echarts/lib/echarts';
-// 引入柱状图
-import 'echarts/lib/chart/bar';
-// 引入提示框和标题组件
-import 'echarts/lib/component/tooltip';
-import 'echarts/lib/component/title';
-
 import stockServer from '../../../service/stock';
 import { ROUND_TYPE } from '../../../data/constants';
 
@@ -224,12 +216,12 @@ export default {
   name: 'equity-dashboard',
   data() {
     return {
+      companyId: '123123123',  // 从缓存读取
       dialogVisible1: false,
       dialogVisible2: false,
-      myChartDiv: undefined,
-      totalMoney: 140000,
       stockMap: undefined, // 股权概况
-      stockList: undefined,
+      stockAddList: undefined, // 新建股权
+      financAddList: undefined, // 新建融资
       roundType: ROUND_TYPE,
       stepList: [{   // 测试
         title: '2017-07-06',
@@ -252,48 +244,13 @@ export default {
     };
   },
   created() {
-    const id = '123456';
-    // console.log(stockServer.get());
-    stockServer.get(id).then((resp) => {
-      this.stockMap = resp.data;
-      resp.data.forEach((value, index) => {
-        const r = this.getPercent(value.registeredCapital, this.totalMoney);
-        this.stockMap[index].rate = r;
-      });
-    }, (resp) => {
-      console.log(resp);
+    stockServer.get(this.companyId).then((resp) => {
+      this.stockMap = resp;
     });
   },
   mounted() {
-    // this.myChartDiv = document.getElementById('ddbox');
-    // if (this.myChartDiv) {
-    //   this.onEchart();
-    // }
   },
   methods: {
-    onEchart() {
-      // 基于准备好的dom，初始化echarts实例
-      const myChart = echarts.init(this.myChartDiv);
-      // 绘制图表
-      myChart.setOption({
-        title: { text: 'ECharts 入门示例' },
-        tooltip: {},
-        xAxis: {
-          data: ['衬衫', '羊毛衫', '雪纺衫', '裤子', '高跟鞋', '袜子'],
-        },
-        yAxis: {},
-        series: [{
-          name: '销量',
-          type: 'bar',
-          data: [5, 20, 36, 10, 10, 20],
-        }],
-      });
-    },
-    handleClose(done) {
-      this.$confirm('确认关闭？').then(() => {
-        done();
-      }).catch(() => {});
-    },
     checkRound(r, rounds) {
       const roundList = rounds.split(',');
       return roundList.includes(r);
@@ -324,6 +281,4 @@ export default {
 .step-description .bold{font-weight: bold;color: #666;}
 .dialog-table-wrap{padding:30px 0 30px 30px;}
 .dialog-footer{display:block;text-align:right;}
-.round-wrap li{display:inline-block;margin-right:5px;padding:0 3px;height:16px;text-align:center;line-height:16px;background:#F1F1F3;border-radius:2px;font-size: 8px;color: #ADADAD;}
-.round-wrap li.active{background:#8BD7FF;color:#FFFFFF;}
 </style>
