@@ -29,12 +29,12 @@
         <li class="common email">
           <span>绑定邮箱</span>
           <p>{{usefulData.emailType}}</p>
-          <div class="edit-btn" @click="emailPopShow(usefulData.email)"><em>{{usefulData.emailBtn}}</em></div>
+          <div class="edit-btn" @click="passwordPopShow(0)"><em>{{usefulData.emailBtn}}</em></div>
         </li>
         <li class="common phone">
           <span>绑定手机</span>
           <p>{{usefulData.phoneType}}</p>
-          <div class="edit-btn" @click="passwordPopShow(usefulData.phone)">
+          <div class="edit-btn" @click="passwordPopShow(1)">
             <em>{{usefulData.phoneBtn}}</em>
           </div>
         </li>
@@ -54,6 +54,19 @@
       <div class="attention">
         <i>*</i><p>接受期权授予协议，必须要完成实名认证才能顺利签字。</br>实名认证审核时间约为1个工作日 ，请您合理安排认证时间，避免耽误签字。</p>
       </div>
+      <!--密码确定 start-->
+      <el-dialog v-if="passwordShow" title="确认密码" :visible.sync="passwordShow" size="tiny">
+        <p class="des">为保障您的账号安全，请输入账号密码进行验证</p>
+        <el-form :model="usefulData">
+          <el-form-item label="请输入密码" :label-width="usefulData.formLabelTiny" required>
+            <el-input v-model.trim="usefulData.password" placeholder="请输入账号密码"></el-input>
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="closePasswordPop">取 消</el-button>
+          <el-button type="primary" @click="popNext(usefulData.email)">确 定</el-button>
+        </span>
+      </el-dialog>
       <!--邮箱弹窗 start-->
       <el-dialog v-if="emailShow" :title="usefulData.emailPopTitle" :visible.sync="emailShow" size="tiny">
         <el-form :model="usefulData" :rules="rules" ref="usefulData">
@@ -70,27 +83,14 @@
         </span>
       </el-dialog>
       <!--邮箱弹窗 end-->
-      <!--手机绑定密码确定 start-->
-      <el-dialog v-if="passwordShow" title="确认密码" :visible.sync="passwordShow" size="tiny">
-        <p class="des">为保障您的账号安全，请输入账号密码进行验证</p>
-        <el-form :model="usefulData">
-          <el-form-item label="请输入密码" :label-width="usefulData.formLabelTiny" required>
-            <el-input v-model.trim="usefulData.password" placeholder="请输入账号密码"></el-input>
-          </el-form-item>
-        </el-form>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="closePasswordPop">取 消</el-button>
-          <el-button type="primary" @click="phonePopUp">确 定</el-button>
-        </span>
-      </el-dialog>
       <!--手机绑定弹窗 start-->
       <el-dialog v-if="phoneShow" :title="usefulData.phonePopTitle" :visible.sync="phoneShow" size="small">
         <el-form :model="usefulData" :rules="rules">
           <el-form-item prop="newPhone" :label="usefulData.phonePopLabel" :label-width="usefulData.formLabelSmall" required>
-            <el-input type="tel" v-model.number.trim="usefulData.newPhone" :placeholder="usefulData.phonePopLabel"></el-input>
+            <el-input type="tel" v-model.number.trim="usefulData.newPhone" :placeholder="usefulData.phonePopLabel" @blur="getImgCode()"></el-input>
           </el-form-item>
           <el-form-item prop="imgCode" label="图形验证码" :label-width="usefulData.formLabelSmall" class="tel-code phoneValidate" required>
-            <el-input v-model.trim="usefulData.imgCode" placeholder="请输入图形验证码" class="img-code" @blur="checkImgCode()"></el-input><img class="hashImgCode" :src="`validateCode/${usefulData.newPhone}/?=_`+hash" role="button" @click="hash = Math.random()"/>
+            <el-input v-model.trim="usefulData.inputImgCode" placeholder="请输入图形验证码" class="img-code" @blur="checkImgCode()"></el-input><img class="hashImgCode" :src="usefulData.imgCode" role="button" @click="getImgCode('usefulData.newPhone')"/>
           </el-form-item>
           <el-form-item prop="telCode" label="手机验证码" :label-width="usefulData.formLabelSmall" class="tel-code phoneValidate" required>
             <el-input v-model.trim="usefulData.telCode" placeholder="请输入手机验证码" class="tel-code"></el-input><el-button @click="sendMsgs">发送验证码</el-button>
@@ -447,7 +447,9 @@ export default {
         newPhone: '', // 验证码手机号新的手机号
         phonePopTitle: '', // 手机弹窗title
         phonePopLabel: '', // 手机弹窗label
+        beforePopPassword: undefined, // 判断从邮箱或者手机条转过来
         imgCode: '', // 图形验证码
+        inputImgCode: '', // 输入的图形验证码
         enabled: '',
         upLoadSignImg: '', // 上传的签名图片地址
         rotate: 0, // 默认进来没有做旋转
@@ -593,8 +595,15 @@ export default {
       }
     },
     // 根据手机号是否为空区别来做弹窗处理
-    passwordPopShow() {
+    passwordPopShow(i) {
       // 初次绑定或者修改绑定都需要输入密码，都需要弹出密码确认
+      if (i === 0) {
+        // 邮箱弹窗
+        this.usefulData.beforePopPassword = 0;
+      } else if (i === 1) {
+        this.usefulData.beforePopPassword = 1;
+      }
+      console.log(this.usefulData.beforePopPassword);
       this.passwordShow = true;
     },
     // 点击获得邮箱验证码
@@ -648,6 +657,14 @@ export default {
       }
       return result;
     },
+    // 获得图片验证码
+    getImgCode() {
+      if (this.usefulData.newPhone && validate.isPhoneAvailable(this.usefulData.newPhone)) {
+        personal.getImgCode(this.usefulData.newPhone).then((resp) => {
+          console.log(resp);
+        });
+      }
+    },
     checkImgCode() {
       personal.checkImgCode(this.usefulData.newPhone, this.usefulData.imgCode).then((resp) => {
         console.log(resp);
@@ -678,6 +695,15 @@ export default {
       //   result = callback(new Error('请输入正确的验证码！'));
       // }
       return result;
+    },
+    // 密码确定后下一个弹窗确定
+    popNext(email) {
+      this.passwordShow = false; // 密码弹窗关闭
+      if (this.usefulData.beforePopPassword === 0) { // 邮箱
+        this.emailPopShow(email);
+      } else if (this.usefulData.beforePopPassword === 1) { // 手机
+        this.phonePopUp();
+      }
     },
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw);
