@@ -33,7 +33,14 @@
           </el-table>
         </div>
         <div class="page-con">
-          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pagination.current_page" :page-size="10" layout="total, prev, pager, next, jumper" :total="pagination.title"></el-pagination>
+          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                         :current-page="pagination.currentPage"
+                         :page-size="pagination.pageSize"
+                         :page-sizes="pagination.pageSizes"
+                         :layout="pagination.layout"
+                         :total="pagination.totalNum">
+
+          </el-pagination>
         </div>
       </div>
     </div>
@@ -115,7 +122,7 @@
 
 <script>
 import pService from '../../../service/participator';
-import { ID_TYPES } from '../../../data/constants';
+import { ID_TYPES, PAGINATION_SIZE, PAGINATION_SIZES, PAGINATION_LAYOUT } from '../../../data/constants';
 import validate from '../../../utils/validation';
 
 export default {
@@ -124,14 +131,21 @@ export default {
     this.searchMsg.companyId = JSON.parse(sessionStorage.getItem('_COMPANY_KEY')).companyList.companyId;
     this.pageTag = this.$route.params.page;
     if (this.$route.params.page) {
-      this.pagination.current_page = this.pageTag;
+      this.pagination.currentPage = this.pageTag;
     } else {
-      this.pagination.current_page = 1;
+      this.pagination.currentPage = 1;
     }
-    this.searchBtn(this.pagination.current_page);
+    this.searchBtn(this.pagination.currentPage);
   },
   data() {
     return {
+      pagination: {
+        layout: PAGINATION_LAYOUT,
+        pageSize: PAGINATION_SIZE,
+        pageSizes: PAGINATION_SIZES,
+        currentPage: 1,
+        totalNum: 0,
+      },
       searchMsg: {
         inputMsg: undefined, // 输入框信息
       },
@@ -148,10 +162,6 @@ export default {
         workId: undefined, // 员工ID
         department: undefined, // 部门
         position: undefined, // 职位
-      },
-      pagination: {
-        current_page: 1,
-        title: undefined,
       },
       id_type: ID_TYPES,
       rules: {
@@ -203,7 +213,7 @@ export default {
     handleSizeChange() {
     },
     handleCurrentChange(val) {
-      this.pagination.current_page = val;
+      this.pagination.currentPage = val;
       this.searchBtn(val);
     },
     // 查询
@@ -214,7 +224,7 @@ export default {
       pService.findAll(this.searchMsg, pageIndex, 10).then((resp) => {
         // console.log(resp);
         this.account = resp.data;
-        this.pagination.title = resp.totalElements;
+        this.pagination.totalNum = resp.pagination.totalNum;
       });
     },
     // 操作
@@ -228,11 +238,11 @@ export default {
           break;
         case 'permissionCheck':
           // console.log(command.id);
-          this.$router.push({ name: 'OptionPermission', params: { id: command.id, type: 'check', page: this.pagination.current_page } });
+          this.$router.push({ name: 'OptionPermission', params: { id: command.id, type: 'check', page: this.pagination.currentPage } });
           break;
         case 'permissionSet':
           this.account = command;
-          this.$router.push({ name: 'OptionPermission', params: { id: command.id, type: 'edit', page: this.pagination.current_page } });
+          this.$router.push({ name: 'OptionPermission', params: { id: command.id, type: 'edit', page: this.pagination.currentPage } });
           break;
         default:
           break;

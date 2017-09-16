@@ -39,6 +39,10 @@ export const QINIU_BUCKET_DOMAIN = 'http://ow9hvlmOa.bkt.clouddn.com';
 
 export const QINIU_SERVER = 'http://upload-z1.qiniu.com';
 
+export const PAGINATION_SIZE = 10;
+export const PAGINATION_SIZES = [10, 20, 50];
+export const PAGINATION_LAYOUT = 'total, sizes, prev, pager, next, jumper';
+
 // 需要用于filter的必须加到default里
 export default {
   ROUND_TYPE,
