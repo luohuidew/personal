@@ -184,7 +184,7 @@ export default {
     handleAvatarSuccess(res) {
       this.hasBackImageUrl = true;
       this.upText = '上传完成';
-      this.backImageUrl = `http://ow9hvlm0a.bkt.clouddn.com/${res.key}`;
+      this.backImageUrl = `${QINIU_BUCKET_DOMAIN}/${res.key}`;
     },
     handleError(res) {
       this.$message.error(res);

@@ -78,10 +78,9 @@ export default {
       return result;
     },
     validatePassword(rule, value, callback) {
-      if (value === '') {
-        callback(new Error('密码不能为空'));
-      } else if (!validate.isPasswordAvailable(value)) {
-        callback(new Error('请输入字母、数字或下划线组成的6~16位密码'));
+      const result = validate.isPasswordAvailable(value);
+      if (result !== 'ok') {
+        callback(new Error(result));
       } else {
         callback();
       }
