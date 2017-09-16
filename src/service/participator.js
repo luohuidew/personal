@@ -7,20 +7,14 @@ export default {
   },
   // update
   update(params) {
-    return api.post('/userInfo/update', params).then((resp) => {
-      return resp;
-    });
+    return api.post('/userInfo/update', params);
   },
   // findOne
-  findOne(params) {
-    return api.get('/userInfo/findOne', params).then((resp) => {
-      return resp;
-    });
+  findOne(id) {
+    return api.get(`/userInfo/findOne/${id}`);
   },
   // findAll
-  findAll(params) {
-    return api.get('/userInfo/findAll', params).then((resp) => {
-      return resp;
-    });
+  findAll(params, pageNumber, size) {
+    return api.post('/userInfo/findAll', { params, pageNumber, size });
   },
 };

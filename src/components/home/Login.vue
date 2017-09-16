@@ -5,7 +5,7 @@
       <canvas id="demo-canvas"></canvas>
     </div>
     <section class="login-inner">
-      <a class="logo"><img src="../../assets/login-logo.png"/></a>
+      <a class="logo" :href="homeUrl"><img src="../../assets/login-logo.png"/></a>
       <div class="login-main">
         <el-form :model="loginData" :rules="rules" ref="loginData">
           <el-form-item prop="username" required>
@@ -14,7 +14,7 @@
           <el-form-item prop="password" required>
             <el-input type="password" v-model.trim="loginData.password" placeholder="请输入密码"></el-input>
           </el-form-item>
-          <el-form-item>
+          <el-form-item class="login-edit">
             <el-row type="flex" justify="end">
               <el-col :span="12" class="forget-pass"><router-link to="/forget_password">忘记密码？</router-link></el-col>
             </el-row>
@@ -38,6 +38,7 @@ export default {
   name: 'login',
   data() {
     return {
+      homeUrl: 'http://localhost:8000/home.html',
       loginData: {
         username: '', // 用户名
         password: '', // 密码
@@ -87,11 +88,8 @@ export default {
     },
     loginRequest(formName) {
       this.$refs[formName].validate((valid) => {
-        console.log(valid);
         if (valid) {
-          user.login(this.loginData).then(() => {
-            window.location.href = `http://${window.location.host}/console/#/user/enterprise_list`;
-          });
+          user.login(this.loginData);
         }
       });
     },
@@ -131,5 +129,8 @@ export default {
 }
 .login-now {
   cursor: pointer;
+}
+.el-form-item.login-edit {
+  margin-bottom: 0 !important;
 }
 </style>

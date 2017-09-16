@@ -148,7 +148,7 @@
     -moz-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
     width: 500px !important;
-    padding-bottom: 70px;
+    padding-bottom: 50px;
     background: #fff;
     -webkit-box-shadow: 0 0 30px 0 rgba(70,70,93,0.50);
     -moz-box-shadow: 0 0 30px 0 rgba(70,70,93,0.50);
@@ -189,13 +189,16 @@
     display: block;
     width: 100%;
     height: 40px;
-    margin: 40px auto 27px;
+    margin: 30px auto 27px;
     line-height: 40px;
     text-align: center;
     background: #546AAC;
     font-family: NotoSansHans-Regular;
     color: #FFFFFF;
     letter-spacing: 6px;
+}
+.forget .submit-btn .submit-now {
+    margin: 0 auto !important;
 }
 .login .login-now:hover, .apply .apply-now:hover , .forget .submit-now:hover{
     -webkit-opacity: 0.8; 
@@ -214,16 +217,31 @@
     height: 46px !important;
     border: 0 none !important;
     border-bottom: 1px solid rgba(213, 213, 213, 0.40) !important;
-    letter-spacing: 6px;
+    letter-spacing: 4px;
 }
 .apply .el-textarea__inner {
     resize: none !important;
 }
 .login .el-input, .apply .el-input, .apply .el-textarea, .forget .el-input{
     width: 100%;
-    margin: 20px 0;
+    margin: 20px 0 0;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
+}
+.login .el-form-item__error, .apply .el-form-item__error, .forget .el-form-item__error {
+    padding: 10px 10px 0;
+}
+::-webkit-input-placeholder { /* WebKit browsers */
+    color:#BDBDBD !important;
+}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color:#BDBDBD !important;
+}
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color:#BDBDBD !important;
+}
+:-ms-input-placeholder { /* Internet Explorer 10+ */
+    color:#BDBDBD !important;
 }
 .forget .get-code .el-input {
     margin: 0;

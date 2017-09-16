@@ -5,9 +5,15 @@ import ElementUI from 'element-ui';
 import Index from './Index.vue';
 import router from './router';
 
+import user from './service/user';
+
 import './style/reset.css';
 import './style/console-common.css';
 import './theme/index.css';
+
+if (!user.getToken()) {
+  user.logout('401');
+}
 
 require('./utils/tools');
 

@@ -10,5 +10,6 @@
     "vue": "html"
   },
   "git.enabled": false,
-  "git.autofetch": false
+  "git.autofetch": false,
+  "git.ignoreLimitWarning": true
 }

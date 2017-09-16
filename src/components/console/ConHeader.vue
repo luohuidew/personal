@@ -1,7 +1,7 @@
 <template>
   <div class="con-header">
     <span class="title"></span>
-    <p class="user" v-if="hasCompany"><img class="u-img" src="../../assets/icon-toggle.png" alt=""><span>{{company_name}}</span></p>
+    <p class="user" v-if="selectedCompany"><img class="u-img" src="../../assets/icon-toggle.png" alt=""><span>{{company_name}}</span></p>
     <p class="msg"><img v-if="!hasInfo" class="u-img" src="../../assets/icon-info.png" alt=""><img v-if="hasInfo" class="u-img" src="../../assets/icon-hasinfo.png" alt=""></p>
     <el-menu theme="dark" class="el-menu-user" mode="horizontal" @select="handleSelect">
       <el-submenu index="1">
@@ -14,20 +14,26 @@
 
 <script>
 import user from '../../service/user';
+import company from '../../service/company';
+import bus from '../../utils/bus';
 
 export default {
   name: 'con-header',
   data() {
     return {
-      company_name: '镜化论科技-境内有限责任公司',
+      company_name: '',
+      selectedCompany: false,
       username: '',
-      hasCompany: true,
       hasInfo: false,
     };
   },
-  mounted() {
-    this.hasLogin();
+  created() {
     this.getUsession();
+  },
+  mounted() {
+    bus.$on('COMPANY_CHANGED', () => {
+      this.getCompanyInfo();
+    });
   },
   methods: {
     handleSelect(key) {
@@ -37,12 +43,13 @@ export default {
     },
     getUsession() {
       const usession = user.getUser();
-      this.username = usession.username;
+      this.username = usession ? usession.username : '';
     },
-    hasLogin() {
-      const token = user.getToken();
-      if (!token) {
-        user.logout();
+    getCompanyInfo() {
+      const store = company.getStoredCompany();
+      if (store && store.companyList) {
+        this.selectedCompany = true;
+        this.company_name = store.companyList.companyName;
       }
     },
   },
