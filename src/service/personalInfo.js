@@ -23,6 +23,19 @@ export default {
       return findOneObj;
     });
   },
+  getUserInfoByUid() { // 根据用户id获取用户信息
+    const userId = user.getUser().id;
+    return api.get(`/user/findOne/${userId}`).then((resp) => {
+      const respData = { ...resp };
+      const repEmail = respData.email;
+      const idx = repEmail.indexOf('@');
+      if (idx > 0) respData.email = repEmail.replace(repEmail.substring(0, idx), '*'.repeat(idx));
+      if (respData.phone) {
+        respData.phone = `${respData.phone.substr(0, 3)}****${respData.phone.substr(7)}`;
+      }
+      return respData;
+    });
+  },
   update(params) { // 修改
     return api.post('/userInfo/update', params).then(resp => resp);
   },
