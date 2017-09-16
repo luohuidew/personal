@@ -725,7 +725,7 @@ export default {
       let result = '';
       if (!value) {
         result = callback(new Error('身份证号不能为空！'));
-      } else if (value && !validate.isIDNO(value)) {
+      } else if (value && !validate.isIDNOAvailable(value)) {
         // 如果不符合身份证号码的情况下
         result = callback(new Error('请输入正确的身份证号！'));
       } else {
@@ -738,7 +738,7 @@ export default {
       let result = '';
       if (!value) {
         result = callback(new Error('护照号不能为空！'));
-      } else if (value && !validate.isPassport(value)) {
+      } else if (value && !validate.PassportAvailable(value)) {
         // 如果不符合护照号码的情况下
         result = callback(new Error('请输入正确的护照号！'));
       } else {
@@ -1073,7 +1073,7 @@ body {
   height: 40px;
   line-height: 40px;
   background: #2e76df;
-  -webkit-opacity: 0.6; 
+  -webkit-opacity: 0.6;
   -moz-opacity: 0.6;
   -khtml-opacity: 0.6;
   opacity: .6;
