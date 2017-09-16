@@ -4,32 +4,48 @@
       <img src="../../../assets/icon-add.png" alt="">
       <span>新建企业</span>
     </div>
-    <div class="enterprise-box">
-      <p class="e-title"><span>深圳市净化论科技有限公司</span><span>管理员</span></p>
-      <p class="row"><img src="../../../assets/icon-manager.png" alt=""><span>管理员：</span><span>沙枫</span></p>
-      <p class="row"><img src="../../../assets/business-type.png" alt=""><span>企业类型：</span><span>境内有限责任公司</span></p>
-      <p class="row"><img src="../../../assets/capital-currency.png" alt=""><span>资本币种：</span><span>人民币</span></p>
+    <!---->
+    <div class="enterprise-box" v-for="item in companyList" @click="selectCompany(item)">
+      <p class="e-title">
+        <span class="e-title-name" :title=item.companyName>{{item.companyName}}</span>
+        <span class="author">管理员</span>
+        <span class="wrz" v-if="item.authentication == 1">未认证</span>
+        <span class="wrz" v-if="item.authentication == 3">认证失败</span>
+        <span class="wfk" v-if="item.pay == 1">未付款</span>
+      </p>
+      <p class="row"><img src="../../../assets/icon-manager.png" alt=""><span>管理员：</span><span>{{item.adminName}}</span></p>
+      <p class="row"><img src="../../../assets/business-type.png" alt=""><span>企业类型：</span><span>{{item.companyType | filter('COMPENY_TYPE')}}</span></p>
+      <p class="row"><img src="../../../assets/capital-currency.png" alt=""><span>资本币种：</span><span>{{item.currency | filter('MONEY_TYPE')}}</span></p>
     </div>
-    <div class="enterprise-box">
-      <p class="e-title"><span>深圳市净化论科技有限公司</span><span>管理员</span></p>
-      <p class="row"><img src="../../../assets/icon-manager.png" alt=""><span>管理员：</span><span>沙枫</span></p>
-      <p class="row"><img src="../../../assets/business-type.png" alt=""><span>企业类型：</span><span>境内有限责任公司</span></p>
-      <p class="row"><img src="../../../assets/capital-currency.png" alt=""><span>资本币种：</span><span>人民币</span></p>
-    </div>
+    <!---->
     <el-dialog title="新建企业" :visible.sync="dialogVisible" size="small" :before-close="handleClose">
-      <el-form :model="form">
-        <el-form-item label="企业全称" :label-width="formLabelWidth" required>
-          <el-input v-model="form.a" auto-complete="off"></el-input>
+      <el-form :model="form" ref="form" :rules="rules">
+        <el-form-item label="企业全称" :label-width="formLabelWidth" required  prop="companyName">
+          <el-input v-model="form.companyName" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="简称" :label-width="formLabelWidth">
-          <el-input v-model="form.b" auto-complete="off"></el-input>
+        <el-form-item label="简称" :label-width="formLabelWidth" prop="companyAbbreviation">
+          <el-input v-model="form.companyAbbreviation" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="公司类型" :label-width="formLabelWidth" prop="companyType">
+          <el-select v-model="form.companyType" placeholder="请选择活动区域">
+            <el-option v-for="item in companyTypes" :label="item.text" :value="item.id"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="资本币种" :label-width="formLabelWidth"  prop="currency">
+          <el-select v-model="form.currency" placeholder="请选择活动区域">
+            <el-option v-for="item in moneyTypes" :label="item.text" :value="item.id"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="营业执照" :label-width="formLabelWidth" required>
           <el-upload
-            class="upload-demo"
-            action="https://jsonplaceholder.typicode.com/posts/"
+            :action="qiniuServer"
+            :before-upload="beforeAvatarUpload"
+            accept="image/*"
+            :on-success="handleAvatarSuccess"
+            :on-error="handleError"
             :on-preview="handlePreview"
             :on-remove="handleRemove"
+            :data="uploadData"
             :file-list="fileList">
             <el-button size="small" type="primary">上传营业执照扫描件</el-button>
           </el-upload>
@@ -42,31 +58,124 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="save"> 确 认 </el-button>
+        <el-button type="primary" @click="save('form')"> 确 认 </el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import company from '../../../service/company';
+import base from '../../../service/base';
+import filters from '../../../utils/filters';
+import { COMPENY_TYPE, MONEY_TYPE, QINIU_BUCKET_DOMAIN, QINIU_SERVER } from '../../../data/constants';
+
 export default {
   name: 'user-enterprise-list',
   data() {
     return {
-      dialogVisible: false,
       formLabelWidth: '120px',
+      companyList: [],
+      companyTypes: COMPENY_TYPE,
+      moneyTypes: MONEY_TYPE,
+      qiniuBucketDomain: QINIU_BUCKET_DOMAIN,
+      qiniuServer: QINIU_SERVER,
+      dialogVisible: false,
       form: {
-        a: '',
-        b: '',
+        companyName: '',
+        companyAbbreviation: '',
+        companyType: '0',
+        currency: 'RMB',
+      },
+      rules: {
+        companyName: [
+          { required: true, message: '请填写企业全称', trigger: 'blur' },
+        ],
+      },
+      fileList: [],
+      backImageUrl: '',
+      uploadData: {
+        token: '',
       },
     };
   },
+  mounted() {
+    this.initData();
+    this.getQiNiuToken();
+  },
+  filters: {
+    filter(arg1, arg2) {
+      return filters.constantsFilter(arg1, arg2);
+    },
+  },
   methods: {
+    initData() {
+      company.getCompanyListByUid().then((resp) => {
+        this.companyList = resp.data;
+      });
+    },
+    selectCompany(cItem) {
+      this.storeSelectedCompany(cItem);
+      this.$router.push({ name: 'OptionManagementList' });
+    },
+    storeSelectedCompany(cItem) {
+      const obj = {
+        authority: cItem.authority,
+        licenseList: cItem.licenseList,
+        companyList: {
+          companyId: cItem.id,
+          companyName: cItem.companyName,
+          companyType: cItem.companyType,
+        },
+      };
+      company.setStoreCompany(obj);
+    },
     openDialog() {
       this.dialogVisible = true;
     },
-    save() {
+    save(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          company.addCompany(this.form).then(() => {
+            this.$message.success('添加成功！');
+            this.initData();
+          });
+          this.handleClose();
+        }
+      });
+    },
+    handleClose() {
+      this.$refs.form.resetFields();
       this.dialogVisible = false;
+    },
+    getQiNiuToken() {
+      base.getQiNiuToken().then((resp) => {
+        this.uploadData.token = resp.token;
+      });
+    },
+    /* upload */
+    beforeAvatarUpload(file) {
+      let result = true;
+      const isJPEG = file.type === 'image/jpeg';
+      const isJPG = file.type === 'image/jpg';
+      const isPNG = file.type === 'image/png';
+      const isLt5M = file.size / 1024 / 1024 < 5;
+
+      if (!isJPG && !isJPEG && !isPNG) {
+        this.$message.error('上传图片只能是 JPG、PNG 格式!');
+        result = false;
+      }
+      if (!isLt5M) {
+        this.$message.error('上传图片大小不能超过 5MB!');
+        result = false;
+      }
+      return result;
+    },
+    handleAvatarSuccess(res) {
+      this.backImageUrl = `http://oq34prjoz.bkt.clouddn.com/${res.key}`;
+    },
+    handleError(res) {
+      this.$message.error(res);
     },
     handleRemove() {
     },
@@ -89,8 +198,13 @@ export default {
     padding-bottom: 30px;
   }
 
-  .add-new,.enterprise-box{
+  .add-new,.enterprise-box {
     float: left;
+  }
+
+  .add-new,.enterprise-box:hover {
+    background: #FCFCFC;
+    cursor: pointer;
   }
 
   .add-new {
@@ -125,18 +239,35 @@ export default {
     background: #eee;
     font-size: 16px;
   }
-  .e-title span:first-child{
+
+  .e-title span.e-title-name{
     float: left;
     margin-left: 30px;
     letter-spacing: 0.8px;
   }
 
-  .e-title span:last-child{
+  .e-title span.author{
     float: right;
     margin-right: 20px;
     color: #2E76E0;
     letter-spacing: 0.8px;
     cursor: pointer;
+  }
+
+  .e-title span.wrz, .e-title span.wfk{
+    float: right;
+    margin-right: 10px;
+    font-size: 14px;
+    color: #FF5151;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .e-title span.wrz:hover,.e-title span.wfk:hover{
+    color: #BC5231;
+  }
+
+  .e-content:hover {
+    background: #FDFDFD;
   }
 
   .row {
@@ -164,6 +295,13 @@ export default {
     color: #BDBDBD;
     letter-spacing: 0.59px;
     line-height: 20px;
+  }
+
+  .e-title-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width:210px;
   }
 
 </style>
