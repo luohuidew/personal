@@ -11,7 +11,7 @@
       </el-row>
     </div>
     <div class="stock-cont">
-      <div class="echart-warp bgcolor">
+      <div class="echart-warp bgcolor" id="financChart">
       </div>
     </div>
     <div class="stock-cont">
@@ -41,19 +41,19 @@
     </div>
     <!-- 新增融资 -->
     <el-dialog title="添加融资信息" :visible.sync="dialogVisible" size="small" :before-close="handleClose">
-      <el-form :model="financAddMap" ref="financAddForm" label-width="120px">
-        <el-form-item label="融资轮次" required prop="round" :rules="[{ required: true, message: '融资轮次不能为空'}]">
+      <el-form :model="financAddMap" :rules="rules" ref="financAddForm" label-width="120px">
+        <el-form-item label="融资轮次" required prop="round">
           <el-select v-model="financAddMap.round" placeholder="请选择融资轮次">
             <el-option v-for="item in roundType" :label="item.text" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="融资时间" required prop="financedDate" :rules="[{ required: true, message: '融资时间不能为空'}]">
+        <el-form-item label="融资时间" required prop="financedDate">
           <el-date-picker v-model="financAddMap.financedDate" type="date" placeholder="选择日期"></el-date-picker>
         </el-form-item>
-        <el-form-item label="融资金额" required prop="financedAccount" :rules="[{ required: true, message: '融资金额不能为空'}, { type: 'number', message: '融资金额必须为数字值'}]">
+        <el-form-item label="融资金额" required prop="financedAccount">
           <el-input v-model.number="financAddMap.financedAccount"></el-input>
         </el-form-item>
-        <el-form-item label="投资方" required prop="equityid" :rules="[{ required: true, message: '投资方不能为空'}]">
+        <el-form-item label="投资方" required prop="equityid">
           <el-select v-model="financAddMap.equityid" placeholder="请选择投资方">
             <el-option v-for="item in shareholderMap" :label="item.shareholderName" :value="item.id"></el-option>
           </el-select>
@@ -67,6 +67,7 @@
   </div>
 </template>
 <script>
+import echarts from 'echarts';
 import financServer from '../../../../service/financ';
 import stockServer from '../../../../service/stock';
 import { ROUND_TYPE } from '../../../../data/constants';
@@ -75,7 +76,7 @@ export default {
   name: 'stock-detail',
   data() {
     return {
-      companyId: '123123123',  // 从缓存读取
+      // companyId: '123123123',  // 从缓存读取
       financlistdata: [],
       shareholderMap: [],
       financAddMap: {
@@ -84,36 +85,108 @@ export default {
         round: '',
         financedDate: '',
       },
+      eChartList: {
+        xAxiasMap: [],
+        yAxiasMap: [],
+      },
+      rules: {
+        round: [
+          { required: true, message: '融资轮次不能为空' },
+        ],
+        financedDate: [
+          { required: true, message: '融资时间不能为空' },
+        ],
+        financedAccount: [
+          { required: true, message: '融资金额不能为空' }, { type: 'number', message: '融资金额必须为数字值' },
+        ],
+        equityid: [
+          { required: true, message: '投资方不能为空' },
+        ],
+      },
       roundType: ROUND_TYPE,
       dialogVisible: false,
     };
   },
   created() {
-    financServer.get(this.companyId).then((resp) => {
-      console.log(resp);
+    financServer.getFinancListByCompanyId().then((resp) => {
       this.financlistdata = resp;
+      this.createEchart();
     });
     this.getShareholderList();
   },
   methods: {
+    createEchart() {
+      this.xyEchartData();
+      this.myChartDiv = document.getElementById('financChart');
+      if (this.myChartDiv) {
+        this.onEchart();
+      }
+    },
+    onEchart() {
+      // 基于准备好的dom，初始化echarts实例
+      const myChart = echarts.init(this.myChartDiv);
+      // 绘制图表
+      myChart.setOption({
+        color: '#4F6BBF',
+        backgroundColor: '#ffffff',
+        textStyle: {
+          color: '#666666',
+        },
+        tooltip: {},
+        xAxis: {
+          data: this.eChartList.xAxiasMap,
+          axisLine: {
+            type: 'category',
+            boundaryGap: false,
+            show: false,
+            lineStyle: {
+              color: '#ffffff',
+              width: '0',
+            },
+          },
+        },
+        yAxis: {
+          show: false,
+        },
+        series: [{
+          type: 'line',
+          data: this.eChartList.yAxiasMap,
+          itemStyle: {
+            normal: {
+              color: 'rgba(124,150,224,0.60)',
+            },
+          },
+          areaStyle: {
+            normal: {
+              color: 'rgba(124,150,224,0.60)',
+            },
+          },
+        }],
+      });
+    },
+    xyEchartData() {
+      this.financlistdata.forEach((value) => {
+        this.eChartList.xAxiasMap.push(value.financedDate);
+        this.eChartList.yAxiasMap.push(value.financedAccount);
+      });
+    },
     checkForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.addFinanc(formName);
         }
-        this.$message.error('添加失败');
-        return false;
       });
     },
     addFinanc(formName) {
-      financServer.add(this.financAddMap).then(() => {
+      // if (this.financAddMap.financedDate) {
+      //   this.financAddMap.financedDate = this.financAddMap.financedDate.split('T')[0];
+      // }
+      financServer.addFinanc(this.financAddMap).then(() => {
         this.resetForm(formName);
         this.$message({
           message: '添加成功',
           type: 'success',
         });
-      }, () => {
-        this.$message.error('添加失败');
       });
     },
     delete(row) {
@@ -127,7 +200,7 @@ export default {
       this.$refs[formName].resetFields();
     },
     getShareholderList() {
-      stockServer.get(this.companyId).then((resp) => {
+      stockServer.getStockListByCompanyId().then((resp) => {
         this.shareholderMap = resp;
       });
     },

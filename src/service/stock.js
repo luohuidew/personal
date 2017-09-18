@@ -1,7 +1,9 @@
 import api from './http';
 
+// const companyId = JSON.parse(localStorage.COMPANY_KEY).id;
+const companyId = '123213213';
 export default {
-  getAll(id) {
+  getStockGroupByCompanyId(id = companyId) {
     const totalMoney = 140000;  // 从缓存读取
     return api.get(`/equity/findAllWithGroup/${id}`).then((resp) => {
       resp.data.forEach((value) => {
@@ -19,7 +21,7 @@ export default {
       return resp.data;
     });
   },
-  get(id) {
+  getStockListByCompanyId(id = companyId) {
     const totalMoney = 140000;  // 从缓存读取
     return api.get(`/equity/findAll/${id}`).then((resp) => {
       resp.data.forEach((value) => {
@@ -32,7 +34,7 @@ export default {
       this.$message.error(resp.errMsg);
     });
   },
-  add(params) {
+  addStock(params) {
     return api.put('/equity/add', params);
   },
   getPercent(num, total) {

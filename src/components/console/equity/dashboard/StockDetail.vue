@@ -27,21 +27,21 @@
     </div>
     <!-- 新增股东 -->
     <el-dialog title="添加股权信息" :visible.sync="dialogVisible" size="small" :before-close="handleClose">
-      <el-form :model="stockAddMap" ref="stockAddForm" label-width="120px">
-        <el-form-item label="股东名称" required prop="shareholderName" :rules="[{ required: true, message: '股东名称不能为空'}]">
+      <el-form :model="stockAddMap" :rules="rules" ref="stockAddForm" label-width="120px">
+        <el-form-item label="股东名称" required prop="shareholderName">
           <el-input v-model="stockAddMap.shareholderName"></el-input>
         </el-form-item>
-        <el-form-item label="股东类型" required prop="shareholderType" :rules="[{ required: true, message: '股东类型不能为空', trigger: 'change'}]">
-          <el-select v-model="stockAddMap.shareholderType" placeholder="请选择股东类型">
+        <el-form-item label="股东类型" required prop="shareholderType">
+          <el-select v-model="stockAddMap.shareholderType">
             <el-option v-for="item in shareholderType" :label="item.text" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="投资轮次" required prop="rounds" :rules="[{ required: true, message: '股东轮次不能为空', trigger: 'change'}]">
-          <el-select v-model="stockAddMap.rounds" placeholder="请选择投资轮次">
+        <el-form-item label="投资轮次" required prop="rounds">
+          <el-select v-model="stockAddMap.rounds">
             <el-option v-for="item in roundType" :label="item.text" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="注册资本" required prop="registeredCapital" :rules="[{ required: true, message: '注册资本不能为空'}, { type: 'number', message: '注册资本必须为数字值'}]">
+        <el-form-item label="注册资本" required prop="registeredCapital">
           <el-input v-model.number="stockAddMap.registeredCapital"></el-input>
         </el-form-item>
         <el-form-item label="股份比例" required>
@@ -81,6 +81,20 @@ export default {
       eChartList: {
         xAxiasMap: [],
         yAxiasMap: [],
+      },
+      rules: {
+        shareholderName: [
+          { required: true, message: '股东名称不能为空' },
+        ],
+        shareholderType: [
+          { required: true, message: '股东类型不能为空', trigger: 'change' },
+        ],
+        rounds: [
+          { required: true, message: '股东轮次不能为空', trigger: 'change' },
+        ],
+        registeredCapital: [
+          { required: true, message: '注册资本不能为空' }, { type: 'number', message: '注册资本必须为数字值' },
+        ],
       },
       dialogVisible: false,
     };
@@ -138,16 +152,12 @@ export default {
         this.eChartList.xAxiasMap.push(value.shareholderAbbreviation);
         this.eChartList.yAxiasMap.push(value.registeredCapital);
       });
-      console.log(this.eChartList.xAxiasMap);
-      console.log(this.eChartList.yAxiasMap);
     },
     checkForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.addStock(formName);
         }
-        this.$message.error('添加失败');
-        return false;
       });
     },
     addStock(formName) {
@@ -157,8 +167,6 @@ export default {
           message: '添加成功',
           type: 'success',
         });
-      }, () => {
-        this.$message.error('添加失败');
       });
     },
     resetForm(formName) {
@@ -169,7 +177,7 @@ export default {
       this.dialogVisible = false;
     },
     getStockList() {
-      stockServer.getAll(this.companyId).then((resp) => {
+      stockServer.getStockGroupByCompanyId().then((resp) => {
         this.stocklistdata = resp;
         this.isloading = true;
         this.createEchart();
