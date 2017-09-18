@@ -10,6 +10,11 @@ const axiosIns = axios.create({
   baseURL: '/api',
 });
 
+function errorMsgBox (statusText, msg) {
+  MessageBox(`错误类型：${statusText}; 错误描述：${msg}`, '异常提示', {
+    confirmButtonText: '确定'
+  });
+}
 axiosIns.interceptors.request.use(
   config => {
     if (user.getToken()) {
@@ -30,11 +35,20 @@ axiosIns.interceptors.response.use(
     if (status === 200) {
       return Promise.resolve(data);
     } else if(status === 401) {
+      // TODO token过期，缓存期间要更新token
       user.logout('401');
+    } else if(status === 400) {
+      const msg = '参数错误。';
+      errorMsgBox(statusText, msg)
+    } else if(status === 404) {
+      const msg = '请求路径错误。';
+      errorMsgBox(statusText, msg)
+    } else if(status === 500) {
+      const msg = res.data.msg;
+      errorMsgBox(statusText, msg)
     } else {
-      MessageBox(`错误码：${status}; 错误描述：${statusText}`, '异常提示', {
-        confirmButtonText: '确定'
-      });
+      const msg = '未知异常';
+      errorMsgBox(statusText, msg)
       return Promise.reject(res);
     }
   },
