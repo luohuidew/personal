@@ -124,7 +124,7 @@ export default {
       const obj = {
         authority: cItem.authority,
         licenseList: cItem.licenseList,
-        companyList: {
+        companyInfo: {
           companyId: cItem.id,
           companyName: cItem.companyName,
           companyType: cItem.companyType,
