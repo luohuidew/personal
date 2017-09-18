@@ -14,7 +14,6 @@
     <div class="option-cont">
       <el-button class="addbtn clearfix" type="success" @click="Save()" v-if="!isEdit">保存修改</el-button>
       <div class="option-list bgcolor">
-        
         <el-row :gutter="20">
           <el-col :span="24">
             <div class="formPanel">
@@ -24,7 +23,7 @@
                   <div class="f-group" v-for="(rd, rdIndex) in r.ruleDetailedList">
                     <el-row :gutter="20">
                       <el-col :span="16"><span class="branch-title">{{rd.text}}</span></el-col>
-                      <el-col :span="8"><el-switch v-model="rd.option" on-text="" off-text=""></el-switch></el-col>
+                      <el-col :span="8"><el-switch v-model="rd.option" on-text="" off-text="" v-bind:disabled="isEdit"></el-switch></el-col>
                     </el-row>
                   </div>
                 </form>
@@ -132,7 +131,7 @@ export default {
   created() {
     this.permission.userId = this.$route.params.id;
     this.typeTest = this.$route.params.type;
-    pService.findOne(this.permission.userId).then((resp) => {
+    pService.findOneParticipatorById(this.permission.userId).then((resp) => {
       // console.log(resp);
       this.licenseList = resp.licenseList;
       this.dataProcessing(this.licenseList);
@@ -150,7 +149,7 @@ export default {
     Save() {
       this.permission.licenseList = this.getThisPageData();
       // console.log(this.permission);
-      pService.update(this.permission).then(() => {
+      pService.updateParticipator(this.permission).then(() => {
         this.$message({
           message: '权限设置成功',
           type: 'success',
