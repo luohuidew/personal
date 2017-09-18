@@ -1,7 +1,7 @@
 import api from './http';
 
 // const companyMap = JSON.parse(sessionStorage.getItem('_COMPANY_KEY'));
-// const companyId = companyMap.companyList.companyId;
+// const companyId = companyMap.companyInfo.companyId;
 const companyId = '1231231'; // 测试代码，用上面两行
 export default {
   getFinancListByCompanyId(id = companyId) {

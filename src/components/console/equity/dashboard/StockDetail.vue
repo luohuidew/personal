@@ -65,7 +65,7 @@ export default {
   name: 'stock-detail',
   data() {
     return {
-      companyId: '',
+      companyId: '12121222',
       totalMoney: 140000,  // 调取接口
       isloading: false, // 判断axios加载是否完成,加载完成后才渲染组件
       myChartDiv: undefined,
@@ -100,8 +100,8 @@ export default {
     };
   },
   created() {
-    const companyMap = JSON.parse(sessionStorage.getItem('_COMPANY_KEY'));
-    this.companyId = companyMap.companyList.companyId;
+    // const companyMap = JSON.parse(sessionStorage.getItem('_COMPANY_KEY'));
+    // this.companyId = companyMap.companyInfo.companyId;
     this.getStockList();
     this.stockAddMap.companyId = this.companyId;
   },
@@ -120,12 +120,23 @@ export default {
       const myChart = echarts.init(this.myChartDiv);
       // 绘制图表
       myChart.setOption({
-        color: '#4F6BBF',
         backgroundColor: '#ffffff',
+        color: ['#4F6BBF'],
         textStyle: {
           color: '#666666',
         },
-        tooltip: {},
+        tooltip: {
+          formatter: '{b0}<br /> {c0}',
+          backgroundColor: '#4F6BBF',
+          padding: [10, 10, 10, 10],
+        },
+        grid: {
+          top: '20',
+          left: '20',
+          right: '20',
+          bottom: '20',
+          containLabel: true,
+        },
         xAxis: {
           data: this.eChartList.xAxiasMap,
           axisLine: {
@@ -133,6 +144,9 @@ export default {
             lineStyle: {
               color: '#ffffff',
               width: '0',
+            },
+            nameTextStyle: {
+              color: '#999',
             },
           },
         },
@@ -143,6 +157,9 @@ export default {
           type: 'bar',
           data: this.eChartList.yAxiasMap,
           itemstyle: {
+            /* normal: {
+              color: '#4F6BBF',
+            }, */
           },
           barWidth: '10%',
           barMinHeight: '10',
@@ -151,7 +168,10 @@ export default {
     },
     xyEchartData() {
       this.stocklistdata.forEach((value) => {
-        this.eChartList.xAxiasMap.push(value.shareholderAbbreviation);
+        this.eChartList.xAxiasMap.push(`
+        ${value.shareholderAbbreviation}
+        /${value.rate}
+        `);
         this.eChartList.yAxiasMap.push(value.registeredCapital);
       });
     },

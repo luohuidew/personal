@@ -132,34 +132,71 @@ export default {
         textStyle: {
           color: '#666666',
         },
-        tooltip: {},
+        // title: {
+        //   show: true,
+        //   text: '测试标题',
+        // },
+        tooltip: {
+          show: true,
+          formatter: '{b0}<br /> {c0}',
+          backgroundColor: '#4F6BBF',
+          padding: [10, 10, 10, 10],
+        },
+        grid: {
+          top: '20',
+          left: '20',
+          right: '20',
+          bottom: '20',
+          containLabel: true,
+        },
         xAxis: {
           data: this.eChartList.xAxiasMap,
-          axisLine: {
-            type: 'category',
-            boundaryGap: false,
+          splitLine: {
             show: false,
+          },
+          axisLine: {
             lineStyle: {
               color: '#ffffff',
-              width: '0',
+              width: 1,
             },
+          },
+          axisTick: {
+            show: false,
           },
         },
         yAxis: {
-          show: false,
+          splitLine: {
+            show: false,
+          },
+          axisLine: {
+            lineStyle: {
+              color: '#ffffff',
+              width: 1,
+            },
+          },
         },
         series: [{
           type: 'line',
           data: this.eChartList.yAxiasMap,
+          symbol: 'circle',
+          symbolSize: 4,
           itemStyle: {
             normal: {
               color: 'rgba(124,150,224,0.60)',
+            },
+          },
+          lineStyle: {
+            normal: {
+              opacity: 0,
             },
           },
           areaStyle: {
             normal: {
               color: 'rgba(124,150,224,0.60)',
             },
+            smooth: true,
+            smoothMonotone: 'x',
+            sampling: 'average',
           },
         }],
       });

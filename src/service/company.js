@@ -19,4 +19,9 @@ export default {
     sessionStorage.setItem('_COMPANY_KEY', JSON.stringify(obj));
     bus.$emit('COMPANY_CHANGED');
   },
+  getCompanyInfoById() {
+    const cInfo = this.getStoredCompany();
+    const id = cInfo.companyInfo.companyId;
+    return api.get(`/company/getCompanyById/${id}`).then(resp => resp);
+  },
 };

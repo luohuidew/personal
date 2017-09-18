@@ -269,7 +269,7 @@ export default {
   },
   created() {
     // const companyMap = JSON.parse(sessionStorage.getItem('_COMPANY_KEY'));
-    // this.companyId = companyMap.companyList.companyId;
+    // this.companyId = companyMap.companyInfo.companyId;
     stockServer.getStockListByCompanyId().then((resp) => {
       if (resp && resp.length !== 0) {
         this.stockMap = resp;
@@ -387,5 +387,6 @@ export default {
 .step-description .bold{font-weight: bold;color: #666;}
 .dialog-table-wrap{padding:30px 0 30px 30px;}
 .dialog-footer{display:block;text-align:right;}
-.button-daoru{background:none;color:#fff;border-color:#fff;font-weight:bold;position:absolute;bottom:50px;}
+.dialog-footer .el-button{border-radius:4px;}
+.button-daoru{background:none;color:#fff;border-color:#fff;font-weight:bold;position:absolute;bottom:50px;border-radius:2px;}
 </style>

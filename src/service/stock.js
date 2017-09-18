@@ -1,11 +1,15 @@
 import api from './http';
+import companyServer from './company';
 
 // const companyMap = JSON.parse(sessionStorage.getItem('_COMPANY_KEY'));
-// const companyId = companyMap.companyList.companyId;
+// const companyId = companyMap.companyInfo.companyId;
 const companyId = '1231231'; // 测试代码，用上面两行
+let totalMoney = 0;
+companyServer.getCompanyInfoById(companyId).then((resp) => {
+  totalMoney = resp.totalRegisteredCapital;
+});
 export default {
   getStockGroupByCompanyId(id = companyId) {
-    const totalMoney = 140000;  // 从缓存读取
     return api.get(`/equity/findAllWithGroup/${id}`).then((resp) => {
       resp.data.forEach((value) => {
         if (value.equities && value.equities.length !== 0) {
@@ -23,7 +27,6 @@ export default {
     });
   },
   getStockListByCompanyId(id = companyId) {
-    const totalMoney = 140000;  // 从缓存读取
     return api.get(`/equity/findAll/${id}`).then((resp) => {
       resp.data.forEach((value) => {
         const r = this.getPercent(value.registeredCapital, totalMoney);
