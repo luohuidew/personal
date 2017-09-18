@@ -14,7 +14,7 @@ export default {
     return api.get(`/userInfo/findOne/${id}`);
   },
   // findAll
-  findAllParticipator(params, currentPage, pageSize) {
+  findAllParticipators(params, currentPage, pageSize) {
     return api.post('/userInfo/findAll', { params, currentPage, pageSize });
   },
 };

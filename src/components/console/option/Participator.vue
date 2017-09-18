@@ -33,14 +33,12 @@
           </el-table>
         </div>
         <div class="page-con">
-
           <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
                          :current-page="pagination.currentPage"
                          :page-size="pagination.pageSize"
                          :page-sizes="pagination.pageSizes"
                          :layout="pagination.layout"
                          :total="pagination.totalNum">
-
           </el-pagination>
         </div>
       </div>
@@ -162,16 +160,17 @@ export default {
       id_type: ID_TYPES,
       rules: {
         username: [
-          { required: true, message: '请输入参与方名称', trigger: 'blur' },
+          { required: true, message: '参与方名称不能为空', trigger: 'blur' },
         ],
         idNumber: [
-          { required: true, message: '请输入证件号', validator: this.validIDCard, trigger: 'blur' },
+          { required: true, validator: this.validIDCard, trigger: 'blur' },
         ],
         email: [
-          { required: true, message: '请输入邮箱地址', trigger: 'blur' },
-          { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur,change' },
+          { required: true, validator: this.validateEmail, trigger: 'blur,change' },
         ],
       },
+      isPassportAvailableResult: undefined,
+      isIDNOAvailableResult: undefined,
     };
   },
   methods: {
@@ -235,7 +234,7 @@ export default {
       if (!this.searchMsg.inputMsg) {
         this.searchMsg.inputMsg = undefined;
       }
-      pService.findAllParticipator(this.searchMsg, pageIndex, this.pagination.pageSize)
+      pService.findAllParticipators(this.searchMsg, pageIndex, this.pagination.pageSize)
       .then((resp) => {
         this.account = resp.data;
         this.pagination.totalNum = resp.pagination.totalNum;
@@ -266,21 +265,32 @@ export default {
     validIDCard(rule, value, callback) {
       switch (this.person.idType) {
         case '0':
-          if (!validate.isIDNO(value)) {
-            callback(new Error('身份证号输入格式不正确'));
+          this.isIDNOAvailableResult = validate.isIDNOAvailable(value);
+          if (this.isIDNOAvailableResult !== 'ok') {
+            callback(new Error(this.isIDNOAvailableResult));
           } else {
             callback();
           }
           break;
         case '1':
-          if (!validate.isPassport(value)) {
-            callback(new Error('护照输入格式不正确'));
+          this.isPassportAvailableResult = validate.isPassportAvailable(value);
+          if (this.isPassportAvailableResult !== 'ok') {
+            callback(new Error(this.isPassportAvailableResult));
           } else {
             callback();
           }
           break;
         default:
           break;
+      }
+    },
+    // 邮箱验证
+    validateEmail(rule, value, callback) {
+      const result = validate.isEmailAvailable(value);
+      if (result !== 'ok') {
+        callback(new Error(result));
+      } else {
+        callback();
       }
     },
   },
