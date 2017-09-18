@@ -5,7 +5,7 @@
       <span>新建企业</span>
     </div>
     <!---->
-    <div class="enterprise-box" v-for="item in companyList" @click="selectCompany(item)">
+    <div class="enterprise-box" v-for="item in companyList" :key="item.companyName" @click="selectCompany(item)">
       <p class="e-title">
         <span class="e-title-name" :title=item.companyName>{{item.companyName}}</span>
         <span class="author">管理员</span>
@@ -28,12 +28,12 @@
         </el-form-item>
         <el-form-item label="公司类型" :label-width="formLabelWidth" prop="companyType">
           <el-select v-model="form.companyType" placeholder="请选择活动区域">
-            <el-option v-for="item in companyTypes" :label="item.text" :value="item.id"></el-option>
+            <el-option v-for="item in companyTypes" :label="item.text" :value="item.id" :key="item.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="资本币种" :label-width="formLabelWidth"  prop="currency">
           <el-select v-model="form.currency" placeholder="请选择活动区域">
-            <el-option v-for="item in moneyTypes" :label="item.text" :value="item.id"></el-option>
+            <el-option v-for="item in moneyTypes" :label="item.text" :value="item.id" :key="item.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="营业执照" :label-width="formLabelWidth" required>
@@ -45,9 +45,9 @@
             :on-error="handleError"
             :on-preview="handlePreview"
             :on-remove="handleRemove"
-            :data="uploadData"
-            :file-list="fileList">
-            <el-button size="small" type="primary">上传营业执照扫描件</el-button>
+            :file-list="fileList"
+            :data="uploadData">
+            <el-button size="small" type="primary" :disabled="hasBackImageUrl">{{upText}}</el-button>
           </el-upload>
           <div class="tips">
             <p>1.选择项(企业认证时必需)</p>
@@ -92,11 +92,13 @@ export default {
           { required: true, message: '请填写企业全称', trigger: 'blur' },
         ],
       },
-      fileList: [],
       backImageUrl: '',
       uploadData: {
         token: '',
       },
+      hasBackImageUrl: false,
+      fileList: [],
+      upText: '上传营业执照扫描件',
     };
   },
   mounted() {
@@ -136,16 +138,24 @@ export default {
     save(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          company.addCompany(this.form).then(() => {
-            this.$message.success('添加成功！');
-            this.initData();
-          });
-          this.handleClose();
+          if (!this.hasBackImageUrl) {
+            this.$message.warning('请上传营业执照');
+          } else {
+            const params = this.form;
+            params.businessLicense = this.backImageUrl;
+            company.addCompany(params).then(() => {
+              this.$message.success('添加成功！');
+              this.initData();
+              this.handleClose();
+            });
+          }
         }
       });
     },
     handleClose() {
       this.$refs.form.resetFields();
+      this.handleRemove();
+      this.fileList = [];
       this.dialogVisible = false;
     },
     getQiNiuToken() {
@@ -172,14 +182,20 @@ export default {
       return result;
     },
     handleAvatarSuccess(res) {
-      this.backImageUrl = `http://oq34prjoz.bkt.clouddn.com/${res.key}`;
+      this.hasBackImageUrl = true;
+      this.upText = '上传完成';
+      this.backImageUrl = `${QINIU_BUCKET_DOMAIN}/${res.key}`;
     },
     handleError(res) {
       this.$message.error(res);
     },
     handleRemove() {
+      this.backImageUrl = '';
+      this.hasBackImageUrl = false;
+      this.upText = '上传营业执照扫描件';
     },
     handlePreview() {
+      window.open(this.backImageUrl);
     },
   },
 };

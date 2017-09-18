@@ -30,10 +30,18 @@ export const MONEY_TYPE = [
   { id: 'USD', text: '欧元' },
   { id: 'EUR', text: '美元' },
 ];
+export const ID_TYPE = [ // 证件类型
+  { id: '0', text: '身份证' },
+  { id: '1', text: '护照' },
+];
 
 export const QINIU_BUCKET_DOMAIN = 'http://ow9hvlmOa.bkt.clouddn.com';
 
-export const QINIU_SERVER = 'http://up-z1.qiniu.com/';
+export const QINIU_SERVER = 'http://upload-z1.qiniu.com';
+
+export const PAGINATION_SIZE = 10;
+export const PAGINATION_SIZES = [10, 20, 50];
+export const PAGINATION_LAYOUT = 'total, sizes, prev, pager, next, jumper';
 
 // 需要用于filter的必须加到default里
 export default {
@@ -41,4 +49,5 @@ export default {
   SHAREHOLDER_TYPE,
   COMPENY_TYPE,
   MONEY_TYPE,
+  ID_TYPE,
 };

@@ -22,7 +22,7 @@
             <el-form-item prop="remarks">
               <el-input type="textarea" v-model.trim="applyData.remarks" :autosize="{ minRows: 1, maxRows: 4}" placeholder="备注点什么？" class="texarea"></el-input>
             </el-form-item>
-            <el-form-item>
+            <el-form-item class="apply-btn">
               <a class="apply-now" @click="applyLogin('applyData')">申请试用</a>
             </el-form-item>
           </el-form>
@@ -139,9 +139,9 @@ export default {
 .texarea.el-textarea .el-textarea__inner{
   border: none;
 }
-@media screen and (max-width: 1430px) {
+@media screen and (max-width: 1435px) {
   .login .el-input, .apply .el-input, .apply .el-textarea, .forget .el-input {
-    margin: 10px 0 !important;
+    margin: 8px 0 !important;
   }
   .apply .apply-inner {
     padding-bottom: 50px !important;
@@ -150,5 +150,8 @@ export default {
     margin-bottom: 0 !important;
     margin-top: 30px !important;
   }
+}
+.el-form-item.apply-btn {
+  margin-bottom: 0 !important;
 }
 </style>

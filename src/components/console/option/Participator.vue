@@ -4,7 +4,7 @@
       <div class="option-list bgcolor">
         <div class="main-title clearfix">
           <span class="title">
-            <el-input placeholder="搜索姓名/邮箱/员工ID" icon="search" v-model="searchMsg.inputMsg" :on-icon-click="Search"></el-input>
+            <el-input placeholder="搜索姓名/邮箱/员工ID" icon="search" v-model="searchMsg.inputMsg" :on-icon-click="searchBtn"></el-input>
           </span>
           <el-button class="addbtn" type="primary" @click="dialogAddPerson = true">添加参与方</el-button>
           <el-button class="addbtn" type="info">批量导入</el-button>
@@ -33,7 +33,14 @@
           </el-table>
         </div>
         <div class="page-con">
-          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pagination.current_page" :page-size="10" layout="total, prev, pager, next, jumper" :total="pagination.title"></el-pagination>
+          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                         :current-page="pagination.currentPage"
+                         :page-size="pagination.pageSize"
+                         :page-sizes="pagination.pageSizes"
+                         :layout="pagination.layout"
+                         :total="pagination.totalNum">
+
+          </el-pagination>
         </div>
       </div>
     </div>
@@ -70,7 +77,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="AddPerson()">确 定</el-button>
+        <el-button type="primary" @click="addPerson()">确 定</el-button>
       </div>
     </el-dialog>
     <!--修改信息弹框-->
@@ -106,7 +113,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="EditPerson()">确 认</el-button>
+        <el-button type="primary" @click="editPerson()">确 认</el-button>
       </div>
     </el-dialog>
     <!---->
@@ -115,17 +122,30 @@
 
 <script>
 import pService from '../../../service/participator';
-import { ID_TYPES } from '../../../data/constants';
+import { ID_TYPES, PAGINATION_SIZE, PAGINATION_SIZES, PAGINATION_LAYOUT } from '../../../data/constants';
 import validate from '../../../utils/validation';
 
 export default {
   name: 'option-participator',
   created() {
-    this.searchMsg.companyId = '111'; // 死数据，待调整
-    this.Search(1);
+    this.searchMsg.companyId = JSON.parse(sessionStorage.getItem('_COMPANY_KEY')).companyList.companyId;
+    this.pageTag = this.$route.params.page;
+    if (this.$route.params.page) {
+      this.pagination.currentPage = this.pageTag;
+    } else {
+      this.pagination.currentPage = 1;
+    }
+    this.searchBtn(this.pagination.currentPage);
   },
   data() {
     return {
+      pagination: {
+        layout: PAGINATION_LAYOUT,
+        pageSize: PAGINATION_SIZE,
+        pageSizes: PAGINATION_SIZES,
+        currentPage: 1,
+        totalNum: 0,
+      },
       searchMsg: {
         inputMsg: undefined, // 输入框信息
       },
@@ -142,10 +162,6 @@ export default {
         workId: undefined, // 员工ID
         department: undefined, // 部门
         position: undefined, // 职位
-      },
-      pagination: {
-        current_page: 1,
-        title: undefined,
       },
       id_type: ID_TYPES,
       rules: {
@@ -164,7 +180,7 @@ export default {
   },
   methods: {
     // 添加
-    AddPerson() {
+    addPerson() {
       // console.log(this.person);
       this.$refs.person.validate((valid) => {
         if (valid) {
@@ -177,8 +193,8 @@ export default {
       });
     },
     // 编辑
-    EditPerson() {
-      console.log(this.person);
+    editPerson() {
+      // console.log(this.person);
       this.$refs.dialogEditData.validate((valid) => {
         if (valid) {
           pService.update(this.person).then(() => {
@@ -197,18 +213,18 @@ export default {
     handleSizeChange() {
     },
     handleCurrentChange(val) {
-      this.pagination.current_page = val;
-      this.Search(val);
+      this.pagination.currentPage = val;
+      this.searchBtn(val);
     },
     // 查询
-    Search(pageIndex) {
+    searchBtn(pageIndex) {
       if (!this.searchMsg.inputMsg) {
         this.searchMsg.inputMsg = undefined;
       }
       pService.findAll(this.searchMsg, pageIndex, 10).then((resp) => {
         // console.log(resp);
         this.account = resp.data;
-        this.pagination.title = resp.totalElements;
+        this.pagination.totalNum = resp.pagination.totalNum;
       });
     },
     // 操作
@@ -222,11 +238,11 @@ export default {
           break;
         case 'permissionCheck':
           // console.log(command.id);
-          this.$router.push({ name: 'OptionPermission', params: { id: command.id, type: 'check' } });
+          this.$router.push({ name: 'OptionPermission', params: { id: command.id, type: 'check', page: this.pagination.currentPage } });
           break;
         case 'permissionSet':
           this.account = command;
-          this.$router.push({ name: 'OptionPermission', params: { id: command.id, type: 'edit' } });
+          this.$router.push({ name: 'OptionPermission', params: { id: command.id, type: 'edit', page: this.pagination.currentPage } });
           break;
         default:
           break;

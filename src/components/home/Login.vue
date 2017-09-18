@@ -14,7 +14,7 @@
           <el-form-item prop="password" required>
             <el-input type="password" v-model.trim="loginData.password" placeholder="请输入密码"></el-input>
           </el-form-item>
-          <el-form-item>
+          <el-form-item class="login-edit">
             <el-row type="flex" justify="end">
               <el-col :span="12" class="forget-pass"><router-link to="/forget_password">忘记密码？</router-link></el-col>
             </el-row>
@@ -78,10 +78,9 @@ export default {
       return result;
     },
     validatePassword(rule, value, callback) {
-      if (value === '') {
-        callback(new Error('密码不能为空'));
-      } else if (!validate.isPasswordAvailable(value)) {
-        callback(new Error('请输入字母、数字或下划线组成的6~16位密码'));
+      const result = validate.isPasswordAvailable(value);
+      if (result !== 'ok') {
+        callback(new Error(result));
       } else {
         callback();
       }
@@ -129,5 +128,8 @@ export default {
 }
 .login-now {
   cursor: pointer;
+}
+.el-form-item.login-edit {
+  margin-bottom: 0 !important;
 }
 </style>

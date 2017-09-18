@@ -156,6 +156,7 @@ export default {
           type: 'success',
         });
         // 之后增加跳回原页面
+        this.$router.push({ name: 'OptionParticipator', params: { page: this.$route.params.page } });
       });
     },
     // 获取权限列表的值
