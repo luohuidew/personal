@@ -33,12 +33,12 @@
         </el-form-item>
         <el-form-item label="股东类型" required prop="shareholderType">
           <el-select v-model="stockAddMap.shareholderType">
-            <el-option v-for="item in shareholderType" :label="item.text" :value="item.id"></el-option>
+            <el-option v-for="item in shareholderType" :key="item.id" :label="item.text" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="投资轮次" required prop="rounds">
           <el-select v-model="stockAddMap.rounds">
-            <el-option v-for="item in roundType" :label="item.text" :value="item.id"></el-option>
+            <el-option v-for="item in roundType" :key="item.id" :label="item.text" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="注册资本" required prop="registeredCapital">
@@ -65,7 +65,7 @@ export default {
   name: 'stock-detail',
   data() {
     return {
-      companyId: '123123123',  // 从缓存读取
+      companyId: '',
       totalMoney: 140000,  // 调取接口
       isloading: false, // 判断axios加载是否完成,加载完成后才渲染组件
       myChartDiv: undefined,
@@ -74,8 +74,8 @@ export default {
       roundType: ROUND_TYPE, // 投资轮次
       stockAddMap: {
         shareholderName: '',
-        shareholderType: '',
-        rounds: '',
+        shareholderType: '0',
+        rounds: '1',
         registeredCapital: '',
       },
       eChartList: {
@@ -100,6 +100,8 @@ export default {
     };
   },
   created() {
+    const companyMap = JSON.parse(sessionStorage.getItem('_COMPANY_KEY'));
+    this.companyId = companyMap.companyList.companyId;
     this.getStockList();
     this.stockAddMap.companyId = this.companyId;
   },

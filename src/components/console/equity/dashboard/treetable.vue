@@ -38,7 +38,7 @@
   </div>
 </template>
 <script>
-// import stockServer from '../../../../service/stock';
+import stockServer from '../../../../service/stock';
 import { ROUND_TYPE } from '../../../../data/constants';
 
 export default {
@@ -56,7 +56,7 @@ export default {
   },
   methods: {
     delete(row) {
-      console.log(row);
+      stockServer.deleteStock(row.id);
     },
     checkRound(r, rounds) {
       const roundList = rounds.split(',');

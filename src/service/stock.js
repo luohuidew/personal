@@ -1,13 +1,14 @@
 import api from './http';
 
-// const companyId = JSON.parse(localStorage.COMPANY_KEY).id;
-const companyId = '123213213';
+// const companyMap = JSON.parse(sessionStorage.getItem('_COMPANY_KEY'));
+// const companyId = companyMap.companyList.companyId;
+const companyId = '1231231'; // 测试代码，用上面两行
 export default {
   getStockGroupByCompanyId(id = companyId) {
     const totalMoney = 140000;  // 从缓存读取
     return api.get(`/equity/findAllWithGroup/${id}`).then((resp) => {
       resp.data.forEach((value) => {
-        if (value.equities.length !== 0) {
+        if (value.equities && value.equities.length !== 0) {
           value.equities.forEach((key) => {
             const keytest = key;
             const rate = this.getPercent(key.registeredCapital, totalMoney);
@@ -48,5 +49,11 @@ export default {
     }
     const rate = Math.round((number / totals) * 100000) / 1000.00;
     return `${rate}%`;
+  },
+  deleteStock(id) {
+    return api.del(`/equity/deleteById/${id}`);
+  },
+  addStockList(params) {
+    return api.put('/equity/addList', params);
   },
 };

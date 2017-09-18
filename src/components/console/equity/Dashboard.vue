@@ -68,7 +68,7 @@
       </el-row>
     </div>
     <!-- 初次登录添加股权信息页 -->
-    <el-dialog class="dialog-wrap__large" title="添加股权信息" :visible.sync="dialogVisible1" size="large">
+    <el-dialog class="dialog-wrap__large" title="添加股权信息" :visible.sync="dialogVisible1" size="large" :before-close="stockClose">
       <div class="dialog-left">
         <div class="dialog-step-list">
           <div class="dialog-step-wrap isDone">
@@ -92,7 +92,7 @@
             <el-col :span="11">
               <el-form-item label="股东类型" required prop="shareholderType">
                 <el-select v-model="stockAddMap.shareholderType" size="small">
-                  <el-option v-for="item in shareholderType" :label="item.text" :value="item.id"></el-option>
+                  <el-option v-for="item in shareholderType" :key="item.id" :label="item.text" :value="item.id"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -101,7 +101,7 @@
             <el-col :span="11">
               <el-form-item label="投资轮次" required prop="rounds">
                 <el-select v-model="stockAddMap.rounds" size="small">
-                  <el-option v-for="item in roundType" :label="item.text" :value="item.id"></el-option>
+                  <el-option v-for="item in roundType" :key="item.id" :label="item.text" :value="item.id"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -114,21 +114,21 @@
           <el-row type="flex" justify="space-between">
             <el-col :span="11">
               <el-form-item label="股份比例" required>
-                <el-input v-model="stockScale" size="small" :disabled="true"></el-input>
+                <el-input v-model="stockAddMap.stockScale" size="small" :disabled="true"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="checkStockForm('stockAddForm')">保存</el-button>
-          <el-button type="primary" @click="dialogVisible1 = false;dialogVisible2 = true">下一步</el-button>
+          <el-button type="primary" @click="checkStockList()">下一步</el-button>
         </span>
         <div class="dialog-table-wrap">
           <el-table :data="stockAddList">
             <el-table-column type="index" label="序号"></el-table-column>
             <el-table-column label="股东名称" prop="shareholderName"></el-table-column>
             <el-table-column label="股东类型">
-              <template scope="scope">{{shareholderType | roundFilter('SHAREHOLDER_TYPE')}}</template>
+              <template scope="scope">{{scope.row.shareholderType | roundFilter('SHAREHOLDER_TYPE')}}</template>
             </el-table-column>
             <el-table-column label="投资轮次">
               <template scope="scope">{{scope.row.rounds | roundFilter('ROUND_TYPE')}}</template>
@@ -140,7 +140,7 @@
       </div>
     </el-dialog>
     <!-- 初次登录添加融资信息页 -->
-    <el-dialog class="dialog-wrap__large" title="添加融资信息" :visible.sync="dialogVisible2" size="large">
+    <el-dialog class="dialog-wrap__large" title="添加融资信息" :visible.sync="dialogVisible2" size="large" :before-close="financClose">
       <div class="dialog-left">
         <div class="dialog-step-list">
           <div class="dialog-step-wrap isDone">
@@ -159,7 +159,7 @@
             <el-col :span="11">
               <el-form-item label="融资轮次" required prop="round">
                 <el-select v-model="financAddMap.round" size="small">
-                  <el-option v-for="item in roundType" :label="item.text" :value="item.id"></el-option>
+                  <el-option v-for="item in roundType" :key="item.id" :label="item.text" :value="item.id"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -178,7 +178,7 @@
             <el-col :span="11">
               <el-form-item label="投资方" required prop="equityid">
                 <el-select v-model="financAddMap.equityid" size="small">
-                  <el-option v-for="item in stockMap" :label="item.shareholderName" :value="item.id"></el-option>
+                  <el-option v-for="item in stockMap" :key="item.id" :label="item.shareholderName" :value="item.id"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -186,15 +186,17 @@
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="checkFinancForm('financAddForm')">保存</el-button>
-          <el-button type="primary" @click="dialogVisible2 = false">完成</el-button>
+          <el-button type="primary" @click="saveList('financAddForm')">完成</el-button>
         </span>
         <div class="dialog-table-wrap">
           <el-table :data="financAddList">
             <el-table-column type="index" label="序号"></el-table-column>
-            <el-table-column label="融资轮次"></el-table-column>
-            <el-table-column label="融资时间"></el-table-column>
-            <el-table-column label="融资金额"></el-table-column>
-            <el-table-column label="投资方"></el-table-column>
+            <el-table-column label="融资轮次">
+              <template scope="scope">{{scope.row.round | roundFilter('ROUND_TYPE')}}</template>
+            </el-table-column>
+            <el-table-column label="融资时间" prop="financedDate"></el-table-column>
+            <el-table-column label="融资金额" prop="financedAccount"></el-table-column>
+            <el-table-column label="投资方" prop="equityid" :formatter="shareholderFilter"></el-table-column>
           </el-table>
         </div>
       </div>
@@ -212,7 +214,8 @@ export default {
   name: 'equity-dashboard',
   data() {
     return {
-      companyId: '123123123',  // 从缓存读取
+      // companyId: '',
+      totalMoney: 140000, // 从公司接口拿到
       dialogVisible1: true,
       dialogVisible2: false,
       stockMap: [],
@@ -222,6 +225,7 @@ export default {
         shareholderType: '0',
         rounds: '1',
         registeredCapital: '',
+        stockScale: '',
       },
       financAddMap: { // 添加融资
         equityid: '',
@@ -264,6 +268,8 @@ export default {
     };
   },
   created() {
+    // const companyMap = JSON.parse(sessionStorage.getItem('_COMPANY_KEY'));
+    // this.companyId = companyMap.companyList.companyId;
     stockServer.getStockListByCompanyId().then((resp) => {
       if (resp && resp.length !== 0) {
         this.stockMap = resp;
@@ -274,15 +280,10 @@ export default {
     financServer.getFinancListByCompanyId().then((resp) => {
       if (resp && resp.length !== 0) {
         this.financMap = resp;
-      } else {
+      } else if (this.dialogVisible1 !== true) {
         this.dialogVisible2 = true;
       }
     });
-  },
-  filters: {
-    roundFilter(arg1, arg2) {
-      return filters.constantsFilter(arg1, arg2);
-    },
   },
   methods: {
     checkRound(r, rounds) {
@@ -296,6 +297,10 @@ export default {
         }
       });
     },
+    addStocktoLlist(formName) {
+      this.stockAddList.push(Object.assign({}, { stockScale: this.stockScale }, this.stockAddMap));
+      this.resetForm(formName);
+    },
     checkFinancForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -303,18 +308,53 @@ export default {
         }
       });
     },
-    addStocktoLlist(formName) {
+    addFinanctoList(formName) {
+      if (this.financAddMap.financedDate) {
+        this.financAddMap.financedDate = this.financAddMap.financedDate.Format('yyyy-MM-dd');
+      }
+      this.financAddList.push(Object.assign({}, this.financAddMap));
       this.resetForm(formName);
-      this.stockAddList.push(this.stockAddMap);
-    },
-    addFinanctoList() {
-      // if (this.financAddMap.financedDate) {
-      //   this.financAddMap.financedDate = this.financAddMap.financedDate.split('T')[0];
-      // }
-      this.financAddList.push(this.financAddMap);
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
+    },
+    stockClose() {
+      this.resetForm('stockAddForm');
+      this.stockAddList = [];
+      this.dialogVisible1 = false;
+    },
+    financClose() {
+      this.resetForm('financAddForm');
+      this.financAddList = [];
+      this.dialogVisible2 = false;
+    },
+    checkStockList() {
+      if (this.stockAddList.length === 0) {
+        this.$message.error('请添加股权信息');
+      } else {
+        this.dialogVisible1 = false;
+        this.dialogVisible2 = true;
+      }
+    },
+    saveList(formName) {
+      stockServer.addStockList(this.stockAddList);
+      financServer.addFinancList(this.financAddList);
+      this.resetForm(formName);
+      this.dialogVisible2 = false;
+    },
+    shareholderFilter(row) {
+      let result = '';
+      this.stockMap.forEach((v) => {
+        if (v.id === row.equityid) {
+          result = v.shareholderName;
+        }
+      });
+      return result;
+    },
+  },
+  filters: {
+    roundFilter(arg1, arg2) {
+      return filters.constantsFilter(arg1, arg2);
     },
   },
   computed: {
