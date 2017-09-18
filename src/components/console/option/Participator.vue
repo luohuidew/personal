@@ -4,7 +4,7 @@
       <div class="option-list bgcolor">
         <div class="main-title clearfix">
           <span class="title">
-            <el-input placeholder="搜索姓名/邮箱/员工ID" icon="search" v-model="searchMsg.inputMsg" :on-icon-click="searchBtn"></el-input>
+            <el-input placeholder="搜索姓名/邮箱/员工ID" icon="search" v-model="searchMsg.inputMsg" @click="searchBtn(1)"></el-input>
           </span>
           <el-button class="addbtn" type="primary" @click="dialogAddPerson = true">添加参与方</el-button>
           <el-button class="addbtn" type="info">批量导入</el-button>
@@ -39,13 +39,12 @@
                          :page-sizes="pagination.pageSizes"
                          :layout="pagination.layout"
                          :total="pagination.totalNum">
-
           </el-pagination>
         </div>
       </div>
     </div>
     <!--新增参与方弹框-->
-    <el-dialog title="新增参与方" :visible.sync="dialogAddPerson" :before-close="handleClose" size="small">
+    <el-dialog title="新增参与方" :visible.sync="dialogAddPerson" :before-close="cleanContent" size="small">
       <el-form label-position='right' :model="person" :rules="rules" ref="person">
         <el-form-item label="参与方名称" prop="username" :label-width="formLabelWidth">
           <el-input v-model="person.username"></el-input>
@@ -122,20 +121,14 @@
 
 <script>
 import pService from '../../../service/participator';
+import companyService from '../../../service/company';
 import { ID_TYPES, PAGINATION_SIZE, PAGINATION_SIZES, PAGINATION_LAYOUT } from '../../../data/constants';
 import validate from '../../../utils/validation';
 
 export default {
   name: 'option-participator',
   created() {
-    this.searchMsg.companyId = JSON.parse(sessionStorage.getItem('_COMPANY_KEY')).companyList.companyId;
-    this.pageTag = this.$route.params.page;
-    if (this.$route.params.page) {
-      this.pagination.currentPage = this.pageTag;
-    } else {
-      this.pagination.currentPage = 1;
-    }
-    this.searchBtn(this.pagination.currentPage);
+    this.initData();
   },
   data() {
     return {
@@ -147,6 +140,7 @@ export default {
         totalNum: 0,
       },
       searchMsg: {
+        companyId: undefined, // 公司id
         inputMsg: undefined, // 输入框信息
       },
       dialogAddPerson: false,
@@ -166,26 +160,41 @@ export default {
       id_type: ID_TYPES,
       rules: {
         username: [
-          { required: true, message: '请输入参与方名称', trigger: 'blur' },
+          { required: true, message: '参与方名称不能为空', trigger: 'blur' },
         ],
         idNumber: [
-          { required: true, validator: this.validIDCard, trigger: 'change' },
+          { required: true, validator: this.validIDCard, trigger: 'blur' },
         ],
         email: [
-          { required: true, message: '请输入邮箱地址', trigger: 'blur' },
-          { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur,change' },
+          { required: true, validator: this.validateEmail, trigger: 'blur,change' },
         ],
       },
+      isPassportAvailableResult: undefined,
+      isIDNOAvailableResult: undefined,
     };
   },
   methods: {
+    // 初始化数据
+    initData() {
+      // companyId
+      this.searchMsg.companyId = companyService.getStoredCompany().companyList.companyId;
+      this.pageTag = this.$route.params.page;
+      if (this.$route.params.page) {
+        this.pagination.currentPage = this.pageTag;
+      } else {
+        this.pagination.currentPage = 1;
+      }
+      this.searchBtn(this.pagination.currentPage);
+    },
     // 添加
     addPerson() {
       // console.log(this.person);
       this.$refs.person.validate((valid) => {
         if (valid) {
-          pService.add(this.person).then(() => {
+          pService.addParticipator(this.person).then(() => {
             this.$message({ message: '添加成功', type: 'success' });
+            this.dialogAddPerson = false;
+            this.searchBtn(1);
           });
         } else {
           this.$message.error('填写信息有误');
@@ -197,16 +206,20 @@ export default {
       // console.log(this.person);
       this.$refs.dialogEditData.validate((valid) => {
         if (valid) {
-          pService.update(this.person).then(() => {
+          pService.updateParticipator(this.person).then(() => {
             this.$message({ message: '编辑成功', type: 'success' });
+            this.dialogEditPerson = false;
+            this.searchBtn(this.pagination.currentPage);
           });
         } else {
           this.$message.error('填写信息有误');
         }
       });
     },
-    handleClose(done) {
-      this.person = {};
+    // 关闭表单，清空数据
+    cleanContent(done) {
+      this.$refs.person.resetFields();
+      // this.$nextTick(() => { this.$refs.person.resetFields(); });
       done();
     },
     // 分页
@@ -221,8 +234,8 @@ export default {
       if (!this.searchMsg.inputMsg) {
         this.searchMsg.inputMsg = undefined;
       }
-      pService.findAll(this.searchMsg, pageIndex, 10).then((resp) => {
-        // console.log(resp);
+      pService.findAllParticipators(this.searchMsg, pageIndex, this.pagination.pageSize)
+      .then((resp) => {
         this.account = resp.data;
         this.pagination.totalNum = resp.pagination.totalNum;
       });
@@ -252,21 +265,32 @@ export default {
     validIDCard(rule, value, callback) {
       switch (this.person.idType) {
         case '0':
-          if (!validate.isIDNO(value)) {
-            callback(new Error('身份证号输入格式不正确'));
+          this.isIDNOAvailableResult = validate.isIDNOAvailable(value);
+          if (this.isIDNOAvailableResult !== 'ok') {
+            callback(new Error(this.isIDNOAvailableResult));
           } else {
             callback();
           }
           break;
         case '1':
-          if (!validate.isPassport(value)) {
-            callback(new Error('护照输入格式不正确'));
+          this.isPassportAvailableResult = validate.isPassportAvailable(value);
+          if (this.isPassportAvailableResult !== 'ok') {
+            callback(new Error(this.isPassportAvailableResult));
           } else {
             callback();
           }
           break;
         default:
           break;
+      }
+    },
+    // 邮箱验证
+    validateEmail(rule, value, callback) {
+      const result = validate.isEmailAvailable(value);
+      if (result !== 'ok') {
+        callback(new Error(result));
+      } else {
+        callback();
       }
     },
   },
