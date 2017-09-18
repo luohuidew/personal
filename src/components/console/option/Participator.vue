@@ -33,7 +33,15 @@
           </el-table>
         </div>
         <div class="page-con">
-          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pagination.currentPage" :page-size="pagination.pageSize" :total="pagination.totalNum" layout="total, prev, pager, next, jumper"></el-pagination>
+
+          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                         :current-page="pagination.currentPage"
+                         :page-size="pagination.pageSize"
+                         :page-sizes="pagination.pageSizes"
+                         :layout="pagination.layout"
+                         :total="pagination.totalNum">
+
+          </el-pagination>
         </div>
       </div>
     </div>
@@ -116,7 +124,7 @@
 <script>
 import pService from '../../../service/participator';
 import companyService from '../../../service/company';
-import { ID_TYPES } from '../../../data/constants';
+import { ID_TYPES, PAGINATION_SIZE, PAGINATION_SIZES, PAGINATION_LAYOUT } from '../../../data/constants';
 import validate from '../../../utils/validation';
 
 export default {
@@ -126,6 +134,13 @@ export default {
   },
   data() {
     return {
+      pagination: {
+        layout: PAGINATION_LAYOUT,
+        pageSize: PAGINATION_SIZE,
+        pageSizes: PAGINATION_SIZES,
+        currentPage: 1,
+        totalNum: 0,
+      },
       searchMsg: {
         companyId: undefined, // 公司id
         inputMsg: undefined, // 输入框信息
@@ -143,11 +158,6 @@ export default {
         workId: undefined, // 员工ID
         department: undefined, // 部门
         position: undefined, // 职位
-      },
-      pagination: {
-        currentPage: 1,
-        totalNum: undefined,
-        pageSize: 10,
       },
       id_type: ID_TYPES,
       rules: {

@@ -3,10 +3,12 @@
   "files.eol": "\n",
   "editor.fontSize": 14,
   "editor.renderWhitespace": "all",
-  "vim.disableAnnoyingNeovimMessage": true,
+  "emmet.showAbbreviationSuggestions": true,
+  "emmet.showExpandedAbbreviation": "always",
   "emmet.syntaxProfiles": {
     "vue-html": "html",
     "vue": "html"
   },
-  "git.ignoreLimitWarning": true
+  "git.enabled": false,
+  "git.autofetch": false
 }

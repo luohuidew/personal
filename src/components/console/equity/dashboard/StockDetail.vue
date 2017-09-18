@@ -11,7 +11,7 @@
       </el-row>
     </div>
     <div class="stock-cont">
-      <div class="echart-warp bgcolor">
+      <div class="echart-warp bgcolor" id="stockChart">
       </div>
     </div>
     <div class="stock-cont">
@@ -21,93 +21,176 @@
           <el-button class="addbtn" type="primary" @click="dialogVisible = true">新增股东</el-button>
         </div>
         <div class="table-wrap">
-          <tree-table :treeClomns="treeClomns"></tree-table>
+          <treelist-table :treelistdata="stocklistdata" v-if="isloading"></treelist-table>
         </div>
       </div>
     </div>
     <!-- 新增股东 -->
     <el-dialog title="添加股权信息" :visible.sync="dialogVisible" size="small" :before-close="handleClose">
-      <el-form :model="stockMap" label-width="120px">
-        <el-form-item label="股东名称" required>
-          <el-input v-model="stockMap.name" auto-complete="off"></el-input>
+      <el-form :model="stockAddMap" :rules="rules" ref="stockAddForm" label-width="120px">
+        <el-form-item label="股东名称" required prop="shareholderName">
+          <el-input v-model="stockAddMap.shareholderName"></el-input>
         </el-form-item>
-        <el-form-item label="股东类型" required>
-          <el-select v-model="stockMap.region" placeholder="请选择活动区域">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+        <el-form-item label="股东类型" required prop="shareholderType">
+          <el-select v-model="stockAddMap.shareholderType">
+            <el-option v-for="item in shareholderType" :label="item.text" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="投资轮次" required>
-          <el-select v-model="stockMap.region" placeholder="请选择活动区域">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+        <el-form-item label="投资轮次" required prop="rounds">
+          <el-select v-model="stockAddMap.rounds">
+            <el-option v-for="item in roundType" :label="item.text" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="注册资本" required>
-          <el-input v-model="stockMap.name" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="总注册资本" required>
-          <el-input v-model="stockMap.name" auto-complete="off"></el-input>
+        <el-form-item label="注册资本" required prop="registeredCapital">
+          <el-input v-model.number="stockAddMap.registeredCapital"></el-input>
         </el-form-item>
         <el-form-item label="股份比例" required>
-          <el-input v-model="stockMap.name" auto-complete="off"></el-input>
+          <el-input v-model="stockScale" :disabled="true"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-            <el-button @click="dialogVisible = false">继续添加</el-button>
-            <el-button type="primary" @click="dialogVisible = false">确认保存</el-button>
-          </span>
+        <el-button @click="checkForm('stockAddForm')">继续添加</el-button>
+        <el-button type="primary" @click="checkForm('stockAddForm');resetForm('financAddForm');dialogVisible=false;">确认保存</el-button>
+      </span>
     </el-dialog>
   </div>
 </template>
 <script>
-import treeTable from './treetable';
-// import stockServer from '../../../../service/stock';
+import echarts from 'echarts';
+import treelistTable from './treetable';
+import { SHAREHOLDER_TYPE, ROUND_TYPE } from '../../../../data/constants';
+import stockServer from '../../../../service/stock';
 
 export default {
   name: 'stock-detail',
   data() {
     return {
-      stockListMap: {},
-      stockMap: { // 测试
-        name: undefined,
+      companyId: '123123123',  // 从缓存读取
+      totalMoney: 140000,  // 调取接口
+      isloading: false, // 判断axios加载是否完成,加载完成后才渲染组件
+      myChartDiv: undefined,
+      stocklistdata: {},
+      shareholderType: SHAREHOLDER_TYPE, // 股东类型
+      roundType: ROUND_TYPE, // 投资轮次
+      stockAddMap: {
+        shareholderName: '',
+        shareholderType: '',
+        rounds: '',
+        registeredCapital: '',
       },
-      treeClomns: [
-        {
-          text: '股东名称',
-          dataIndex: 'shareholderAbbreviation',
-        }, {
-          text: '投资轮次',
-          dataIndex: 'rounds',
-        }, {
-          text: '注册资本',
-          dataIndex: 'registeredCapital',
-        }, {
-          text: '股份比例',
-          dataIndex: 'rate',
-        },
-      ],
+      eChartList: {
+        xAxiasMap: [],
+        yAxiasMap: [],
+      },
+      rules: {
+        shareholderName: [
+          { required: true, message: '股东名称不能为空' },
+        ],
+        shareholderType: [
+          { required: true, message: '股东类型不能为空', trigger: 'change' },
+        ],
+        rounds: [
+          { required: true, message: '股东轮次不能为空', trigger: 'change' },
+        ],
+        registeredCapital: [
+          { required: true, message: '注册资本不能为空' }, { type: 'number', message: '注册资本必须为数字值' },
+        ],
+      },
       dialogVisible: false,
     };
   },
   created() {
-    // const id = '123456';
-    // stockServer.getAll(id).then((resp) => {
-    //   console.log('2222222222222222', resp);
-    //   this.stockListMap = resp.data;
-    // }, (resp) => {
-    //   console.log('aaaaaaaaaa', resp);
-    // });
+    this.getStockList();
+    this.stockAddMap.companyId = this.companyId;
+  },
+  mounted() {
   },
   methods: {
-    handleClose(done) {
-      this.$confirm('确认关闭？').then(() => {
-        done();
-      }).catch(() => {});
+    createEchart() {
+      this.xyEchartData();
+      this.myChartDiv = document.getElementById('stockChart');
+      if (this.myChartDiv) {
+        this.onEchart();
+      }
+    },
+    onEchart() {
+      // 基于准备好的dom，初始化echarts实例
+      const myChart = echarts.init(this.myChartDiv);
+      // 绘制图表
+      myChart.setOption({
+        color: '#4F6BBF',
+        backgroundColor: '#ffffff',
+        textStyle: {
+          color: '#666666',
+        },
+        tooltip: {},
+        xAxis: {
+          data: this.eChartList.xAxiasMap,
+          axisLine: {
+            show: false,
+            lineStyle: {
+              color: '#ffffff',
+              width: '0',
+            },
+          },
+        },
+        yAxis: {
+          show: false,
+        },
+        series: [{
+          type: 'bar',
+          data: this.eChartList.yAxiasMap,
+          itemstyle: {
+          },
+          barWidth: '10%',
+          barMinHeight: '10',
+        }],
+      });
+    },
+    xyEchartData() {
+      this.stocklistdata.forEach((value) => {
+        this.eChartList.xAxiasMap.push(value.shareholderAbbreviation);
+        this.eChartList.yAxiasMap.push(value.registeredCapital);
+      });
+    },
+    checkForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.addStock(formName);
+        }
+      });
+    },
+    addStock(formName) {
+      stockServer.add(this.stockAddMap).then(() => {
+        this.resetForm(formName);
+        this.$message({
+          message: '添加成功',
+          type: 'success',
+        });
+      });
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+    },
+    handleClose() {
+      this.resetForm('stockAddForm');
+      this.dialogVisible = false;
+    },
+    getStockList() {
+      stockServer.getStockGroupByCompanyId().then((resp) => {
+        this.stocklistdata = resp;
+        this.isloading = true;
+        this.createEchart();
+      });
+    },
+  },
+  computed: {
+    stockScale() {
+      return stockServer.getPercent(this.stockAddMap.registeredCapital, this.totalMoney);
     },
   },
   components: {
-    treeTable,
+    treelistTable,
   },
 };
 </script>
@@ -116,7 +199,7 @@ export default {
 .head-menu .title{font-weight:bold;font-size: 16px;color: #666;letter-spacing: 1.97px;line-height: 60px;}
 .head-menu .return{position: absolute;top:20px;left:20px;font-size: 14px;color: #999999;letter-spacing: 1.14px;line-height: 14px;}
 .stock-cont{margin:20px 0 0;}
-.echart-warp{min-height: 180px;}
+.echart-warp{min-height: 180px;width:100%;}
 .stock-list{min-height:500px;padding:30px 30px 0 30px;}
 .main-title .title{float:left;display: inline;font-size: 16px;color: #666666;letter-spacing:1px;font-weight:bold;line-height:36px;}
 .main-title .addbtn{float:right;display: inline;font-size: 14px;color: #FFFFFF;letter-spacing: 1px;}

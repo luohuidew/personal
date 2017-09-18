@@ -29,17 +29,13 @@
         <li class="common email">
           <span>绑定邮箱</span>
           <p>{{usefulData.emailType}}</p>
-          <div class="edit-btn" @click="emailEdit(usefulData.email)"><em>{{usefulData.emailBtn}}</em></div>
+          <div class="edit-btn" @click="passwordPopShow(0)"><em>{{usefulData.emailBtn}}</em></div>
         </li>
         <li class="common phone">
           <span>绑定手机</span>
-          <p v-if="!unlinkTel">{{usefulData.xingTel}}</p>
-          <div v-if="!unlinkTel" class="edit-btn" @click="userPassword=true">
-            <em>修改</em>
-          </div>
-          <p v-if="unlinkTel">未绑定</p>
-          <div v-if="unlinkTel" class="edit-btn" @click="linkTel=true">
-            <em>手机绑定</em>
+          <p>{{usefulData.phoneType}}</p>
+          <div class="edit-btn" @click="passwordPopShow(1)">
+            <em>{{usefulData.phoneBtn}}</em>
           </div>
         </li>
       </ul>
@@ -58,13 +54,26 @@
       <div class="attention">
         <i>*</i><p>接受期权授予协议，必须要完成实名认证才能顺利签字。</br>实名认证审核时间约为1个工作日 ，请您合理安排认证时间，避免耽误签字。</p>
       </div>
-      <!--邮箱弹窗 start-->
-      <el-dialog v-if="emailShow" title="绑定邮箱" :visible.sync="emailShow" size="tiny">
-        <el-form :model="usefulData" :rules="rules" ref="usefulData">
-          <el-form-item label="请输入绑定的邮箱" prop="newEmail" :label-width="usefulData.formLabelSmall" required>
-            <el-input type="email" v-model.trim="usefulData.newEmail" placeholder="请输入您要绑定的邮箱地址"></el-input>
+      <!--密码确定 start-->
+      <el-dialog v-if="passwordShow" title="确认密码" :visible.sync="passwordShow" size="tiny">
+        <p class="des">为保障您的账号安全，请输入账号密码进行验证</p>
+        <el-form :model="usefulData">
+          <el-form-item label="请输入密码" :label-width="usefulData.formLabelTiny" required>
+            <el-input v-model.trim="usefulData.password" placeholder="请输入账号密码"></el-input>
           </el-form-item>
-          <!-- <el-form-item prop="emailCode" label="邮箱验证码" :label-width="usefulData.formLabelWidth" class="tel-code" required>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="closePasswordPop">取 消</el-button>
+          <el-button type="primary" @click="popNext(usefulData.email)">确 定</el-button>
+        </span>
+      </el-dialog>
+      <!--邮箱弹窗 start-->
+      <el-dialog v-if="emailShow" :title="usefulData.emailPopTitle" :visible.sync="emailShow" size="tiny">
+        <el-form :model="usefulData" :rules="rules" ref="usefulData">
+          <el-form-item :label="usefulData.emailPopLabel" prop="newEmail" :label-width="usefulData.formLabelSmall" required>
+            <el-input type="email" v-model.trim="usefulData.newEmail" :placeholder="usefulData.emailPopLabel"></el-input>
+          </el-form-item>
+          <!-- <el-form-item prop="emailCode" label="邮箱验证码" :label-width="usefulData.formLabelTiny" class="tel-code" required>
             <el-input v-model.trim="usefulData.emailCode" placeholder="请输入邮箱验证码" class="tel-code"></el-input><el-button @click="sendEmailMsgs('updateEmail')">发送验证码</el-button>
           </el-form-item> -->
         </el-form>
@@ -74,37 +83,16 @@
         </span>
       </el-dialog>
       <!--邮箱弹窗 end-->
-      <!--手机解绑弹窗 start-->
-      <el-dialog v-if="!userTel" title="手机解绑" :visible.sync="userPassword" size="tiny">
-        <p class="des">为保障您的账号安全，请输入账号密码进行验证</p>
-        <el-form :model="usefulData">
-          <el-form-item label="请输入密码" :label-width="usefulData.formLabelWidth" required>
-            <el-input v-model.trim="usefulData.password" placeholder="请输入账号密码"></el-input>
-          </el-form-item>
-        </el-form>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="userPassword = false">取 消</el-button>
-          <el-button type="primary" @click="editTel">确 定</el-button>
-        </span>
-      </el-dialog>
-      <el-dialog v-if="userTel" title="手机解绑" :visible.sync="userTel" size="tiny">
-        <!--这里需要处理一个逻辑，当点击确定解绑成功，当点击取消，就解绑不成功！！！-->
-        <h4 class="success">验证成功!</h4>
-        <p class="des">解除绑定后您将无法用当前绑定手机号继续登录股书平台并接收相关信息。<br/>是否确定要接除绑定？</p>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="userTel = false">取 消</el-button>
-          <el-button type="primary" @click="editUnlinkTel">确 定</el-button>
-        </span>
-      </el-dialog>
-      <!--手机解绑弹窗 end-->
       <!--手机绑定弹窗 start-->
-      <el-dialog v-if="linkTel" title="手机绑定" :visible.sync="linkTel" size="tiny">
+      <el-dialog v-if="phoneShow" :title="usefulData.phonePopTitle" :visible.sync="phoneShow" size="small">
         <el-form :model="usefulData" :rules="rules">
-          <el-form-item prop="newPhone" label="手机号" :label-width="usefulData.formLabelWidth" required>
-            <el-input type="tel" v-model.number.trim="usefulData.newPhone" placeholder="请输入手机号"></el-input>
+          <el-form-item prop="newPhone" :label="usefulData.phonePopLabel" :label-width="usefulData.formLabelSmall" required>
+            <el-input type="tel" v-model.number.trim="usefulData.newPhone" :placeholder="usefulData.phonePopLabel" @blur="getImgCode()"></el-input>
           </el-form-item>
-          <el-form-item prop="telCode" label="手机验证码" :label-width="usefulData.formLabelWidth" class="tel-code" required>
-            <!--这里需要做一个处理，掉接口判断手机验证码正确与否-->
+          <el-form-item prop="imgCode" label="图形验证码" :label-width="usefulData.formLabelSmall" class="tel-code phoneValidate" required>
+            <el-input v-model.trim="usefulData.inputImgCode" placeholder="请输入图形验证码" class="img-code" @blur="checkImgCode()"></el-input><img class="hashImgCode" :src="usefulData.imgCode" role="button" @click="getImgCode('usefulData.newPhone')"/>
+          </el-form-item>
+          <el-form-item prop="telCode" label="手机验证码" :label-width="usefulData.formLabelSmall" class="tel-code phoneValidate" required>
             <el-input v-model.trim="usefulData.telCode" placeholder="请输入手机验证码" class="tel-code"></el-input><el-button @click="sendMsgs">发送验证码</el-button>
           </el-form-item>
         </el-form>
@@ -117,11 +105,11 @@
       <!--实名认证弹窗 start-->
       <el-dialog v-if="realNameStatus" title="实名认证" :visible.sync="realNameStatus" size="small">
         <el-form :model="usefulData" :rules="rules">
-          <el-form-item label="真实姓名" :label-width="usefulData.formLabelWidth" required>
+          <el-form-item label="真实姓名" :label-width="usefulData.formLabelTiny" required>
             <el-input v-if="firstCertificateStatus" v-model.trim="usefulData.confirmRealName" placeholder="请输入您的真实姓名"></el-input>
             <el-input v-else v-model.trim="usefulData.confirmRealName" disabled></el-input>
           </el-form-item>
-          <el-form-item label="证件号" :label-width="usefulData.formLabelWidth" class="ids" required>
+          <el-form-item label="证件号" :label-width="usefulData.formLabelTiny" class="ids" required>
             <el-row :gutter="10" class="ids-row">
               <el-col :span="7">
                 <el-select v-if="firstCertificateStatus" v-model="usefulData.idValue" clearable placeholder="请选择" @change="changeItem">
@@ -151,7 +139,7 @@
               </el-col>
             </el-row>
           </el-form-item>
-          <el-form-item label="手持证件照" :label-width="usefulData.formLabelWidth" class="hand-photo">
+          <el-form-item label="手持证件照" :label-width="usefulData.formLabelTiny" class="hand-photo">
             <el-row :gutter="15">
               <el-col :span="10">
                 <img v-if="usefulData.handheldIdCardImgUrl" :src="usefulData.handheldIdCardImgUrl">
@@ -190,7 +178,7 @@
               </el-col>
             </el-row>
           </el-form-item>
-          <el-form-item label="证件正反面" :label-width="usefulData.formLabelWidth">
+          <el-form-item label="证件正反面" :label-width="usefulData.formLabelTiny">
             <el-row :gutter="10" class="two-upload">
               <el-col :span="10">
                 <img v-if="usefulData.idCardImgPositiveUrl" :src="usefulData.idCardImgPositiveUrl">
@@ -266,16 +254,16 @@
       <el-dialog v-if="passwordStatus" title="修改密码" :visible.sync="passwordStatus" size="tiny">
         <p class="des">为保障您的账号安全，请输入账号密码进行验证</p>
         <el-form :model="usefulData">
-          <el-form-item label="旧密码" :label-width="usefulData.formLabelWidth" required>
+          <el-form-item label="旧密码" :label-width="usefulData.formLabelTiny" required>
             <el-input v-model.trim="usefulData.password" placeholder="请输入旧密码"></el-input>
           </el-form-item>
-          <el-form-item label="新密码" :label-width="usefulData.formLabelWidth" required>
+          <el-form-item label="新密码" :label-width="usefulData.formLabelTiny" required>
             <el-input v-model.trim="usefulData.newPassword" placeholder="请输入新密码"></el-input>
           </el-form-item>
-          <el-form-item label="确认密码" :label-width="usefulData.formLabelWidth" required>
+          <el-form-item label="确认密码" :label-width="usefulData.formLabelTiny" required>
             <el-input v-model.trim="usefulData.confirmPassword" placeholder="请再次输入新密码"></el-input>
           </el-form-item>
-          <el-form-item label="密码安全性" :label-width="usefulData.formLabelWidth">
+          <el-form-item label="密码安全性" :label-width="usefulData.formLabelTiny">
             <el-row :gutter="10" class="safety">
               <el-col :span="8" ref="weakLen"><span></span></el-col>
               <el-col :span="8" ref="midLen"><span></span></el-col>
@@ -366,7 +354,7 @@
       </el-dialog>
       <!-- <el-dialog v-if="userEmail" title="修改邮箱" :visible.sync="userEmail" size="tiny">
         <el-form :model="usefulData">
-          <el-form-item label="修改邮箱" :label-width="usefulData.formLabelWidth" required>
+          <el-form-item label="修改邮箱" :label-width="usefulData.formLabelTiny" required>
             <el-input type="email" v-model.trim="usefulData.newEmail" placeholder="请输入新的邮箱地址"></el-input>
           </el-form-item>
         </el-form>
@@ -395,6 +383,7 @@ export default {
     this.sendPhoneCode.id = this.usefulData.id;
     // 执行findOne接口返回的数据
     personal.findOne().then((r) => {
+      console.log(r);
       this.usefulData.username = r.username;
       this.usefulData.enabled = r.enabled;
       this.usefulData.phone = r.phone;
@@ -402,19 +391,9 @@ export default {
       this.usefulData.lastPasswordResetDate = r.lastPasswordResetDate;
       // 编辑处理邮箱
       this.editEmail();
+      // 处理手机号逻辑展示
+      this.editPhone();
     });
-    // 根据手机号是否为空来判断是否已经被绑定
-    // if (this.updateEmail.phone) {
-    //   this.emailStatus = 1; // 0表示邮箱未绑定，1表示邮箱已绑定
-    // } else {
-    //   this.emailStatus = 0;
-    // }
-    // this.updateEmail.email = this.usefulData.newEmail;
-    // 手机中间4位均为*号
-    const phone = this.usefulData.phone;
-    if (phone.length > 0) {
-      this.usefulData.xingTel = `${phone.substr(0, 3)}****${phone.substr(7)}`;
-    }
   },
   data() {
     return {
@@ -430,20 +409,18 @@ export default {
       isNameEdit: false, // 默认进来用户名称是不可编辑状态
       emailShow: false, // 默认进来邮箱弹窗不显示
       changeEmailShow: false, // 默认进来修改邮箱绑定不显示
-      emailStatus: 0, // 未绑定 0表示未绑定,1已绑定
-      phoneShow: false, // 默认进来手机绑定弹窗不显示绑定不显示
-      phoneStatus: 0, // 未绑定 0表示未绑定，1已绑定
-      changePhoneShow: false, // 默认进来修改手机bang'ding
+      phoneShow: false, // 默认进来手机弹窗不显示
+      passwordShow: false, // 默认输入用户密码弹窗是不可见的
+      changePhoneShow: false, // 默认进来修改手机绑定不显示
+      disabled: false,
       defaultItem: 'first', // 默认进来第一个展示
       signatureStatus: false, // 默认进来签名管理弹窗是不可见的
       firstSinStatus: true, // 默认进来首次签名结果是展示的
       editSinStatus: false, // 默认进来编辑签名不可见
-      userPassword: false, // 默认输入用户密码弹窗是不可见的
       userEmail: false, // 默认用户邮箱弹窗是不可见的
-      userTel: false, // 默认进来用户手机号弹窗是不可见的
       passwordStatus: false, // 默认修改密码不可见
-      unlinkTel: true, // 默认进来手机解绑为false
-      linkTel: false, // 默认进来手机号未绑定
+      // unlinkTel: true, // 默认进来手机解绑为false
+      // linkTel: false, // 默认进来手机号未绑定
       editStatus: false, // 默认输入框是不可编辑的
       changeNick: false, // 默认昵称是不可编辑的
       telCodeStatus: false, // 手机验证码状态
@@ -454,10 +431,25 @@ export default {
       firstCertificateStatus: true, // 未被认证过，初次认证
       idStatus: true, // 身份证被选中
       passportStatus: false, // 默认护照没有被选中
+      hash: Math.random(),
       usefulData: {
         username: '', // 用户名称
+        email: '', // 默认邮箱地址为空
+        newEmail: '', // 变更的邮箱
         emailType: '', // 星处理之后的邮箱
         emailBtn: '', // 编辑邮箱btn
+        emailPopTitle: '', // 邮箱弹窗title
+        emailPopLabel: '', // 邮箱弹窗label
+        emailCode: '', // 默认邮箱验证码为空
+        phone: '', // 手机号
+        phoneType: '', // 手机号位置的展示
+        phoneBtn: '', // 手机按钮展示
+        newPhone: '', // 验证码手机号新的手机号
+        phonePopTitle: '', // 手机弹窗title
+        phonePopLabel: '', // 手机弹窗label
+        beforePopPassword: undefined, // 判断从邮箱或者手机条转过来
+        imgCode: '', // 图形验证码
+        inputImgCode: '', // 输入的图形验证码
         enabled: '',
         upLoadSignImg: '', // 上传的签名图片地址
         rotate: 0, // 默认进来没有做旋转
@@ -477,14 +469,7 @@ export default {
         password: '123', // 临时账号密码
         newPassword: '', // 修改后的密码
         confirmPassword: '', // 确认的新密码
-        newEmail: '', // 变更的邮箱
-        email: '', // 默认邮箱地址为空
-        emailCode: '', // 默认邮箱验证码为空
-        xingEmail: '', // 被截取后的邮箱地址
-        phone: '', // 手机号
-        newPhone: '', // 验证码手机号新的手机号
-        xingTel: '', // 被截取后的手机号
-        formLabelWidth: '95px',
+        formLabelTiny: '95px',
         formLabelSmall: '150px',
         telCode: '', // 默认手机验证码
         confirmRealName: '沙枫', // 输入的实名
@@ -501,10 +486,10 @@ export default {
       },
       rules: {
         newPhone: [
-          { validator: this.checkTel, trigger: 'blur' },
+          { validator: this.checkPhone, trigger: 'blur' },
         ],
         telCode: [
-          { validator: this.checkTelCode, trigger: 'blur' },
+          { validator: this.checkPhoneCode, trigger: 'blur' },
         ],
         idNo: [
           { validator: this.checkIdNo, trigger: 'blur' },
@@ -517,11 +502,6 @@ export default {
         ],
       },
     };
-  },
-  filters: {
-    filter(avg1, avg2) {
-      return filters.constantsFilter(avg1, avg2);
-    },
   },
   methods: {
     handleClose(done) {
@@ -551,13 +531,21 @@ export default {
       if (this.usefulData.email.length > 0) {
         this.usefulData.emailType = this.usefulData.email;
         this.usefulData.emailBtn = '修改邮箱';
+        this.usefulData.emailPopTitle = '修改绑定邮箱';
+        this.usefulData.emailPopLabel = '请输入变更的邮箱';
       } else {
         this.usefulData.emailType = '未绑定';
         this.usefulData.emailBtn = '邮箱绑定';
+        this.usefulData.emailPopTitle = '绑定邮箱';
+        this.usefulData.emailPopLabel = '请输入绑定的邮箱';
       }
     },
+    // 关闭密码确认弹窗
+    closePasswordPop() {
+      this.passwordShow = false;
+    },
     // 根据邮箱是否为空区别来做弹窗处理
-    emailEdit(email) {
+    emailPopShow(email) {
       if (email.length > 0) {
         this.changeEmailShow = true;
       }
@@ -593,6 +581,31 @@ export default {
     closeEmail() {
       this.emailShow = false;
     },
+    editPhone() { // 根据findOne来做手机号处理
+      if (this.usefulData.phone.length > 0) { // 当手机号不为空默认绑定
+        this.usefulData.phoneType = this.usefulData.phone;
+        this.usefulData.phoneBtn = '修改手机';
+        this.usefulData.phonePopTitle = '修改绑定手机';
+        this.usefulData.phonePopLabel = '请输入变更的手机号';
+      } else {
+        this.usefulData.phoneType = '未绑定';
+        this.usefulData.phoneBtn = '手机绑定';
+        this.usefulData.phonePopTitle = '绑定手机';
+        this.usefulData.phonePopLabel = '请输入绑定的手机号';
+      }
+    },
+    // 根据手机号是否为空区别来做弹窗处理
+    passwordPopShow(i) {
+      // 初次绑定或者修改绑定都需要输入密码，都需要弹出密码确认
+      if (i === 0) {
+        // 邮箱弹窗
+        this.usefulData.beforePopPassword = 0;
+      } else if (i === 1) {
+        this.usefulData.beforePopPassword = 1;
+      }
+      console.log(this.usefulData.beforePopPassword);
+      this.passwordShow = true;
+    },
     // 点击获得邮箱验证码
     sendEmailMsgs(formName) {
       this.$refs[formName].validate((valid) => {
@@ -605,18 +618,6 @@ export default {
           });
         }
       });
-    },
-    xingEmails() {
-    // 邮箱@前均为*号
-      console.log(this.usefulData.emailType);
-      if (this.usefulData.emailType.length > 0) {
-        const emailArray = this.usefulData.emailType.split('@');
-        const editedEmai = emailArray.join('@');
-        const len = emailArray[0].length;
-        const x = '*';
-        const xing = x.repeat(len);
-        this.usefulData.xingEmail = editedEmai.replace(emailArray[0], xing);
-      }
     },
     // 验证邮箱地址
     validateEmail(rule, value, callback) {
@@ -637,20 +638,14 @@ export default {
         });
       }
     },
-    // 编辑手机解绑弹窗
-    editTel() {
-      this.userPassword = false;
-      this.userTel = true; // 邮箱弹出
-      // 这个地方需要做验证，当用户密码对上了，设置userPassword为true,这样切换弹窗里的内容
-    },
-    // 手机解绑确认
-    editUnlinkTel() {
-      this.userTel = false;
-      this.unlinkTel = true; // 手机解绑成功
-      // this.linkTel = true; // 手机号未被绑定为true
+    // 弹出手机绑定弹窗
+    phonePopUp() {
+      this.passwordShow = false; // 密码弹窗关闭
+      this.phoneShow = true; // 手机弹窗打开
+      // 这个地方需要做验证，当用户密码对上了，然后就关闭密码弹窗弹出手机弹窗
     },
     // 验证手机号
-    checkTel(rule, value, callback) {
+    checkPhone(rule, value, callback) {
       let result = '';
       if (!value) {
         result = callback(new Error('手机号不能为空！'));
@@ -662,8 +657,33 @@ export default {
       }
       return result;
     },
+    // 获得图片验证码
+    getImgCode() {
+      if (this.usefulData.newPhone && validate.isPhoneAvailable(this.usefulData.newPhone)) {
+        personal.getImgCode(this.usefulData.newPhone).then((resp) => {
+          console.log(resp);
+        });
+      }
+    },
+    checkImgCode() {
+      personal.checkImgCode(this.usefulData.newPhone, this.usefulData.imgCode).then((resp) => {
+        console.log(resp);
+        this.disabled = false;
+        return true;
+      //   if (resp.data === 'error') {
+      //     this.$message.error('图形验证码不正确');
+      //     this.disabled = true;
+      //     return false;
+      //   }
+      //   this.disabled = false;
+      //   return true;
+      // }, () => {
+      //   this.$message.error('图形验证码不正确');
+      // });
+      });
+    },
     // 手机验证码
-    checkTelCode(rule, value, callback) {
+    checkPhoneCode(rule, value, callback) {
       let result = '';
       if (!value) {
         result = callback(new Error('验证码不能为空！'));
@@ -675,6 +695,15 @@ export default {
       //   result = callback(new Error('请输入正确的验证码！'));
       // }
       return result;
+    },
+    // 密码确定后下一个弹窗确定
+    popNext(email) {
+      this.passwordShow = false; // 密码弹窗关闭
+      if (this.usefulData.beforePopPassword === 0) { // 邮箱
+        this.emailPopShow(email);
+      } else if (this.usefulData.beforePopPassword === 1) { // 手机
+        this.phonePopUp();
+      }
     },
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw);
@@ -696,7 +725,7 @@ export default {
       let result = '';
       if (!value) {
         result = callback(new Error('身份证号不能为空！'));
-      } else if (value && !validate.isIDNO(value)) {
+      } else if (value && !validate.isIDNOAvailable(value)) {
         // 如果不符合身份证号码的情况下
         result = callback(new Error('请输入正确的身份证号！'));
       } else {
@@ -709,7 +738,7 @@ export default {
       let result = '';
       if (!value) {
         result = callback(new Error('护照号不能为空！'));
-      } else if (value && !validate.isPassport(value)) {
+      } else if (value && !validate.PassportAvailable(value)) {
         // 如果不符合护照号码的情况下
         result = callback(new Error('请输入正确的护照号！'));
       } else {
@@ -763,6 +792,11 @@ export default {
     rotateImg() { // 图片旋转功能
       this.usefulData.rotate = (this.usefulData.rotate + 90) % 360;
       this.$refs.realSignImg1.style.transform = `rotate(${this.usefulData.rotate}deg)`;
+    },
+  },
+  filters: {
+    filter(avg1, avg2) {
+      return filters.constantsFilter(avg1, avg2);
     },
   },
 };
@@ -914,13 +948,6 @@ body {
   font-weight: 700;
   font-size: 16px;
 }
-.tel-code .el-input{
-  width: 90px !important;
-  margin-right: 10px;
-}
-.tel-code .el-button {
-  padding:10px 5px!important;
-}
 .safety.el-row span {
   display: block;
   width: 100%;
@@ -938,6 +965,22 @@ body {
 }
 .ids .el-col-17 .el-input {
   width: 100% !important;
+}
+.el-dialog--small .tel-code .el-input{
+  float: left;
+  width: 180px !important;
+  margin-right: 10px;
+}
+.el-dialog--small .tel-code .el-button, .el-dialog--small .tel-code .hashImgCode {
+  float: left;
+  width: 90px !important;
+  padding:10px 5px!important;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.el-dialog--small .tel-code .hashImgCode {
+  height: 100%;
 }
 /* .ids-row .el-col {
   padding: 0 !important;
@@ -1030,7 +1073,7 @@ body {
   height: 40px;
   line-height: 40px;
   background: #2e76df;
-  -webkit-opacity: 0.6; 
+  -webkit-opacity: 0.6;
   -moz-opacity: 0.6;
   -khtml-opacity: 0.6;
   opacity: .6;

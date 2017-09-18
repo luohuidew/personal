@@ -7,11 +7,11 @@ export const ROUND_TYPE = [ // 轮次类型
   { id: '5', text: 'B+轮' },
   { id: '6', text: 'C轮' },
   { id: '7', text: 'C+轮' },
-  { id: '7', text: 'D轮' },
-  { id: '7', text: 'D+轮' },
-  { id: '7', text: 'E轮' },
-  { id: '7', text: 'F轮' },
-  { id: '7', text: 'G轮' },
+  { id: '8', text: 'D轮' },
+  { id: '9', text: 'D+轮' },
+  { id: '10', text: 'E轮' },
+  { id: '11', text: 'F轮' },
+  { id: '12', text: 'G轮' },
 ];
 export const SHAREHOLDER_TYPE = [  // 股东类型
   { id: '0', text: '个人' },
@@ -38,6 +38,10 @@ export const ID_TYPE = [ // 证件类型
 export const QINIU_BUCKET_DOMAIN = 'http://ow9hvlmOa.bkt.clouddn.com';
 
 export const QINIU_SERVER = 'http://upload-z1.qiniu.com';
+
+export const PAGINATION_SIZE = 10;
+export const PAGINATION_SIZES = [10, 20, 50];
+export const PAGINATION_LAYOUT = 'total, sizes, prev, pager, next, jumper';
 
 // 需要用于filter的必须加到default里
 export default {

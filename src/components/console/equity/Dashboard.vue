@@ -30,11 +30,11 @@
             </div>
             <div class="main-wrap">
               <el-table :data="stockMap">
-                <el-table-column prop="shareholderAbbreviation" label="股东名称"></el-table-column>
+                <el-table-column prop="shareholderName" label="股东名称"></el-table-column>
                 <el-table-column label="投资轮次">
                   <template scope="scope">
                     <ul class="round-wrap">
-                      <li v-for="item in roundType" v-bind:class="{active: checkRound(item.text, scope.row.rounds)}">{{item.text}}</li>
+                      <li v-for="item in roundType" v-bind:class="{active: checkRound(item.id, scope.row.rounds)}">{{item.text}}</li>
                     </ul>
                   </template>
                 </el-table-column>
@@ -51,14 +51,14 @@
             </div>
             <div class="main-wrap">
               <div class="step-list">
-                <div class="step-wrap" v-for="item in stepList">
+                <div class="step-wrap" v-for="item in financMap">
                   <div class="step-head">
                     <div class="step-line"></div>
                     <div class="step-icon"></div>
                   </div>
                   <div class="step-main">
-                    <div class="step-title">{{item.title}}</div>
-                    <div class="step-description"><span class="bold">{{item.finance}}</span>&nbsp;&nbsp;获<span class="bold">{{item.money}}</span>{{item.compony}}</div>
+                    <div class="step-title">{{item.financedDate}}</div>
+                    <div class="step-description"><span class="bold">{{item.round | roundFilter('ROUND_TYPE')}}</span>&nbsp;&nbsp;获<span class="bold">{{item.financedAccount}}</span>{{item.equity.shareholderName}}投资</div>
                   </div>
                 </div>
               </div>
@@ -68,7 +68,7 @@
       </el-row>
     </div>
     <!-- 初次登录添加股权信息页 -->
-    <el-dialog class="dialog-wrap__large" title="添加股权信息" :visible.sync="dialogVisible1" size="large" :before-close="handleClose">
+    <el-dialog class="dialog-wrap__large" title="添加股权信息" :visible.sync="dialogVisible1" size="large">
       <div class="dialog-left">
         <div class="dialog-step-list">
           <div class="dialog-step-wrap isDone">
@@ -79,70 +79,68 @@
             <div class="dialog-step-icon"></div><div class="dialog-step-titel">融资历史</div>
           </div>
         </div>
+        <el-button class="button-daoru">批量导入</el-button>
       </div>
       <div class="dialog-right">
-        <el-form :model="stockMap" label-width="100px">
+        <el-form :model="stockAddMap" ref="stockAddForm" :rules="stockRules" label-width="100px">
           <el-row type="flex" justify="space-between">
             <el-col :span="11">
-              <el-form-item label="股东名称" required>
-                <el-input v-model="stockMap" size="small" auto-complete="off"></el-input>
+              <el-form-item label="股东名称" required prop="shareholderName">
+                <el-input v-model="stockAddMap.shareholderName" size="small"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="11">
-              <el-form-item label="股东类型" required>
-                <el-select v-model="stockMap" size="small" placeholder="请选择活动区域">
-                  <el-option label="区域一" value="shanghai"></el-option>
-                  <el-option label="区域二" value="beijing"></el-option>
+              <el-form-item label="股东类型" required prop="shareholderType">
+                <el-select v-model="stockAddMap.shareholderType" size="small">
+                  <el-option v-for="item in shareholderType" :label="item.text" :value="item.id"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row type="flex" justify="space-between">
             <el-col :span="11">
-              <el-form-item label="投资轮次" required>
-                <el-select v-model="stockMap" size="small" placeholder="请选择活动区域">
-                  <el-option label="区域一" value="shanghai"></el-option>
-                  <el-option label="区域二" value="beijing"></el-option>
+              <el-form-item label="投资轮次" required prop="rounds">
+                <el-select v-model="stockAddMap.rounds" size="small">
+                  <el-option v-for="item in roundType" :label="item.text" :value="item.id"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="11">
-              <el-form-item label="注册资本" required>
-                <el-input v-model="stockMap" size="small" auto-complete="off"></el-input>
+              <el-form-item label="注册资本" required prop="registeredCapital">
+                <el-input v-model.number="stockAddMap.registeredCapital" size="small"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row type="flex" justify="space-between">
-            <el-col :span="11">
-              <el-form-item label="总注册资本" required>
-                <el-input v-model="stockMap" size="small" auto-complete="off"></el-input>
-              </el-form-item>
-            </el-col>
             <el-col :span="11">
               <el-form-item label="股份比例" required>
-                <el-input v-model="stockMap" size="small" auto-complete="off"></el-input>
+                <el-input v-model="stockScale" size="small" :disabled="true"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
         </el-form>
         <span slot="footer" class="dialog-footer">
-          <el-button>保存</el-button>
+          <el-button @click="checkStockForm('stockAddForm')">保存</el-button>
           <el-button type="primary" @click="dialogVisible1 = false;dialogVisible2 = true">下一步</el-button>
         </span>
         <div class="dialog-table-wrap">
-          <el-table :data="stockList">
+          <el-table :data="stockAddList">
             <el-table-column type="index" label="序号"></el-table-column>
-            <el-table-column label="股东名称"></el-table-column>
-            <el-table-column label="股东类型"></el-table-column>
-            <el-table-column label="投资轮次"></el-table-column>
-            <el-table-column label="注册资本"></el-table-column>
+            <el-table-column label="股东名称" prop="shareholderName"></el-table-column>
+            <el-table-column label="股东类型">
+              <template scope="scope">{{shareholderType | roundFilter('SHAREHOLDER_TYPE')}}</template>
+            </el-table-column>
+            <el-table-column label="投资轮次">
+              <template scope="scope">{{scope.row.rounds | roundFilter('ROUND_TYPE')}}</template>
+            </el-table-column>
+            <el-table-column label="注册资本" prop="registeredCapital"></el-table-column>
             <el-table-column label="股份比例"></el-table-column>
           </el-table>
         </div>
       </div>
     </el-dialog>
     <!-- 初次登录添加融资信息页 -->
-    <el-dialog class="dialog-wrap__large" title="添加融资信息" :visible.sync="dialogVisible2" size="large" :before-close="handleClose">
+    <el-dialog class="dialog-wrap__large" title="添加融资信息" :visible.sync="dialogVisible2" size="large">
       <div class="dialog-left">
         <div class="dialog-step-list">
           <div class="dialog-step-wrap isDone">
@@ -153,49 +151,45 @@
             <div class="dialog-step-icon"></div><div class="dialog-step-titel">融资历史</div>
           </div>
         </div>
-        <div>
-          ul>li 
-        </div>
+        <el-button class="button-daoru">批量导入</el-button>
       </div>
       <div class="dialog-right">
-        <el-form :model="stockMap" label-width="100px">
+        <el-form :model="financAddMap" ref="financAddForm" :rules="financRules" label-width="100px">
           <el-row type="flex" justify="space-between">
             <el-col :span="11">
-              <el-form-item label="融资轮次" required>
-                <el-select v-model="stockMap" size="small" placeholder="请选择活动区域">
-                  <el-option label="区域一" value="shanghai"></el-option>
-                  <el-option label="区域二" value="beijing"></el-option>
+              <el-form-item label="融资轮次" required prop="round">
+                <el-select v-model="financAddMap.round" size="small">
+                  <el-option v-for="item in roundType" :label="item.text" :value="item.id"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="11">
-              <el-form-item label="融资时间" required>
-                <el-select v-model="stockMap" size="small" placeholder="请选择活动区域">
-                  <el-option label="区域一" value="shanghai"></el-option>
-                  <el-option label="区域二" value="beijing"></el-option>
-                </el-select>
+              <el-form-item label="融资时间" required prop="financedDate">
+                <el-date-picker size="small" v-model="financAddMap.financedDate" type="date" placeholder="选择日期"></el-date-picker>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row type="flex" justify="space-between">
             <el-col :span="11">
-              <el-form-item label="融资金额" required>
-                <el-input v-model="stockMap" size="small" auto-complete="off"></el-input>
+              <el-form-item label="融资金额" required prop="financedAccount">
+                <el-input v-model.number="financAddMap.financedAccount" size="small"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="11">
-              <el-form-item label="投资方" required>
-                <el-input v-model="stockMap" size="small" auto-complete="off"></el-input>
+              <el-form-item label="投资方" required prop="equityid">
+                <el-select v-model="financAddMap.equityid" size="small">
+                  <el-option v-for="item in stockMap" :label="item.shareholderName" :value="item.id"></el-option>
+                </el-select>
               </el-form-item>
             </el-col>
           </el-row>
         </el-form>
         <span slot="footer" class="dialog-footer">
-          <el-button>保存</el-button>
+          <el-button @click="checkFinancForm('financAddForm')">保存</el-button>
           <el-button type="primary" @click="dialogVisible2 = false">完成</el-button>
         </span>
         <div class="dialog-table-wrap">
-          <el-table :data="stockList">
+          <el-table :data="financAddList">
             <el-table-column type="index" label="序号"></el-table-column>
             <el-table-column label="融资轮次"></el-table-column>
             <el-table-column label="融资时间"></el-table-column>
@@ -209,94 +203,123 @@
 </template>
 
 <script>
-// 引入 ECharts 主模块
-import echarts from 'echarts/lib/echarts';
-// 引入柱状图
-import 'echarts/lib/chart/bar';
-// 引入提示框和标题组件
-import 'echarts/lib/component/tooltip';
-import 'echarts/lib/component/title';
-
 import stockServer from '../../../service/stock';
-import { ROUND_TYPE } from '../../../data/constants';
+import financServer from '../../../service/financ';
+import filters from '../../../utils/filters';
+import { SHAREHOLDER_TYPE, ROUND_TYPE } from '../../../data/constants';
 
 export default {
   name: 'equity-dashboard',
   data() {
     return {
-      dialogVisible1: false,
+      companyId: '123123123',  // 从缓存读取
+      dialogVisible1: true,
       dialogVisible2: false,
-      myChartDiv: undefined,
-      totalMoney: 140000,
-      stockMap: undefined, // 股权概况
-      stockList: undefined,
-      roundType: ROUND_TYPE,
-      stepList: [{   // 测试
-        title: '2017-07-06',
-        finance: 'A轮',
-        compony: '经纬中国投资',
-        money: '120万',
+      stockMap: [],
+      financMap: [],
+      stockAddMap: { // 添加股权
+        shareholderName: '',
+        shareholderType: '0',
+        rounds: '1',
+        registeredCapital: '',
       },
-      {
-        title: '2017-07-26',
-        finance: 'B轮',
-        compony: '经纬中国投资',
-        money: '220万',
+      financAddMap: { // 添加融资
+        equityid: '',
+        financedAccount: '',
+        round: '1',
+        financedDate: '',
       },
-      {
-        title: '2017-08-06',
-        finance: 'C轮',
-        compony: '经纬中国投资',
-        money: '500万',
-      }],
+      stockAddList: [], // 新建股权列表
+      financAddList: [], // 新建融资列表
+      shareholderType: SHAREHOLDER_TYPE, // 股东类型
+      roundType: ROUND_TYPE, // 轮次类型
+      stockRules: {
+        shareholderName: [
+          { required: true, message: '股东名称不能为空' },
+        ],
+        shareholderType: [
+          { required: true, message: '股东类型不能为空', trigger: 'change' },
+        ],
+        rounds: [
+          { required: true, message: '股东轮次不能为空', trigger: 'change' },
+        ],
+        registeredCapital: [
+          { required: true, message: '注册资本不能为空' }, { type: 'number', message: '注册资本必须为数字值' },
+        ],
+      },
+      financRules: {
+        round: [
+          { required: true, message: '融资轮次不能为空' },
+        ],
+        financedDate: [
+          { required: true, message: '融资时间不能为空' },
+        ],
+        financedAccount: [
+          { required: true, message: '融资金额不能为空' }, { type: 'number', message: '融资金额必须为数字值' },
+        ],
+        equityid: [
+          { required: true, message: '投资方不能为空' },
+        ],
+      },
     };
   },
   created() {
-    const id = '123456';
-    // console.log(stockServer.get());
-    stockServer.get(id).then((resp) => {
-      this.stockMap = resp.data;
-      resp.data.forEach((value, index) => {
-        const r = this.getPercent(value.registeredCapital, this.totalMoney);
-        this.stockMap[index].rate = r;
-      });
-    }, (resp) => {
-      console.log(resp);
+    stockServer.getStockListByCompanyId().then((resp) => {
+      if (resp && resp.length !== 0) {
+        this.stockMap = resp;
+      } else {
+        this.dialogVisible1 = true;
+      }
+    });
+    financServer.getFinancListByCompanyId().then((resp) => {
+      if (resp && resp.length !== 0) {
+        this.financMap = resp;
+      } else {
+        this.dialogVisible2 = true;
+      }
     });
   },
-  mounted() {
-    // this.myChartDiv = document.getElementById('ddbox');
-    // if (this.myChartDiv) {
-    //   this.onEchart();
-    // }
+  filters: {
+    roundFilter(arg1, arg2) {
+      return filters.constantsFilter(arg1, arg2);
+    },
   },
   methods: {
-    onEchart() {
-      // 基于准备好的dom，初始化echarts实例
-      const myChart = echarts.init(this.myChartDiv);
-      // 绘制图表
-      myChart.setOption({
-        title: { text: 'ECharts 入门示例' },
-        tooltip: {},
-        xAxis: {
-          data: ['衬衫', '羊毛衫', '雪纺衫', '裤子', '高跟鞋', '袜子'],
-        },
-        yAxis: {},
-        series: [{
-          name: '销量',
-          type: 'bar',
-          data: [5, 20, 36, 10, 10, 20],
-        }],
-      });
-    },
-    handleClose(done) {
-      this.$confirm('确认关闭？').then(() => {
-        done();
-      }).catch(() => {});
-    },
     checkRound(r, rounds) {
       const roundList = rounds.split(',');
       return roundList.includes(r);
+    },
+    checkStockForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.addStocktoLlist(formName);
+        }
+      });
+    },
+    checkFinancForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.addFinanctoList(formName);
+        }
+      });
+    },
+    addStocktoLlist(formName) {
+      this.resetForm(formName);
+      this.stockAddList.push(this.stockAddMap);
+    },
+    addFinanctoList() {
+      // if (this.financAddMap.financedDate) {
+      //   this.financAddMap.financedDate = this.financAddMap.financedDate.split('T')[0];
+      // }
+      this.financAddList.push(this.financAddMap);
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+    },
+  },
+  computed: {
+    stockScale() {
+      return stockServer.getPercent(this.stockAddMap.registeredCapital, this.totalMoney);
     },
   },
 };
@@ -324,6 +347,5 @@ export default {
 .step-description .bold{font-weight: bold;color: #666;}
 .dialog-table-wrap{padding:30px 0 30px 30px;}
 .dialog-footer{display:block;text-align:right;}
-.round-wrap li{display:inline-block;margin-right:5px;padding:0 3px;height:16px;text-align:center;line-height:16px;background:#F1F1F3;border-radius:2px;font-size: 8px;color: #ADADAD;}
-.round-wrap li.active{background:#8BD7FF;color:#FFFFFF;}
+.button-daoru{background:none;color:#fff;border-color:#fff;font-weight:bold;position:absolute;bottom:50px;}
 </style>

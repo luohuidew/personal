@@ -3,7 +3,7 @@ import api from './http';
 import user from '../service/user';
 
 export default {
-  findOne() {
+  findOne() { // 默认进来获得的用户信息
     const userId = user.getUser().id;
     return api.get(`/user/findOne/${userId}`).then((resp) => {
       // 处理邮箱*
@@ -17,7 +17,23 @@ export default {
       if (resp.email.length > 0) {
         findOneObj.email = editedEmail.replace(emailArray[0], xing);
       }
+      if (resp.phone.length > 0) {
+        findOneObj.phone = `${resp.phone.substr(0, 3)}****${resp.phone.substr(7)}`;
+      }
       return findOneObj;
+    });
+  },
+  getUserInfoByUid() { // 根据用户id获取用户信息
+    const userId = user.getUser().id;
+    return api.get(`/user/findOne/${userId}`).then((resp) => {
+      const respData = { ...resp };
+      const repEmail = respData.email;
+      const idx = repEmail.indexOf('@');
+      if (idx > 0) respData.email = repEmail.replace(repEmail.substring(0, idx), '*'.repeat(idx));
+      if (respData.phone) {
+        respData.phone = `${respData.phone.substr(0, 3)}****${respData.phone.substr(7)}`;
+      }
+      return respData;
     });
   },
   update(params) { // 修改
@@ -25,5 +41,11 @@ export default {
   },
   sendMsg(params) { // 邮箱、电话验证
     return api.post('/sendMsg/', params).then(resp => resp);
+  },
+  getImgCode(phone) { // 获得图形验证
+    return api.get(`/validateCode/${phone}`).then(resp => resp);
+  },
+  checkImgCode(phone, validateCode) { // 验证图形验证码
+    return api.post(`/checkCode/${phone}/${validateCode}`).then(resp => resp);
   },
 };
