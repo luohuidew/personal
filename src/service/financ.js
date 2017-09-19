@@ -16,6 +16,6 @@ export default {
     return api.delete(`/financing/deleteById/${id}`);
   },
   addFinancList(params) {
-    return api.put('/financing/addList', params);
+    return api.put('/financing/addList', { financList: params });
   },
 };

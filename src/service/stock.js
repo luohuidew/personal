@@ -1,48 +1,15 @@
 import api from './http';
-// import companyServer from './company';
 
 // const companyMap = JSON.parse(sessionStorage.getItem('_COMPANY_KEY'));
 // const companyId = companyMap.companyInfo.companyId;
 const companyId = '1231231'; // 测试代码，用上面两行
-// let totalMoney;
-// function getTotalRegisteredCapital() {
-//   companyServer.getCompanyInfoById(companyId).then((resp) => {
-//     totalMoney = resp.totalRegisteredCapital;
-//   });
-// }
 
 export default {
-  // getTotalRegisteredCapital,
   getStockGroupByCompanyId(totalMoney, id = companyId) {
-    // getTotalRegisteredCapital();
-    return api.get(`/equity/findAllWithGroup/${id}`).then((resp) => {
-      resp.data.forEach((value) => {
-        if (value.equities && value.equities.length !== 0) {
-          value.equities.forEach((key) => {
-            const keytest = key;
-            const rate = this.getPercent(key.registeredCapital, totalMoney);
-            keytest.rate = rate;
-          });
-        }
-        const r = this.getPercent(value.registeredCapital, totalMoney);
-        const valuetest = value;
-        valuetest.rate = r;
-      });
-      return resp.data;
-    });
+    return api.get(`/equity/findAllWithGroup/${id}`).then(resp => resp.data);
   },
   getStockListByCompanyId(totalMoney, id = companyId) {
-    // getTotalRegisteredCapital();
-    return api.get(`/equity/findAll/${id}`).then((resp) => {
-      resp.data.forEach((value) => {
-        const r = this.getPercent(value.registeredCapital, totalMoney);
-        const valuetest = value;
-        valuetest.rate = r;
-      });
-      return resp.data;
-    }, (resp) => {
-      this.$message.error(resp.errMsg);
-    });
+    return api.get(`/equity/findAll/${id}`).then(resp => resp.data);
   },
   addStock(params) {
     return api.put('/equity/add', params);
@@ -63,6 +30,6 @@ export default {
     return api.del(`/equity/deleteById/${id}`);
   },
   addStockList(params) {
-    return api.put('/equity/addList', params);
+    return api.put('/equity/addList', { equityList: params });
   },
 };

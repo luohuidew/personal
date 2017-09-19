@@ -15,7 +15,7 @@ export const ROUND_TYPE = [ // 轮次类型
 ];
 export const SHAREHOLDER_TYPE = [  // 股东类型
   { id: '0', text: '个人' },
-  { id: '1', text: '团体' },
+  { id: '1', text: '机构' },
 ];
 export const ID_TYPES = [
   { id: '0', text: '身份证' },
