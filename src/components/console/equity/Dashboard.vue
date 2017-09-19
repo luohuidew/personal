@@ -222,7 +222,7 @@ export default {
         totalRegisteredCapital: '',  // 总注册资本
         totalFinancingCapital: '',  // 总融资额
       },
-      dialogVisible1: true,
+      dialogVisible1: false,
       dialogVisible2: false,
       stockMap: [],
       financMap: [],
@@ -276,22 +276,22 @@ export default {
   created() {
     // const companyMap = JSON.parse(sessionStorage.getItem('_COMPANY_KEY'));
     // this.companyId = companyMap.companyInfo.companyId;
-    companyServer.getCompanyInfoById().then((resp) => {
-      this.companyMap = resp;
-    });
-    stockServer.getStockListByCompanyId().then((resp) => {
-      if (resp && resp.length !== 0) {
-        this.stockMap = resp;
-      } else {
-        this.dialogVisible1 = true;
-      }
-    });
-    financServer.getFinancListByCompanyId().then((resp) => {
-      if (resp && resp.length !== 0) {
-        this.financMap = resp;
-      } else if (this.dialogVisible1 !== true) {
-        this.dialogVisible2 = true;
-      }
+    companyServer.getCompanyInfoById().then((r) => {
+      this.companyMap = r;
+      stockServer.getStockListByCompanyId(this.companyMap.totalRegisteredCapital).then((resp) => {
+        if (resp && resp.length !== 0) {
+          this.stockMap = resp;
+        } else {
+          this.dialogVisible1 = true;
+        }
+      });
+      financServer.getFinancListByCompanyId(this.companyMap.totalRegisteredCapital).then((resp) => {
+        if (resp && resp.length !== 0) {
+          this.financMap = resp;
+        } else if (this.dialogVisible1 !== true) {
+          this.dialogVisible2 = true;
+        }
+      });
     });
   },
   methods: {
@@ -379,7 +379,7 @@ export default {
         });
         return t.split('').reverse().join('');
       }
-      num = `${num.toFixed(4)}`;
+      num = Number(num).toFixed(2);
       const l = `${num}`.split('.')[0].split('').reverse();
       const r = num.split('.')[1];
       l.forEach((v, i) => {
