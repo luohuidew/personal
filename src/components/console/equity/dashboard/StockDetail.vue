@@ -60,13 +60,14 @@ import echarts from 'echarts';
 import treelistTable from './treetable';
 import { SHAREHOLDER_TYPE, ROUND_TYPE } from '../../../../data/constants';
 import stockServer from '../../../../service/stock';
+import companyServer from '../../../../service/company';
 
 export default {
   name: 'stock-detail',
   data() {
     return {
       companyId: '12121222',
-      totalMoney: 140000,  // 调取接口
+      totalMoney: 0,  // 调取接口
       isloading: false, // 判断axios加载是否完成,加载完成后才渲染组件
       myChartDiv: undefined,
       stocklistdata: {},
@@ -199,10 +200,13 @@ export default {
       this.dialogVisible = false;
     },
     getStockList() {
-      stockServer.getStockGroupByCompanyId().then((resp) => {
-        this.stocklistdata = resp;
-        this.isloading = true;
-        this.createEchart();
+      companyServer.getCompanyInfoById().then((r) => {
+        this.totalMoney = r.totalRegisteredCapital;
+        stockServer.getStockGroupByCompanyId(this.totalMoney).then((resp) => {
+          this.stocklistdata = resp;
+          this.isloading = true;
+          this.createEchart();
+        });
       });
     },
   },
