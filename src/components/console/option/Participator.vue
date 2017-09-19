@@ -18,7 +18,7 @@
             <el-table-column align="center" prop="position" label="职位"></el-table-column>
             <el-table-column align="right" label="">
               <template scope="scope">
-                <el-dropdown trigger="click" @command="handleCommand(scope)">
+                <el-dropdown trigger="click" @command="handleCommand(scope,scope.$index)">
                   <el-button size="mini" class="el-dropdown-link">
                     操作<i class="el-icon-caret-bottom el-icon--right"></i>
                   </el-button>
@@ -26,6 +26,7 @@
                     <el-dropdown-item id="edit">编辑</el-dropdown-item>
                     <el-dropdown-item id="permissionCheck">权限浏览</el-dropdown-item>
                     <el-dropdown-item id="permissionSet">权限设置</el-dropdown-item>
+                    <el-dropdown-item id="delete">删除</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </template>
@@ -74,6 +75,9 @@
         <el-form-item label="职位" :label-width="formLabelWidth">
           <el-input v-model="person.position"></el-input>
         </el-form-item>
+        <el-form-item label="" :label-width="formLabelWidth">
+          <el-checkbox v-model="person.sentEmail">发送邮件邀请</el-checkbox>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="addPerson()">确 定</el-button>
@@ -115,6 +119,14 @@
         <el-button type="primary" @click="editPerson()">确 认</el-button>
       </div>
     </el-dialog>
+    <!--删除确认-->
+    <el-dialog title="确认操作" :visible.sync="dialogDeletePerson" size='tiny'>
+      <span class="spanBlock">您确定要删除该用户？</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogDeletePerson = false">取 消</el-button>
+        <el-button type="primary" @click="deletePerson(deletePersonInfo)">确 定</el-button>
+      </span>
+    </el-dialog>
     <!---->
   </div>
 </template>
@@ -145,10 +157,13 @@ export default {
       },
       dialogAddPerson: false,
       dialogEditPerson: false,
+      dialogDeletePerson: false,
+      deletePersonInfo: [],
       formLabelWidth: '120px',
       account: [], // table数据展示
       dialogEditData: [], // 编辑弹出框信息
       person: {
+        companyId: undefined, // 公司id
         username: undefined, // 参与方
         idType: '0', // 证件类型
         idNumber: undefined, // 证件号
@@ -156,6 +171,7 @@ export default {
         workId: undefined, // 员工ID
         department: undefined, // 部门
         position: undefined, // 职位
+        sentEmail: undefined, // 是否发送邮件邀请
       },
       id_type: ID_TYPES,
       rules: {
@@ -169,15 +185,13 @@ export default {
           { required: true, validator: this.validateEmail, trigger: 'blur,change' },
         ],
       },
-      isPassportAvailableResult: undefined,
-      isIDNOAvailableResult: undefined,
     };
   },
   methods: {
     // 初始化数据
     initData() {
       // companyId
-      this.searchMsg.companyId = companyService.getStoredCompany().companyList.companyId;
+      this.person.companyId = companyService.getStoredCompany().companyList.companyId;
       this.pageTag = this.$route.params.page;
       if (this.$route.params.page) {
         this.pagination.currentPage = this.pageTag;
@@ -206,7 +220,8 @@ export default {
       // console.log(this.person);
       this.$refs.dialogEditData.validate((valid) => {
         if (valid) {
-          pService.updateParticipator(this.person).then(() => {
+          this.dialogEditData.companyId = companyService.getStoredCompany().companyList.companyId;
+          pService.updateParticipator(this.dialogEditData).then(() => {
             this.$message({ message: '编辑成功', type: 'success' });
             this.dialogEditPerson = false;
             this.searchBtn(this.pagination.currentPage);
@@ -214,6 +229,18 @@ export default {
         } else {
           this.$message.error('填写信息有误');
         }
+      });
+    },
+    // 删除
+    deletePerson(command) {
+      console.log(command);
+      pService.deleteParticipator(command.id).then(() => {
+        this.dialogDeletePerson = false;
+        this.account.splice(command.index, 1);
+        this.$message({ message: '删除成功', type: 'success' });
+        this.searchBtn(this.pagination.currentPage);
+      }, () => {
+        this.$message.error('删除失败');
       });
     },
     // 关闭表单，清空数据
@@ -234,14 +261,15 @@ export default {
       if (!this.searchMsg.inputMsg) {
         this.searchMsg.inputMsg = undefined;
       }
-      pService.findAllParticipators(this.searchMsg, pageIndex, this.pagination.pageSize)
+      pService.findAllParticipators(this.person.companyId,
+      this.searchMsg.inputMsg, pageIndex, this.pagination.pageSize)
       .then((resp) => {
         this.account = resp.data;
         this.pagination.totalNum = resp.pagination.totalNum;
       });
     },
     // 操作
-    handleCommand(scope) {
+    handleCommand(scope, index) {
       const name = event.target.id;
       const command = scope.row;
       switch (name) {
@@ -257,25 +285,30 @@ export default {
           this.account = command;
           this.$router.push({ name: 'OptionPermission', params: { id: command.id, type: 'edit', page: this.pagination.currentPage } });
           break;
+        case 'delete':
+          this.dialogDeletePerson = true;
+          this.deletePersonInfo = command;
+          this.deletePersonInfo.index = index;
+          break;
         default:
           break;
       }
     },
     // 身份证验证
     validIDCard(rule, value, callback) {
+      const isIDNOAvailableResult = validate.isIDNOAvailable(value);
+      const isPassportAvailableResult = validate.isPassportAvailable(value);
       switch (this.person.idType) {
         case '0':
-          this.isIDNOAvailableResult = validate.isIDNOAvailable(value);
-          if (this.isIDNOAvailableResult !== 'ok') {
-            callback(new Error(this.isIDNOAvailableResult));
+          if (isIDNOAvailableResult !== 'ok') {
+            callback(new Error(isIDNOAvailableResult));
           } else {
             callback();
           }
           break;
         case '1':
-          this.isPassportAvailableResult = validate.isPassportAvailable(value);
-          if (this.isPassportAvailableResult !== 'ok') {
-            callback(new Error(this.isPassportAvailableResult));
+          if (isPassportAvailableResult !== 'ok') {
+            callback(new Error(isPassportAvailableResult));
           } else {
             callback();
           }
@@ -293,6 +326,7 @@ export default {
         callback();
       }
     },
+    // 批量导入 暂且不做
   },
 };
 </script>
@@ -331,5 +365,9 @@ export default {
 .page-con {
   text-align: center;
   padding: 30px 0px;
+}
+.spanBlock{
+  padding: 1px 0px 30px;
+  display: inline-block;
 }
 </style>

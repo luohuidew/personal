@@ -38,6 +38,7 @@
 </template>
 <script>
 import pService from '../../../../service/participator';
+import companyService from '../../../../service/company';
 
 export default {
   name: 'OptionPermission',
@@ -129,13 +130,7 @@ export default {
     };
   },
   created() {
-    this.permission.userId = this.$route.params.id;
-    this.typeTest = this.$route.params.type;
-    pService.findOneParticipatorById(this.permission.userId).then((resp) => {
-      // console.log(resp);
-      this.licenseList = resp.licenseList;
-      this.dataProcessing(this.licenseList);
-    });
+    this.initData();
   },
   computed: {
     isEdit() {
@@ -146,16 +141,31 @@ export default {
     },
   },
   methods: {
+    // 数据初始化
+    initData() {
+      this.permission.userId = this.$route.params.id;
+      this.permission.companyId = companyService.getStoredCompany().companyList.companyId;
+      this.typeTest = this.$route.params.type;
+      pService.getParticipatorLicenseList(this.permission).then((resp) => {
+        // console.log(resp);
+        this.licenseList = resp.licenseList;
+        this.dataProcessing(this.licenseList);
+      });
+    },
+    // 保存权限
     Save() {
       this.permission.licenseList = this.getThisPageData();
-      // console.log(this.permission);
-      pService.updateParticipator(this.permission).then(() => {
+      console.log(this.permission);
+      pService.updateParticipatorLicenseList(this.permission).then(() => {
         this.$message({
           message: '权限设置成功',
           type: 'success',
         });
         // 之后增加跳回原页面
-        this.$router.push({ name: 'OptionParticipator', params: { page: this.$route.params.page } });
+        // this.$router.push({
+          //   name: 'OptionParticipator',
+          //   params: { page: this.$route.params.page }
+          // });
       });
     },
     // 获取权限列表的值
@@ -184,19 +194,32 @@ export default {
     // 此处待完善
     dataProcessing(licenseList) {
       const datalist = JSON.parse(licenseList);
-      this.ruleList[0].option = datalist.equity;
-      this.ruleList[0].ruleDetailedList[0].option = datalist['equity.dashboard'];
-      this.ruleList[1].option = datalist.option;
-      this.ruleList[1].ruleDetailedList[0].option = datalist['option.management_list'];
-      this.ruleList[1].ruleDetailedList[1].option = datalist['option.incentive_plan'];
-      this.ruleList[1].ruleDetailedList[2].option = datalist['option.holding_platform'];
-      this.ruleList[1].ruleDetailedList[3].option = datalist['option.participator'];
-      this.ruleList[2].option = datalist.doc;
-      this.ruleList[2].ruleDetailedList[0].option = datalist['doc.management_list'];
-      this.ruleList[3].option = datalist.user;
-      this.ruleList[3].ruleDetailedList[0].option = datalist['user.personal_info'];
-      this.ruleList[3].ruleDetailedList[1].option = datalist['user.my_order'];
-      this.ruleList[3].ruleDetailedList[2].option = datalist['user.enterprise_list'];
+      const keys = Object.keys(datalist);
+      keys.forEach((item) => {
+        const itemArr = item.split('.');
+        this.ruleList.forEach((v, i) => {
+          if (itemArr[1]) {
+            this.ruleList[i].ruleDetailedList.forEach((v2, i2) => {
+              this.ruleList[i].ruleDetailedList[i2].option = datalist[itemArr[1]];
+            });
+          } else {
+            this.ruleList[i].option = datalist[itemArr[0]];
+          }
+        });
+      });
+      // this.ruleList[0].option = datalist.equity;
+      // this.ruleList[0].ruleDetailedList[0].option = datalist['equity.dashboard'];
+      // this.ruleList[1].option = datalist.option;
+      // this.ruleList[1].ruleDetailedList[0].option = datalist['option.management_list'];
+      // this.ruleList[1].ruleDetailedList[1].option = datalist['option.incentive_plan'];
+      // this.ruleList[1].ruleDetailedList[2].option = datalist['option.holding_platform'];
+      // this.ruleList[1].ruleDetailedList[3].option = datalist['option.participator'];
+      // this.ruleList[2].option = datalist.doc;
+      // this.ruleList[2].ruleDetailedList[0].option = datalist['doc.management_list'];
+      // this.ruleList[3].option = datalist.user;
+      // this.ruleList[3].ruleDetailedList[0].option = datalist['user.personal_info'];
+      // this.ruleList[3].ruleDetailedList[1].option = datalist['user.my_order'];
+      // this.ruleList[3].ruleDetailedList[2].option = datalist['user.enterprise_list'];
     },
   },
 };
