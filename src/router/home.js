@@ -7,6 +7,9 @@ import Apply from '../components/home/Apply';
 import Login from '../components/home/Login';
 import ForgetPassword from '../components/home/ForgetPassword';
 
+// 邮件邀请
+import InvitationIndex from '../components/home/invitationIndex';
+import InvitationRegister from '../components/home/invitationRegister';
 
 Vue.use(Router);
 
@@ -36,6 +39,17 @@ export default new Router({
       path: '/forget_password',
       name: 'ForgetPassword',
       component: ForgetPassword,
+    },
+    // 邮件邀请
+    {
+      path: '/invitation/index',
+      name: 'InvitationIndex',
+      component: InvitationIndex,
+    },
+    {
+      path: '/invitation/register',
+      name: 'InvitationRegister',
+      component: InvitationRegister,
     },
   ],
 });

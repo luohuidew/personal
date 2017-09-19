@@ -25,7 +25,9 @@
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item id="edit">编辑</el-dropdown-item>
                     <!--<el-dropdown-item id="permissionCheck">权限浏览</el-dropdown-item>-->
-                    <el-dropdown-item v-if="userIsAdmin" id="permissionSet">权限设置</el-dropdown-item>
+                    <el-dropdown-item v-if="scope.row.status === '0'" id="invitation">邀请</el-dropdown-item>
+                    <el-dropdown-item v-if="scope.row.status === '1'" id="invitation">重新邀请</el-dropdown-item>
+                    <el-dropdown-item v-if="scope.row.authority === 'ROLR_USER'" id="permissionSet">权限设置</el-dropdown-item>
                     <el-dropdown-item id="delete">删除</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
@@ -185,7 +187,10 @@ export default {
           { required: true, validator: this.validateEmail, trigger: 'blur,change' },
         ],
       },
-      userIsAdmin: false, // 判断是否为管理员
+      invitationInfo: {
+        id: undefined,
+        companyId: undefined,
+      },
     };
   },
   methods: {
@@ -193,11 +198,6 @@ export default {
     initData() {
       // companyId
       this.searchMsg.companyId = companyService.getStoredCompany().companyInfo.companyId;
-      // user role
-      this.userRole = companyService.getStoredCompany().authority;
-      if (this.userRole === 'ROLR_ADMIN') {
-        this.userIsAdmin = true;
-      }
       this.pageTag = this.$route.params.page;
       if (this.$route.params.page) {
         this.pagination.currentPage = this.pageTag;
@@ -274,14 +274,30 @@ export default {
         this.pagination.totalNum = resp.pagination.totalNum;
       });
     },
+    // 发送邮件邀请
+    sendEmail(command) {
+      this.invitationInfo.id = command.id;
+      this.invitationInfo.companyId = this.searchMsg.companyId;
+      pService.sendEmail(this.invitationInfo).then(() => {
+        this.$message({ message: '邀请邮件已发送', type: 'success' });
+        this.searchBtn(this.pagination.currentPage);
+      }, () => {
+        this.$message.error('邀请邮件发送失败，请重新邀请');
+      });
+    },
     // 操作
     handleCommand(scope, index) {
       const name = event.target.id;
       const command = scope.row;
+      console.log(command);
       switch (name) {
         case 'edit':
           this.dialogEditPerson = true;
           this.dialogEditData = { ...command };
+          break;
+        case 'invitation':
+          this.data = { ...command };
+          this.sendEmail(this.data);
           break;
         // case 'permissionCheck':
         //   this.$router.push({
