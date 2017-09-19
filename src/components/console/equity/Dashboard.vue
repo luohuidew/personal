@@ -354,9 +354,17 @@ export default {
       if (this.stockAddList.length === 0) {
         this.$message.error('请添加股权信息');
       } else {
-        stockServer.addStockList(this.stockAddList);
-        this.dialogVisible1 = false;
-        this.dialogVisible2 = true;
+        let totalNum = 0;
+        this.stockAddList.forEach((v) => {
+          totalNum += Number(v.registeredCapital);
+        });
+        if (totalNum < this.companyMap.totalRegisteredCapital) {
+          this.$message.error('总注册资本求和不满足条件');
+        } else {
+          stockServer.addStockList(this.stockAddList);
+          this.dialogVisible1 = false;
+          this.dialogVisible2 = true;
+        }
       }
     },
     saveList(formName) {
