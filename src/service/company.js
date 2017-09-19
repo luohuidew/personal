@@ -14,6 +14,12 @@ export default {
     pm.adminId = user.getUser().id;
     return api.post('/company/addCompany', pm).then(resp => resp);
   },
+  getCompanyInfoById() {
+    // const cInfo = this.getStoredCompany();
+    // const id = cInfo.companyInfo.companyId;
+    const id = '1231321323'; // 测试代码，用上面两行
+    return api.get(`/company/getCompanyById/${id}`).then(resp => resp);
+  },
   /* *
    * 存储内容：
    * {
