@@ -29,12 +29,17 @@ axiosIns.interceptors.request.use(
 axiosIns.interceptors.response.use(
   res => {
     let data = res.data;
+    let token = res.data.token;
     let status = res.status;
     let statusText = res.statusText;
+    if(token) {
+      // 处于缓存期，获得新token
+      user.setToken(token);
+    }
     if (status === 200) {
       return Promise.resolve(data);
     } else if(status === 401) {
-      // TODO token过期，缓存期间要更新token
+      // 超出缓存期，重新登录
       user.logout('401');
     } else if(status === 403) {
       const msg = '未授权。';
