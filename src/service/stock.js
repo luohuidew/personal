@@ -4,12 +4,17 @@ import companyServer from './company';
 // const companyMap = JSON.parse(sessionStorage.getItem('_COMPANY_KEY'));
 // const companyId = companyMap.companyInfo.companyId;
 const companyId = '1231231'; // 测试代码，用上面两行
-let totalMoney = 0;
-companyServer.getCompanyInfoById(companyId).then((resp) => {
-  totalMoney = resp.totalRegisteredCapital;
-});
+let totalMoney;
+function getTotalRegisteredCapital() {
+  companyServer.getCompanyInfoById(companyId).then((resp) => {
+    totalMoney = resp.totalRegisteredCapital;
+  });
+}
+
 export default {
+  getTotalRegisteredCapital,
   getStockGroupByCompanyId(id = companyId) {
+    getTotalRegisteredCapital();
     return api.get(`/equity/findAllWithGroup/${id}`).then((resp) => {
       resp.data.forEach((value) => {
         if (value.equities && value.equities.length !== 0) {
@@ -27,6 +32,7 @@ export default {
     });
   },
   getStockListByCompanyId(id = companyId) {
+    getTotalRegisteredCapital();
     return api.get(`/equity/findAll/${id}`).then((resp) => {
       resp.data.forEach((value) => {
         const r = this.getPercent(value.registeredCapital, totalMoney);

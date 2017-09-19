@@ -45,7 +45,7 @@ export default {
   name: 'tree-table',
   data() {
     return {
-      totalMoney: '140000',
+      // totalMoney: '140000',
       treeDataMap: [],
       roundType: ROUND_TYPE,
     };
