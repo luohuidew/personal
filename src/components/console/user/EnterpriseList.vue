@@ -5,17 +5,18 @@
       <span>新建企业</span>
     </div>
     <!---->
-    <div class="enterprise-box" v-for="item in companyList" :key="item.companyName" @click="selectCompany(item)">
+    <div class="enterprise-box" v-for="item in companyList" :key="item.companyName">
       <p class="e-title">
         <span class="e-title-name" :title=item.companyName>{{item.companyName}}</span>
         <span class="author">管理员</span>
-        <span class="wrz" v-if="item.authentication == 1">未认证</span>
-        <span class="wrz" v-if="item.authentication == 3">认证失败</span>
+        <span class="wrz" v-if="item.authentication == 1" @click="authority(item)">未认证</span>
         <span class="wfk" v-if="item.pay == 1">未付款</span>
       </p>
-      <p class="row"><img src="../../../assets/icon-manager.png" alt=""><span>管理员：</span><span>{{item.adminName}}</span></p>
-      <p class="row"><img src="../../../assets/business-type.png" alt=""><span>企业类型：</span><span>{{item.companyType | filter('COMPENY_TYPE')}}</span></p>
-      <p class="row"><img src="../../../assets/capital-currency.png" alt=""><span>资本币种：</span><span>{{item.currency | filter('MONEY_TYPE')}}</span></p>
+      <div class="e-content" @click="selectCompany(item)">
+        <p class="row"><img src="../../../assets/icon-manager.png" alt=""><span>管理员：</span><span>{{item.adminName}}</span></p>
+        <p class="row"><img src="../../../assets/business-type.png" alt=""><span>企业类型：</span><span>{{item.companyType | filter('COMPENY_TYPE')}}</span></p>
+        <p class="row"><img src="../../../assets/capital-currency.png" alt=""><span>资本币种：</span><span>{{item.currency | filter('MONEY_TYPE')}}</span></p>
+      </div>
     </div>
     <!---->
     <el-dialog title="新建企业" :visible.sync="dialogVisible" size="small" :before-close="handleClose">
@@ -61,6 +62,46 @@
         <el-button type="primary" @click="save('form')"> 确 认 </el-button>
       </span>
     </el-dialog>
+    <!---->
+    <el-dialog title="企业认证" :visible.sync="authenDialogVisible" size="small" :before-close="handleCloseAuthen">
+      <el-form :model="form" ref="form" :rules="rules">
+        <el-form-item label="企业全称：" :label-width="formLabelWidth"  prop="companyName2">
+          <div>{{form.companyName}}</div>
+        </el-form-item>
+        <el-form-item label="简称：" :label-width="formLabelWidth" prop="companyAbbreviation">
+          <div>{{form.companyAbbreviation}}</div>
+        </el-form-item>
+        <el-form-item label="公司类型：" :label-width="formLabelWidth" prop="companyType">
+          <div>{{form.companyType | filter('COMPENY_TYPE')}}</div>
+        </el-form-item>
+        <el-form-item label="资本币种：" :label-width="formLabelWidth"  prop="currency">
+          <div>{{form.currency | filter('MONEY_TYPE')}}</div>
+        </el-form-item>
+        <el-form-item label="营业执照：" :label-width="formLabelWidth" required>
+          <el-upload
+            :action="qiniuServer"
+            :before-upload="beforeAvatarUpload"
+            accept="image/*"
+            :on-success="handleAvatarSuccess"
+            :on-error="handleError"
+            :on-preview="handlePreview"
+            :on-remove="handleRemove"
+            :file-list="fileList"
+            :data="uploadData">
+            <el-button size="small" type="primary" :disabled="hasBackImageUrl">{{upText}}</el-button>
+          </el-upload>
+          <div class="tips">
+            <p>1.选择项(企业认证时必需)</p>
+            <p>2.仅支持JPG、PNG格式</p>
+            <p>3.文件不超过5M</p>
+            <p>4.请上传营业执照原件</p>
+          </div>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="save('form')"> 确 认 </el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -81,6 +122,7 @@ export default {
       qiniuBucketDomain: QINIU_BUCKET_DOMAIN,
       qiniuServer: QINIU_SERVER,
       dialogVisible: false,
+      authenDialogVisible: false,
       form: {
         companyName: '',
         companyAbbreviation: '',
@@ -90,6 +132,9 @@ export default {
       rules: {
         companyName: [
           { required: true, message: '请填写企业全称', trigger: 'blur' },
+        ],
+        companyName2: [
+          { required: false, message: '请填写企业全称', trigger: 'blur' },
         ],
       },
       backImageUrl: '',
@@ -147,21 +192,40 @@ export default {
               this.$message.success('添加成功！');
               this.initData();
               this.handleClose();
+              this.handleCloseAuthen();
             });
           }
         }
       });
     },
     handleClose() {
-      this.$refs.form.resetFields();
+//      this.$refs.form.resetFields();
+      this.form = {
+        companyName: '',
+        companyAbbreviation: '',
+        companyType: '0',
+        currency: 'RMB',
+      };
       this.handleRemove();
       this.fileList = [];
       this.dialogVisible = false;
+    },
+    handleCloseAuthen() {
+      this.authenDialogVisible = false;
     },
     getQiNiuToken() {
       base.getQiNiuToken().then((resp) => {
         this.uploadData.token = resp.token;
       });
+    },
+    authority(item) {
+      this.authenDialogVisible = true;
+      this.form = {
+        companyName: item.companyName,
+        companyAbbreviation: item.companyAbbreviation,
+        companyType: String(item.companyType),
+        currency: item.currency,
+      };
     },
     /* upload */
     beforeAvatarUpload(file) {
@@ -186,8 +250,9 @@ export default {
       this.upText = '上传完成';
       this.backImageUrl = `${QINIU_BUCKET_DOMAIN}/${res.key}`;
     },
-    handleError(res) {
-      this.$message.error(res);
+    handleError() {
+      this.getQiNiuToken();
+      this.$message.error('上传失败，请重新上传。');
     },
     handleRemove() {
       this.backImageUrl = '';
@@ -220,7 +285,6 @@ export default {
 
   .add-new,.enterprise-box:hover {
     background: #FCFCFC;
-    cursor: pointer;
   }
 
   .add-new {
@@ -284,6 +348,7 @@ export default {
 
   .e-content:hover {
     background: #FDFDFD;
+    cursor: pointer;
   }
 
   .row {
