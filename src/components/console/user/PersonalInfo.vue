@@ -383,7 +383,7 @@ export default {
     this.sendPhoneCode.id = this.usefulData.id;
     // 执行findOne接口返回的数据
     personal.findOne().then((r) => {
-      console.log(r);
+      // console.log(r);
       this.usefulData.username = r.username;
       this.usefulData.enabled = r.enabled;
       this.usefulData.phone = r.phone;
@@ -520,9 +520,9 @@ export default {
         id: this.usefulData.id,
         username: this.usefulData.username,
       };
-      personal.update(updateUserName).then((r) => {
-        console.log(r);
-        console.log('用户名称更改成功！');
+      personal.update(updateUserName).then(() => {
+        // console.log(r);
+        // console.log('用户名称更改成功！');
       });
     },
     // 编辑渲染邮箱展示
@@ -562,9 +562,9 @@ export default {
             id: this.usefulData.id,
             email: this.usefulData.newEmail,
           };
-          personal.update(updateEmail).then((r) => {
+          personal.update(updateEmail).then(() => {
             // 调用update接口成功
-            console.log(r);
+            // console.log(r);
             this.usefulData.emailType = updateEmail.email; // 将变更后的邮箱给到渲染的邮箱
             // 将绑定的邮箱*处理
             const emailArray = this.usefulData.emailType.split('@');
@@ -603,7 +603,7 @@ export default {
       } else if (i === 1) {
         this.usefulData.beforePopPassword = 1;
       }
-      console.log(this.usefulData.beforePopPassword);
+      // console.log(this.usefulData.beforePopPassword);
       this.passwordShow = true;
     },
     // 点击获得邮箱验证码
@@ -612,9 +612,9 @@ export default {
         if (valid) {
           // 当邮箱验证通过
           // this.sendEmailCode.email = this.updateEmail.email;
-          personal.sendMsg(this.sendEmailCode).then((r) => {
+          personal.sendMsg(this.sendEmailCode).then(() => {
             // 这里是调用获得邮箱验证码成功，然后再比较输入的验证码跟返回的验证码是否相等，相等就表示验证正确，否则，重新获得验证码，手机同这个
-            console.log(r);
+            // console.log(r);
           });
         }
       });
@@ -633,8 +633,8 @@ export default {
     sendMsgs() {
       if (this.usefulData.newPhone) {
         this.sendPhoneCode.phone = this.usefulData.newPhone;
-        personal.sendMsg(this.sendPhoneCode).then((r) => {
-          console.log(r);
+        personal.sendMsg(this.sendPhoneCode).then(() => {
+          // console.log(r);
         });
       }
     },
@@ -660,14 +660,14 @@ export default {
     // 获得图片验证码
     getImgCode() {
       if (this.usefulData.newPhone && validate.isPhoneAvailable(this.usefulData.newPhone)) {
-        personal.getImgCode(this.usefulData.newPhone).then((resp) => {
-          console.log(resp);
+        personal.getImgCode(this.usefulData.newPhone).then(() => {
+          // console.log(resp);
         });
       }
     },
     checkImgCode() {
-      personal.checkImgCode(this.usefulData.newPhone, this.usefulData.imgCode).then((resp) => {
-        console.log(resp);
+      personal.checkImgCode(this.usefulData.newPhone, this.usefulData.imgCode).then(() => {
+        // console.log(resp);
         this.disabled = false;
         return true;
       //   if (resp.data === 'error') {
