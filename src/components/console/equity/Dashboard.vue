@@ -5,19 +5,19 @@
         <el-col :span="8">
           <div class="head-content bgcolor">
             <div class="head-title"><span class="span1">股东人数</span>&nbsp;&nbsp;<span class="span2">（人）</span></div>
-            <div class="head-cont"><span class="num1">123</span></div>
+            <div class="head-cont"><span class="num1">{{companyMap.shareholderNum}}</span></div>
           </div>
         </el-col>
         <el-col :span="8">
           <div class="head-content bgcolor">
             <div class="head-title"><span class="span1">注册资金</span>&nbsp;&nbsp;<span class="span2">（万元）</span></div>
-            <div class="head-cont"><span class="num1">56200</span></div>
+            <div class="head-cont"><span class="num1">{{companyMap.totalRegisteredCapital | moneyFormat}}</span></div>
           </div>
         </el-col>
         <el-col :span="8">
           <div class="head-content bgcolor">
             <div class="head-title"><span class="span1">总融资额</span>&nbsp;&nbsp;<span class="span2">（万元）</span></div>
-            <div class="head-cont"><span class="num1">6,200</span></div>
+            <div class="head-cont"><span class="num1">{{companyMap.totalFinancingCapital | moneyFormat}}</span></div>
           </div>
         </el-col>
       </el-row>
@@ -207,6 +207,7 @@
 <script>
 import stockServer from '../../../service/stock';
 import financServer from '../../../service/financ';
+import companyServer from '../../../service/company';
 import filters from '../../../utils/filters';
 import { SHAREHOLDER_TYPE, ROUND_TYPE } from '../../../data/constants';
 
@@ -216,6 +217,11 @@ export default {
     return {
       // companyId: '',
       totalMoney: 140000, // 从公司接口拿到
+      companyMap: {
+        shareholderNum: '',  // 股东人数
+        totalRegisteredCapital: '',  // 总注册资本
+        totalFinancingCapital: '',  // 总融资额
+      },
       dialogVisible1: true,
       dialogVisible2: false,
       stockMap: [],
@@ -270,6 +276,9 @@ export default {
   created() {
     // const companyMap = JSON.parse(sessionStorage.getItem('_COMPANY_KEY'));
     // this.companyId = companyMap.companyInfo.companyId;
+    companyServer.getCompanyInfoById().then((resp) => {
+      this.companyMap = resp;
+    });
     stockServer.getStockListByCompanyId().then((resp) => {
       if (resp && resp.length !== 0) {
         this.stockMap = resp;
@@ -356,10 +365,33 @@ export default {
     roundFilter(arg1, arg2) {
       return filters.constantsFilter(arg1, arg2);
     },
+    moneyFormat(arg1) {
+      let num;
+      if (Number(arg1) > 9999) {
+        num = Number(arg1) / 10000;
+      }
+      let t = '';
+      if (Number.isInteger(num)) {
+        const l = `${num}`.split('').reverse();
+        // const r = num.split('.')[1];
+        l.forEach((v, i) => {
+          t += l[i] + ((i + 1) % 3 === 0 && (i + 1) !== l.length ? ',' : '');
+        });
+        return t.split('').reverse().join('');
+      }
+      num = `${num.toFixed(4)}`;
+      const l = `${num}`.split('.')[0].split('').reverse();
+      const r = num.split('.')[1];
+      l.forEach((v, i) => {
+        t += l[i] + ((i + 1) % 3 === 0 && (i + 1) !== l.length ? ',' : '');
+      });
+      return `${t.split('').reverse().join('')}.${r}`;
+    },
   },
   computed: {
     stockScale() {
-      return stockServer.getPercent(this.stockAddMap.registeredCapital, this.totalMoney);
+      const totalNum = this.companyMap.totalRegisteredCapital;
+      return stockServer.getPercent(this.stockAddMap.registeredCapital, totalNum);
     },
   },
 };
