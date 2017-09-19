@@ -44,7 +44,7 @@
       <el-form :model="financAddMap" :rules="rules" ref="financAddForm" label-width="120px">
         <el-form-item label="融资轮次" required prop="round">
           <el-select v-model="financAddMap.round" placeholder="请选择融资轮次">
-            <el-option v-for="item in roundType" :label="item.text" :value="item.id"></el-option>
+            <el-option v-for="item in roundType" :key="item.id" :label="item.text" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="融资时间" required prop="financedDate">
@@ -55,7 +55,7 @@
         </el-form-item>
         <el-form-item label="投资方" required prop="equityid">
           <el-select v-model="financAddMap.equityid" placeholder="请选择投资方">
-            <el-option v-for="item in shareholderMap" :label="item.shareholderName" :value="item.id"></el-option>
+            <el-option v-for="item in shareholderMap" :key="item.id" :label="item.shareholderName" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -82,7 +82,7 @@ export default {
       financAddMap: {
         equityid: '',
         financedAccount: '',
-        round: '',
+        round: '1',
         financedDate: '',
       },
       eChartList: {
@@ -132,34 +132,71 @@ export default {
         textStyle: {
           color: '#666666',
         },
-        tooltip: {},
+        // title: {
+        //   show: true,
+        //   text: '测试标题',
+        // },
+        tooltip: {
+          show: true,
+          formatter: '{b0}<br /> {c0}',
+          backgroundColor: '#4F6BBF',
+          padding: [10, 10, 10, 10],
+        },
+        grid: {
+          top: '20',
+          left: '20',
+          right: '20',
+          bottom: '20',
+          containLabel: true,
+        },
         xAxis: {
           data: this.eChartList.xAxiasMap,
-          axisLine: {
-            type: 'category',
-            boundaryGap: false,
+          splitLine: {
             show: false,
+          },
+          axisLine: {
             lineStyle: {
               color: '#ffffff',
-              width: '0',
+              width: 1,
             },
+          },
+          axisTick: {
+            show: false,
           },
         },
         yAxis: {
-          show: false,
+          splitLine: {
+            show: false,
+          },
+          axisLine: {
+            lineStyle: {
+              color: '#ffffff',
+              width: 1,
+            },
+          },
         },
         series: [{
           type: 'line',
           data: this.eChartList.yAxiasMap,
+          symbol: 'circle',
+          symbolSize: 4,
           itemStyle: {
             normal: {
               color: 'rgba(124,150,224,0.60)',
+            },
+          },
+          lineStyle: {
+            normal: {
+              opacity: 0,
             },
           },
           areaStyle: {
             normal: {
               color: 'rgba(124,150,224,0.60)',
             },
+            smooth: true,
+            smoothMonotone: 'x',
+            sampling: 'average',
           },
         }],
       });
@@ -178,9 +215,9 @@ export default {
       });
     },
     addFinanc(formName) {
-      // if (this.financAddMap.financedDate) {
-      //   this.financAddMap.financedDate = this.financAddMap.financedDate.split('T')[0];
-      // }
+      if (this.financAddMap.financedDate) {
+        this.financAddMap.financedDate = this.financAddMap.financedDate.Format('yyyy-MM-dd');
+      }
       financServer.addFinanc(this.financAddMap).then(() => {
         this.resetForm(formName);
         this.$message({
@@ -190,7 +227,7 @@ export default {
       });
     },
     delete(row) {
-      console.log(row);
+      financServer.deleteFinanc(row.id);
     },
     handleClose() {
       this.resetForm('financAddForm');

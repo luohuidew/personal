@@ -3,13 +3,17 @@
 import axios from 'axios';
 import user from './user';
 import { MessageBox, Message } from 'element-ui';
-import router from '../router/index';
 
 const axiosIns = axios.create({
   timeout: 60000,
   baseURL: '/api',
 });
 
+function errorMsgBox (statusText, msg) {
+  MessageBox(`错误类型：${statusText}; 错误描述：${msg}`, '异常提示', {
+    confirmButtonText: '确定'
+  });
+}
 axiosIns.interceptors.request.use(
   config => {
     if (user.getToken()) {
@@ -25,18 +29,38 @@ axiosIns.interceptors.request.use(
 axiosIns.interceptors.response.use(
   res => {
     let data = res.data;
+    let token = res.data.token;
     let status = res.status;
     let statusText = res.statusText;
+    if(token) {
+      // 处于缓存期，获得新token
+      user.setToken(token);
+    }
     if (status === 200) {
       return Promise.resolve(data);
     } else if(status === 401) {
+      // 超出缓存期，重新登录
       user.logout('401');
+    } else if(status === 403) {
+      const msg = '未授权。';
+      errorMsgBox(statusText, msg);
+    } else if(status === 400) {
+      const msg = '参数错误。';
+      errorMsgBox(statusText, msg);
+    } else if(status === 404) {
+      const msg = '请求路径错误。';
+      errorMsgBox(statusText, msg);
+    } else if(status === 500) {
+      const msg = res.data.msg;
+      errorMsgBox(statusText, msg);
+    } else if(status === 510) {
+      const msg = '保存失败。';
+      errorMsgBox(statusText, msg);
     } else {
-      MessageBox(`错误码：${status}; 错误描述：${statusText}`, '异常提示', {
-        confirmButtonText: '确定'
-      });
-      return Promise.reject(res);
+      const msg = '未知异常。';
+      errorMsgBox(statusText, msg);
     }
+    return Promise.reject(res);
   },
   error => {
     let errorInfo =  error.data.error ? error.data.error.message : error.data;

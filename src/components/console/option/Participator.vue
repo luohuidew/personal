@@ -191,7 +191,7 @@ export default {
     // 初始化数据
     initData() {
       // companyId
-      this.person.companyId = companyService.getStoredCompany().companyList.companyId;
+      this.searchMsg.companyId = companyService.getStoredCompany().companyInfo.companyId;
       this.pageTag = this.$route.params.page;
       if (this.$route.params.page) {
         this.pagination.currentPage = this.pageTag;

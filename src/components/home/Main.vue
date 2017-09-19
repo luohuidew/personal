@@ -107,7 +107,7 @@
           </el-col>
         </el-row>
       </section>
-      <div @click="jump" style="border: 1px solid red;width: 100px;">点我跳到控制台</div>
+      <!--<div @click="jump" style="border: 1px solid red;width: 100px;">点我跳到控制台</div>-->
       <br>
       <br>
       <br>
