@@ -24,8 +24,8 @@
                   </el-button>
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item id="edit">编辑</el-dropdown-item>
-                    <el-dropdown-item id="permissionCheck">权限浏览</el-dropdown-item>
-                    <el-dropdown-item id="permissionSet">权限设置</el-dropdown-item>
+                    <!--<el-dropdown-item id="permissionCheck">权限浏览</el-dropdown-item>-->
+                    <el-dropdown-item v-if="userIsAdmin" id="permissionSet">权限设置</el-dropdown-item>
                     <el-dropdown-item id="delete">删除</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
@@ -185,6 +185,7 @@ export default {
           { required: true, validator: this.validateEmail, trigger: 'blur,change' },
         ],
       },
+      userIsAdmin: false, // 判断是否为管理员
     };
   },
   methods: {
@@ -192,6 +193,11 @@ export default {
     initData() {
       // companyId
       this.searchMsg.companyId = companyService.getStoredCompany().companyInfo.companyId;
+      // user role
+      this.userRole = companyService.getStoredCompany().authority;
+      if (this.userRole === 'ROLR_ADMIN') {
+        this.userIsAdmin = true;
+      }
       this.pageTag = this.$route.params.page;
       if (this.$route.params.page) {
         this.pagination.currentPage = this.pageTag;
@@ -233,7 +239,7 @@ export default {
     },
     // 删除
     deletePerson(command) {
-      console.log(command);
+      // console.log(command);
       pService.deleteParticipator(command.id).then(() => {
         this.dialogDeletePerson = false;
         this.account.splice(command.index, 1);
@@ -277,10 +283,12 @@ export default {
           this.dialogEditPerson = true;
           this.dialogEditData = { ...command };
           break;
-        case 'permissionCheck':
-          // console.log(command.id);
-          this.$router.push({ name: 'OptionPermission', params: { id: command.id, type: 'check', page: this.pagination.currentPage } });
-          break;
+        // case 'permissionCheck':
+        //   this.$router.push({
+        //   name: 'OptionPermission',
+        //   params: { id: command.id, type: 'check', page: this.pagination.currentPage }
+        //  });
+        //   break;
         case 'permissionSet':
           this.account = command;
           this.$router.push({ name: 'OptionPermission', params: { id: command.id, type: 'edit', page: this.pagination.currentPage } });
