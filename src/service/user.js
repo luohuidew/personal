@@ -6,7 +6,7 @@ const USER_KEY = '_USER_KEY';
 export default {
   getToken: () => JSON.parse(sessionStorage.getItem(TOKEN)),
   setToken(token) {
-    sessionStorage.setItem(TOKEN, JSON.stringify(token))
+    sessionStorage.setItem(TOKEN, JSON.stringify(token));
   },
   getUser: () => JSON.parse(sessionStorage.getItem(USER_KEY)),
   login(params) {
