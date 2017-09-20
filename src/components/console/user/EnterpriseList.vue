@@ -43,7 +43,6 @@
           <el-upload
             :action="qiniuServer"
             :before-upload="beforeAvatarUpload"
-            accept="image/*"
             :on-success="handleAvatarSuccess"
             :on-error="handleError"
             :on-preview="handlePreview"
@@ -83,7 +82,6 @@
           <el-upload
             :action="qiniuServer"
             :before-upload="beforeAvatarUpload"
-            accept="image/*"
             :on-success="handleAvatarSuccess"
             :on-error="handleError"
             :on-preview="handlePreview"
@@ -121,7 +119,6 @@ export default {
       companyList: [],
       companyTypes: COMPENY_TYPE,
       moneyTypes: MONEY_TYPE,
-      qiniuBucketDomain: QINIU_BUCKET_DOMAIN,
       qiniuServer: QINIU_SERVER,
       dialogVisible: false,
       authenDialogVisible: false,
