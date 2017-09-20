@@ -25,4 +25,8 @@ export default {
   deleteParticipator(id) {
     return api.delete(`/user/participator/${id}`);
   },
+  // 发送邮箱邀请
+  sendEmail(params) {
+    return api.post('/userInfo/sendEmail', params);
+  },
 };

@@ -16,6 +16,8 @@ import OptionIncentivePlan from '../components/console/option/IncentivePlan';
 import OptionHoldingPlatform from '../components/console/option/HoldingPlatform';
 import OptionParticipator from '../components/console/option/Participator';
 import OptionPermission from '../components/console/option/participator/Permission';
+
+
 // 文档管理
 import DocManagementList from '../components/console/doc/ManagementList';
 // 账户管理
@@ -79,6 +81,7 @@ export default new Router({
       name: 'OptionHoldingPlatform',
       component: OptionHoldingPlatform,
     },
+    // 参与方
     {
       path: '/option/participator',
       name: 'OptionParticipator',
