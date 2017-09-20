@@ -8,8 +8,10 @@
     <div class="enterprise-box" v-for="item in companyList" :key="item.companyName">
       <p class="e-title">
         <span class="e-title-name" :title=item.companyName>{{item.companyName}}</span>
-        <span class="author">管理员</span>
-        <span class="wrz" v-if="item.authentication == 1" @click="authority(item)">未认证</span>
+        <span class="author" v-if="item.authority == 'ROLE_ADMIN'">管理员</span>
+        <span class="author" v-if="item.authority == 'ROLE_USER'">参与者</span>
+        <span class="wrz" v-if="item.authentication == 0" @click="authority(item)">未认证</span>
+        <span class="wrz" v-if="item.authentication == 1">认证中</span>
         <span class="wfk" v-if="item.pay == 1">未付款</span>
       </p>
       <div class="e-content" @click="selectCompany(item)">
@@ -107,7 +109,7 @@
 
 <script>
 import company from '../../../service/company';
-import base from '../../../service/base';
+import base from '../../../service/common';
 import filters from '../../../utils/filters';
 import { COMPENY_TYPE, MONEY_TYPE, QINIU_BUCKET_DOMAIN, QINIU_SERVER } from '../../../data/constants';
 
@@ -198,8 +200,7 @@ export default {
         }
       });
     },
-    handleClose() {
-//      this.$refs.form.resetFields();
+    closeBefore() {
       this.form = {
         companyName: '',
         companyAbbreviation: '',
@@ -208,9 +209,13 @@ export default {
       };
       this.handleRemove();
       this.fileList = [];
+    },
+    handleClose() {
+      this.closeBefore();
       this.dialogVisible = false;
     },
     handleCloseAuthen() {
+      this.closeBefore();
       this.authenDialogVisible = false;
     },
     getQiNiuToken() {
