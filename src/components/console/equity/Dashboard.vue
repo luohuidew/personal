@@ -226,9 +226,9 @@ export default {
     return {
       companyId: '',
       companyMap: {
-        shareholderNum: '',  // 股东人数
-        totalRegisteredCapital: '',  // 总注册资本
-        totalFinancingCapital: '',  // 总融资额
+        shareholderNum: 0,  // 股东人数
+        totalRegisteredCapital: 0,  // 总注册资本
+        totalFinancingCapital: 0,  // 总融资额
       },
       dialogVisible1: true,
       dialogVisible2: false,

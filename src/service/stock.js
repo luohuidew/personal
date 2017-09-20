@@ -1,8 +1,7 @@
 import api from './http';
 
-// const companyMap = JSON.parse(sessionStorage.getItem('_COMPANY_KEY'));
-// const companyId = companyMap.companyInfo.companyId;
-const companyId = '1231231'; // 测试代码，用上面两行
+const companyMap = JSON.parse(sessionStorage.getItem('_COMPANY_KEY'));
+const companyId = companyMap ? companyMap.companyInfo.companyId : '';
 
 export default {
   getStockGroupByCompanyId(totalMoney, id = companyId) {
@@ -30,6 +29,6 @@ export default {
     return api.del(`/equity/deleteById/${id}`);
   },
   addStockList(params) {
-    return api.put('/equity/addList', { equityList: params });
+    return api.put('/equity/addList', params);
   },
 };
