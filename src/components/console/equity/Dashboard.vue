@@ -285,8 +285,8 @@ export default {
     };
   },
   created() {
-    // const company = JSON.parse(sessionStorage.getItem('_COMPANY_KEY'));
-    // this.companyId = company.companyInfo.companyId;
+    const company = JSON.parse(sessionStorage.getItem('_COMPANY_KEY'));
+    this.companyId = company.companyInfo.companyId;
     companyServer.getCompanyInfoById().then((r) => {
       this.companyMap = r;
       this.stockAddMap.totalRegisteredCapital = Number(r.totalRegisteredCapital);

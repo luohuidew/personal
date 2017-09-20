@@ -76,7 +76,7 @@ export default {
   name: 'stock-detail',
   data() {
     return {
-      companyId: '123123123',  // 从缓存读取
+      companyId: '',  // 从缓存读取
       financlistdata: [],
       shareholderMap: [],
       financAddMap: {
@@ -108,8 +108,8 @@ export default {
     };
   },
   created() {
-    // const companyMap = JSON.parse(sessionStorage.getItem('_COMPANY_KEY'));
-    // this.companyId = companyMap.companyInfo.companyId;
+    const companyMap = JSON.parse(sessionStorage.getItem('_COMPANY_KEY'));
+    this.companyId = companyMap.companyInfo.companyId;
     this.financAddMap.companyId = this.companyId;
     financServer.getFinancListByCompanyId().then((resp) => {
       this.financlistdata = resp;
