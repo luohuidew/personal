@@ -42,12 +42,12 @@ export default new Router({
     },
     // 邮件邀请
     {
-      path: '/invitation/index',
+      path: '/invitation_index',
       name: 'InvitationIndex',
       component: InvitationIndex,
     },
     {
-      path: '/invitation/register',
+      path: '/invitation_register',
       name: 'InvitationRegister',
       component: InvitationRegister,
     },
