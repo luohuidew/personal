@@ -136,7 +136,7 @@
 <script>
 import pService from '../../../service/participator';
 import companyService from '../../../service/company';
-import { ID_TYPES, PAGINATION_SIZE, PAGINATION_SIZES, PAGINATION_LAYOUT } from '../../../data/constants';
+import { ID_TYPE, PAGINATION_SIZE, PAGINATION_SIZES, PAGINATION_LAYOUT } from '../../../data/constants';
 import validate from '../../../utils/validation';
 
 export default {
@@ -175,7 +175,7 @@ export default {
         position: undefined, // 职位
         sentEmail: undefined, // 是否发送邮件邀请
       },
-      id_type: ID_TYPES,
+      id_type: ID_TYPE,
       rules: {
         username: [
           { required: true, message: '参与方名称不能为空', trigger: 'blur' },
