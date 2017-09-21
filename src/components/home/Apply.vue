@@ -11,7 +11,8 @@
               <el-input type="text" v-model.trim="applyData.username" placeholder="请输入您的名称"></el-input>
             </el-form-item>
             <el-form-item prop="companyName" required>
-              <el-input type="text" v-model.trim="applyData.companyName" placeholder="请输入公司名称"></el-input>
+              <!-- <el-input type="text" v-model.trim="applyData.companyName" placeholder="请输入公司名称"></el-input> -->
+              <el-autocomplete v-model="applyData.companyName" :fetch-suggestions="querySearchAsync" placeholder="请输入内容" :trigger-on-focus="false" @select="handleSelect"></el-autocomplete>
             </el-form-item>
             <el-form-item prop="email" required>
               <el-input type="email" v-model.trim="applyData.email" placeholder="请输入邮箱地址"></el-input>
@@ -35,11 +36,15 @@
 import canvasbg from '../../lib/canvasbg';
 import validate from '../../utils/validation';
 import Apply from '../../service/apply';
+import toolServer from '../../service/common';
 
 export default {
   name: 'apply',
   data() {
     return {
+      restaurants: [],
+      timeout: null,
+      state2: '',
       homeUrl: 'http://localhost:8000/home.html',
       applyData: {
         username: '', // 名称
@@ -50,10 +55,10 @@ export default {
       },
       rules: {
         username: [
-          { validator: this.checkUsername, trigger: 'blur' },
+          { required: true, message: '名称不能为空', trigger: 'blur' },
         ],
         companyName: [
-          { validator: this.checkCompanyName, trigger: 'blur' },
+          { required: true, message: '公司名不能为空', trigger: 'blur' },
         ],
         email: [
           { validator: this.checkEmail, trigger: 'blur' },
@@ -66,6 +71,10 @@ export default {
   },
   mounted() {
     this.canvas();
+    // this.restaurants = this.loadAll();
+  },
+  created() {
+    // this.restaurants = this.loadAll();
   },
   methods: {
     canvas() {
@@ -76,26 +85,49 @@ export default {
         },
       });
     },
-    checkPassword(rule, value, callback) {
-      if (value === '') {
-        callback(new Error('密码不能为空'));
+    querySearchAsync(queryString, cb) {
+      /* const restaurants = this.restaurants;
+      let results;
+      if (queryString) {
+        results = restaurants.filter(this.createStateFilter(queryString));
       } else {
-        callback();
+        results = restaurants;
       }
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
+        cb(results);
+      }, 1000); */
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
+        let results = [];
+        toolServer.searchWideCompany(queryString).then((resp) => {
+          if (resp.Status === '200') {
+            resp.Result.forEach((v) => {
+              const c = v;
+              c.value = v.Name;
+            });
+            results = resp.Result;
+            cb(results);
+          } else {
+            this.$message.error(resp.Message);
+          }
+        });
+      }, 2000);
     },
-    checkUsername(rule, value, callback) {
-      if (value === '') {
-        callback(new Error('请输入您的名称'));
-      } else {
-        callback();
-      }
+    createStateFilter(queryString) {
+      return state => (state.value.indexOf(queryString.toLowerCase()) === 0);
     },
-    checkCompanyName(rule, value, callback) {
-      if (value === '') {
-        callback(new Error('请输入公司名称'));
-      } else {
-        callback();
-      }
+    handleSelect(item) {
+      console.log(item);
+    },
+    loadAll() {
+      return [
+        { value: '三全鲜食（北新泾店）', address: '长宁区新渔路144号' },
+        { value: 'Hot honey 首尔炸鸡（仙霞路）', address: '上海市长宁区淞虹路661号' },
+        { value: '新旺角茶餐厅', address: '上海市普陀区真北路988号创邑金沙谷6号楼113' },
+        { value: '泷千家(天山西路店)', address: '天山西路438号' },
+      ];
+      // toolServer.searchWideCompany(text).then(resp => resp.Result);
     },
     checkEmail(rule, value, callback) {
       let r = '';
@@ -154,4 +186,5 @@ export default {
 .el-form-item.apply-btn {
   margin-bottom: 0 !important;
 }
+
 </style>

@@ -1,5 +1,6 @@
 import api from './http';
 
+const userKey = 'f5e6d93974cd4effb849f7441ad4ad5d';
 export default {
   getQiNiuToken() {
     return api.get('/qiniu/token').then(resp => resp);
@@ -30,5 +31,20 @@ export default {
      * arg2：validateCode
      * */
     return api.post('/sendMsg', { account: arg1 }).then(resp => resp);
+  },
+  // 企业关键字多维度查询
+  searchWideCompany(text) {
+    return api.get(`/ECI/SearchWide?key=${userKey}&keyWord=${text}`, { baseURL: 'http://i.yjapi.com' }).then((resp) => {
+      /* if (resp.Status === '200') {
+        resp.Result.forEach((v) => {
+          const c = v;
+          c.value = v.Name;
+        });
+        return resp.Result;
+      }
+      return resp.Message; */
+      const result = resp;
+      return result;
+    });
   },
 };
