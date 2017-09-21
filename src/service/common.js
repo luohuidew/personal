@@ -35,16 +35,35 @@ export default {
   // 企业关键字多维度查询
   searchWideCompany(text) {
     return api.get(`/ECI/SearchWide?key=${userKey}&keyWord=${text}`, { baseURL: 'http://i.yjapi.com' }).then((resp) => {
-      /* if (resp.Status === '200') {
-        resp.Result.forEach((v) => {
-          const c = v;
-          c.value = v.Name;
-        });
-        return resp.Result;
-      }
-      return resp.Message; */
       const result = resp;
       return result;
     });
+  },
+  // 企业关键字精确获取详细信息
+  getDetailCompany(text) {
+    return api.get(`/ECI/GetDetailsByName?key=${userKey}&keyWord=${text}`, { baseURL: 'http://i.yjapi.com' }).then((resp) => {
+      const result = resp;
+      return result;
+    });
+  },
+  checkEmail(arg1) {
+    /*
+    * 检查邮箱是否已经注册
+    * arg1：email
+    * */
+    const params = {
+      email: arg1,
+    };
+    return api.post(' /check/email', params).then(resp => resp);
+  },
+  checkPhone(arg1) {
+    /*
+    * 检查手机号是否已经注册
+    * arg1：email
+    * */
+    const params = {
+      phone: arg1,
+    };
+    return api.post(' /check/phone', params).then(resp => resp);
   },
 };
