@@ -53,7 +53,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="checkForm('stockAddForm')">继续添加</el-button>
-        <el-button type="primary" @click="checkForm('stockAddForm');resetForm('financAddForm');dialogVisible=false;">确认保存</el-button>
+        <el-button type="primary" @click="checkForm('stockAddForm');resetForm('stockAddForm');dialogVisible=false;">确认保存</el-button>
       </span>
     </el-dialog>
   </div>
