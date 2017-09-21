@@ -1,4 +1,3 @@
-// created by yll @ 2017-09-12
 import api from './http';
 import user from '../service/user';
 
@@ -9,9 +8,9 @@ export default {
       const respData = resp;
       const repEmail = respData.email;
       const idx = repEmail.indexOf('@');
-      if (idx > 0) respData.email = repEmail.replace(repEmail.substring(0, idx), '*'.repeat(idx));
+      if (idx > 0) respData.emailHide = repEmail.replace(repEmail.substring(0, idx), '*'.repeat(idx));
       if (respData.phone) {
-        respData.phone = `${respData.phone.substr(0, 3)}****${respData.phone.substr(7)}`;
+        respData.phoneHide = `${respData.phone.substr(0, 3)}****${respData.phone.substr(7)}`;
       }
       return respData;
     });
@@ -19,6 +18,4 @@ export default {
   updateUserInfo(params) {
     return api.post('/user/myInfo/update', params).then(resp => resp);
   },
-
-
 };
