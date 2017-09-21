@@ -15,12 +15,11 @@ export default {
         this.setToken(resp.token);
       }
       if (resp.user) {
-        const itemStr = {
-          id: resp.user.id,
-          username: resp.user.username,
-          phone: resp.user.phone,
-          email: resp.user.email,
-        };
+        const itemStr = {};
+        const arr = Object.keys(resp.user);
+        arr.forEach((v) => {
+          itemStr[v] = resp.user[v];
+        });
         sessionStorage.setItem(USER_KEY, JSON.stringify(itemStr));
       }
       window.location.href = `http://${window.location.host}/console/#/user/enterprise_list`;
