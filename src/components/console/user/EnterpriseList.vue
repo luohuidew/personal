@@ -7,7 +7,7 @@
     <!---->
     <div class="enterprise-box" v-for="item in companyList" :key="item.companyName">
       <p class="e-title">
-        <span class="e-title-name" :title=item.companyName>{{item.companyName}}</span>
+        <span class="e-title-name" :title=item.companyName @click="selectCompany(item)">{{item.companyName}}</span>
         <span class="author" v-if="item.authority == 'ROLE_ADMIN'">管理员</span>
         <span class="author" v-if="item.authority == 'ROLE_USER'">参与者</span>
         <span class="wrz" v-if="item.authentication == 0" @click="authority(item)">未认证</span>
@@ -43,7 +43,6 @@
           <el-upload
             :action="qiniuServer"
             :before-upload="beforeAvatarUpload"
-            accept="image/*"
             :on-success="handleAvatarSuccess"
             :on-error="handleError"
             :on-preview="handlePreview"
@@ -83,7 +82,6 @@
           <el-upload
             :action="qiniuServer"
             :before-upload="beforeAvatarUpload"
-            accept="image/*"
             :on-success="handleAvatarSuccess"
             :on-error="handleError"
             :on-preview="handlePreview"
@@ -121,7 +119,6 @@ export default {
       companyList: [],
       companyTypes: COMPENY_TYPE,
       moneyTypes: MONEY_TYPE,
-      qiniuBucketDomain: QINIU_BUCKET_DOMAIN,
       qiniuServer: QINIU_SERVER,
       dialogVisible: false,
       authenDialogVisible: false,
@@ -148,7 +145,7 @@ export default {
       upText: '上传营业执照扫描件',
     };
   },
-  mounted() {
+  created() {
     this.initData();
     this.getQiNiuToken();
   },
@@ -207,6 +204,7 @@ export default {
         companyType: '0',
         currency: 'RMB',
       };
+      this.$refs.form.resetFields();
       this.handleRemove();
       this.fileList = [];
     },
@@ -329,6 +327,7 @@ export default {
     float: left;
     margin-left: 30px;
     letter-spacing: 0.8px;
+    cursor: pointer;
   }
 
   .e-title span.author{

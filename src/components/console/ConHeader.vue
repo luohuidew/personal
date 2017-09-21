@@ -43,7 +43,7 @@ export default {
     },
     getUsession() {
       const usession = user.getUser();
-      this.username = usession ? usession.username : '';
+      this.username = usession ? usession.realName : '';
     },
     getCompanyInfo() {
       const store = company.getStoredCompany();

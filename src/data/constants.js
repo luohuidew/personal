@@ -17,10 +17,6 @@ export const SHAREHOLDER_TYPE = [  // 股东类型
   { id: '0', text: '个人' },
   { id: '1', text: '机构' },
 ];
-export const ID_TYPES = [
-  { id: '0', text: '身份证' },
-  { id: '1', text: '护照' },
-];
 export const COMPENY_TYPE = [
   { id: '0', text: '境内有限责任公司' },
   { id: '1', text: '境外有限责任公司' },
@@ -34,9 +30,14 @@ export const ID_TYPE = [ // 证件类型
   { id: '0', text: '身份证' },
   { id: '1', text: '护照' },
 ];
+export const ID_AUTHENTICATION = [ // 证件认证流程
+  { id: '0', text: '未认证' },
+  { id: '1', text: '待审核' },
+  { id: '2', text: '已认证' },
+  { id: '3', text: '未通过' },
+];
 
-export const QINIU_BUCKET_DOMAIN = 'http://ow9hvlmOa.bkt.clouddn.com';
-
+export const QINIU_BUCKET_DOMAIN = 'http://ow9hvlm0a.bkt.clouddn.com';
 export const QINIU_SERVER = 'http://upload-z1.qiniu.com';
 
 export const PAGINATION_SIZE = 10;
@@ -50,4 +51,5 @@ export default {
   COMPENY_TYPE,
   MONEY_TYPE,
   ID_TYPE,
+  ID_AUTHENTICATION,
 };
