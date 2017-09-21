@@ -28,6 +28,9 @@
     <!-- 新增股东 -->
     <el-dialog title="添加股权信息" :visible.sync="dialogVisible" size="small" :before-close="handleClose">
       <el-form :model="stockAddMap" :rules="rules" ref="stockAddForm" label-width="120px">
+        <el-form-item label="股东简称" required prop="shareholderAbbreviation">
+          <el-input v-model="stockAddMap.shareholderAbbreviation"></el-input>
+        </el-form-item>
         <el-form-item label="股东名称" required prop="shareholderName">
           <el-input v-model="stockAddMap.shareholderName"></el-input>
         </el-form-item>
@@ -74,6 +77,7 @@ export default {
       shareholderType: SHAREHOLDER_TYPE, // 股东类型
       roundType: ROUND_TYPE, // 投资轮次
       stockAddMap: {
+        shareholderAbbreviation: '',
         shareholderName: '',
         shareholderType: '0',
         rounds: '1',
@@ -84,6 +88,9 @@ export default {
         yAxiasMap: [],
       },
       rules: {
+        shareholderAbbreviation: [
+          { required: true, message: '股东简称不能为空' },
+        ],
         shareholderName: [
           { required: true, message: '股东名称不能为空' },
         ],
