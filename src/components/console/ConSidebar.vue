@@ -47,6 +47,7 @@ export default {
     };
   },
   mounted() {
+    this.getPermission();
     bus.$on('COMPANY_CHANGED', () => {
       this.getPermission();
     });
