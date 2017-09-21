@@ -38,7 +38,9 @@
                     </ul>
                   </template>
                 </el-table-column>
-                <el-table-column prop="rate" label="股份比例"></el-table-column>
+                <el-table-column label="股份比例">
+                  <template scope="scope">{{scope.row.registeredCapital | stockScalefilter(companyMap.totalRegisteredCapital)}}</template>
+                </el-table-column>
               </el-table>
             </div>
           </div>
@@ -113,15 +115,20 @@
           </el-row>
           <el-row type="flex" justify="space-between">
             <el-col :span="11">
-              <el-form-item label="股份比例" required>
-                <el-input v-model="stockAddMap.stockScale" size="small" :disabled="true"></el-input>
+              <el-form-item label="总注册资本" required prop="totalRegisteredCapital">
+                <el-input v-model.number="stockAddMap.totalRegisteredCapital" size="small"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="11">
+              <el-form-item label="股份比例" required prop="stockScale">
+                <el-input v-model="stockScale" size="small" :disabled="true"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
         </el-form>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="checkStockForm('stockAddForm')">保存</el-button>
-          <el-button type="primary" @click="checkStockList()">下一步</el-button>
+          <el-button @click="checkStockForm('stockAddForm')">添加</el-button>
+          <el-button type="primary" @click="checkStockList()">保存</el-button>
         </span>
         <div class="dialog-table-wrap">
           <el-table :data="stockAddList">
@@ -134,7 +141,9 @@
               <template scope="scope">{{scope.row.rounds | roundFilter('ROUND_TYPE')}}</template>
             </el-table-column>
             <el-table-column label="注册资本" prop="registeredCapital"></el-table-column>
-            <el-table-column label="股份比例"></el-table-column>
+            <el-table-column label="股份比例">
+              <template scope="scope">{{scope.row.registeredCapital | stockScalefilter(companyMap.totalRegisteredCapital)}}</template>
+            </el-table-column>
           </el-table>
         </div>
       </div>
@@ -185,7 +194,7 @@
           </el-row>
         </el-form>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="checkFinancForm('financAddForm')">保存</el-button>
+          <el-button @click="checkFinancForm('financAddForm')">添加</el-button>
           <el-button type="primary" @click="saveList('financAddForm')">完成</el-button>
         </span>
         <div class="dialog-table-wrap">
@@ -215,14 +224,13 @@ export default {
   name: 'equity-dashboard',
   data() {
     return {
-      // companyId: '',
-      totalMoney: 140000, // 从公司接口拿到
+      companyId: '',
       companyMap: {
-        shareholderNum: '',  // 股东人数
-        totalRegisteredCapital: '',  // 总注册资本
-        totalFinancingCapital: '',  // 总融资额
+        shareholderNum: 0,  // 股东人数
+        totalRegisteredCapital: 0,  // 总注册资本
+        totalFinancingCapital: 0,  // 总融资额
       },
-      dialogVisible1: false,
+      dialogVisible1: true,
       dialogVisible2: false,
       stockMap: [],
       financMap: [],
@@ -231,7 +239,7 @@ export default {
         shareholderType: '0',
         rounds: '1',
         registeredCapital: '',
-        stockScale: '',
+        totalRegisteredCapital: 0,
       },
       financAddMap: { // 添加融资
         equityid: '',
@@ -256,6 +264,9 @@ export default {
         registeredCapital: [
           { required: true, message: '注册资本不能为空' }, { type: 'number', message: '注册资本必须为数字值' },
         ],
+        totalRegisteredCapital: [
+          { required: true, message: '总注册资本不能为空' }, { type: 'number', message: '总注册资本必须为数字值' },
+        ],
       },
       financRules: {
         round: [
@@ -274,24 +285,25 @@ export default {
     };
   },
   created() {
-    // const companyMap = JSON.parse(sessionStorage.getItem('_COMPANY_KEY'));
-    // this.companyId = companyMap.companyInfo.companyId;
+    const company = JSON.parse(sessionStorage.getItem('_COMPANY_KEY'));
+    this.companyId = company.companyInfo.companyId;
     companyServer.getCompanyInfoById().then((r) => {
       this.companyMap = r;
-      stockServer.getStockListByCompanyId(this.companyMap.totalRegisteredCapital).then((resp) => {
-        if (resp && resp.length !== 0) {
-          this.stockMap = resp;
-        } else {
-          this.dialogVisible1 = true;
-        }
-      });
-      financServer.getFinancListByCompanyId(this.companyMap.totalRegisteredCapital).then((resp) => {
-        if (resp && resp.length !== 0) {
-          this.financMap = resp;
-        } else if (this.dialogVisible1 !== true) {
-          this.dialogVisible2 = true;
-        }
-      });
+      this.stockAddMap.totalRegisteredCapital = Number(r.totalRegisteredCapital);
+    });
+    stockServer.getStockListByCompanyId().then((resp) => {
+      if (resp && resp.length !== 0) {
+        this.stockMap = resp;
+      } else {
+        this.dialogVisible1 = true;
+      }
+    });
+    financServer.getFinancListByCompanyId().then((resp) => {
+      if (resp && resp.length !== 0) {
+        this.financMap = resp;
+      } else if (this.dialogVisible1 !== true) {
+        this.dialogVisible2 = true;
+      }
     });
   },
   methods: {
@@ -307,8 +319,9 @@ export default {
       });
     },
     addStocktoLlist(formName) {
-      this.stockAddList.push(Object.assign({}, { stockScale: this.stockScale }, this.stockAddMap));
+      this.stockAddList.push(Object.assign({}, this.stockAddMap, { companyId: this.companyId }));
       this.resetForm(formName);
+      this.stockAddMap.totalRegisteredCapital = Number(this.companyMap.totalRegisteredCapital);
     },
     checkFinancForm(formName) {
       this.$refs[formName].validate((valid) => {
@@ -321,7 +334,7 @@ export default {
       if (this.financAddMap.financedDate) {
         this.financAddMap.financedDate = this.financAddMap.financedDate.Format('yyyy-MM-dd');
       }
-      this.financAddList.push(Object.assign({}, this.financAddMap));
+      this.financAddList.push(Object.assign({}, this.financAddMap, { companyId: this.companyId }));
       this.resetForm(formName);
     },
     resetForm(formName) {
@@ -341,12 +354,20 @@ export default {
       if (this.stockAddList.length === 0) {
         this.$message.error('请添加股权信息');
       } else {
-        this.dialogVisible1 = false;
-        this.dialogVisible2 = true;
+        let totalNum = 0;
+        this.stockAddList.forEach((v) => {
+          totalNum += Number(v.registeredCapital);
+        });
+        if (totalNum < this.companyMap.totalRegisteredCapital) {
+          this.$message.error('总注册资本求和不满足条件');
+        } else {
+          stockServer.addStockList(this.stockAddList);
+          this.dialogVisible1 = false;
+          this.dialogVisible2 = true;
+        }
       }
     },
     saveList(formName) {
-      stockServer.addStockList(this.stockAddList);
       financServer.addFinancList(this.financAddList);
       this.resetForm(formName);
       this.dialogVisible2 = false;
@@ -386,6 +407,9 @@ export default {
         t += l[i] + ((i + 1) % 3 === 0 && (i + 1) !== l.length ? ',' : '');
       });
       return `${t.split('').reverse().join('')}.${r}`;
+    },
+    stockScalefilter(arg1, arg2) {
+      return stockServer.getPercent(arg1, arg2);
     },
   },
   computed: {

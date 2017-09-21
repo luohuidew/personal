@@ -1,8 +1,7 @@
 import api from './http';
 
-// const companyMap = JSON.parse(sessionStorage.getItem('_COMPANY_KEY'));
-// const companyId = companyMap.companyInfo.companyId;
-const companyId = '1231231'; // 测试代码，用上面两行
+const companyMap = JSON.parse(sessionStorage.getItem('_COMPANY_KEY'));
+const companyId = companyMap ? companyMap.companyInfo.companyId : '';
 export default {
   getFinancListByCompanyId(id = companyId) {
     return api.get(`/financing/findAll/${id}`).then(resp => resp.data, (resp) => {
