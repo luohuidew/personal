@@ -1,4 +1,3 @@
-// created by yll @ 2017-09-12
 import api from './http';
 
 export default {

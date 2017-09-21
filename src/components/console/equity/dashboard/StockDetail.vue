@@ -66,8 +66,8 @@ export default {
   name: 'stock-detail',
   data() {
     return {
-      companyId: '12121222',
-      totalMoney: 0,  // 调取接口
+      companyId: '',
+      totalMoney: 0,
       isloading: false, // 判断axios加载是否完成,加载完成后才渲染组件
       myChartDiv: undefined,
       stocklistdata: {},
@@ -101,8 +101,8 @@ export default {
     };
   },
   created() {
-    // const companyMap = JSON.parse(sessionStorage.getItem('_COMPANY_KEY'));
-    // this.companyId = companyMap.companyInfo.companyId;
+    const companyMap = JSON.parse(sessionStorage.getItem('_COMPANY_KEY'));
+    this.companyId = companyMap.companyInfo.companyId;
     this.getStockList();
     this.stockAddMap.companyId = this.companyId;
   },

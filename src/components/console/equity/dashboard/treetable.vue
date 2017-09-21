@@ -14,7 +14,9 @@
               </template>
             </el-table-column>
             <el-table-column prop="registeredCapital"></el-table-column>
-            <el-table-column prop="rate"></el-table-column>
+            <el-table-column>
+              <template scope="scope">{{scope.row.registeredCapital | stockScalefilter(companyMap.totalRegisteredCapital)}}</template>
+            </el-table-column>
             <el-table-column>
               <template scope="scope"><el-button @click="delete(scope.row)">删除</el-button></template>
             </el-table-column>
@@ -30,7 +32,9 @@
         </template>
       </el-table-column>
       <el-table-column prop="registeredCapital" label="注册资本"></el-table-column>
-      <el-table-column prop="rate" label="股份比例"></el-table-column>
+      <el-table-column label="股份比例">
+        <template scope="scope">{{scope.row.registeredCapital | stockScalefilter(companyMap.totalRegisteredCapital)}}</template>
+      </el-table-column>
       <el-table-column label="操作">
         <template scope="scope"><el-button @click="delete(scope.row)">删除</el-button></template>
       </el-table-column>
@@ -39,6 +43,7 @@
 </template>
 <script>
 import stockServer from '../../../../service/stock';
+import companyServer from '../../../../service/company';
 import { ROUND_TYPE } from '../../../../data/constants';
 
 export default {
@@ -48,11 +53,15 @@ export default {
       // totalMoney: '140000',
       treeDataMap: [],
       roundType: ROUND_TYPE,
+      companyMap: '',
     };
   },
   props: ['treelistdata'],
   created() {
     this.treeDataMap = this.treelistdata;
+    companyServer.getCompanyInfoById().then((r) => {
+      this.companyMap = r;
+    });
   },
   methods: {
     delete(row) {
@@ -61,6 +70,11 @@ export default {
     checkRound(r, rounds) {
       const roundList = rounds.split(',');
       return roundList.includes(r);
+    },
+  },
+  filters: {
+    stockScalefilter(arg1, arg2) {
+      return stockServer.getPercent(arg1, arg2);
     },
   },
 };
