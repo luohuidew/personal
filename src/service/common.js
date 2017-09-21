@@ -32,6 +32,13 @@ export default {
      * */
     return api.post('/sendMsg', { account: arg1 }).then(resp => resp);
   },
+  checkPWD(arg1) {
+    /*
+     * 检测密码
+     * arg1：password
+     * */
+    return api.post('/check/pwd', { password: arg1 }).then(resp => resp);
+  },
   // 企业关键字多维度查询
   searchWideCompany(text) {
     return api.get(`/ECI/SearchWide?key=${userKey}&keyWord=${text}`, { baseURL: 'http://i.yjapi.com' }).then((resp) => {

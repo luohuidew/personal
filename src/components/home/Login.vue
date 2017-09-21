@@ -46,7 +46,6 @@ export default {
       rules: {
         username: [
           { validator: this.checkUserName, trigger: 'blur' },
-          { validator: this.checkUserName, trigger: 'blur' },
         ],
         password: [
           { validator: this.validatePassword, trigger: 'blur' },
@@ -67,15 +66,13 @@ export default {
       });
     },
     checkUserName(rule, value, callback) {
-      let result = '';
-      if (!value) {
-        result = callback(new Error('用户名不能为空！'));
-      } else if (!validate.isPhoneAvailable(value) && !validate.isEmailAvailable(value)) {
-        result = callback(new Error('请输入正确的手机号或邮箱！'));
+      const result1 = validate.isPhoneAvailable(value);
+      const result2 = validate.isEmailAvailable(value);
+      if (result1 !== 'ok' && result2 !== 'ok') {
+        callback(new Error('请输入正确的电话或邮箱格式'));
       } else {
         callback();
       }
-      return result;
     },
     validatePassword(rule, value, callback) {
       const result = validate.isPasswordAvailable(value);
