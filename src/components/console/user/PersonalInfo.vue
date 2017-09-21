@@ -30,7 +30,7 @@
         <div class="in-row">
           <span>绑定邮箱</span>
           <span>{{info.emailHide}}</span>
-          <span>修改</span>
+          <span @click="openEmailDlg">修改</span>
         </div>
         <div class="in-row">
           <span>绑定手机</span>
@@ -70,27 +70,48 @@
       </div>
     </div>
     <!---->
+    <el-dialog title="修改邮箱" :visible.sync="emailDialogVisible" size="small" :before-close="handleCloseEmail">
+      <el-form :model="emailForm" ref="emailForm" :rules="rules">
+        <div style="margin-bottom: 10px;">为保障您的账号安全，请输入账号密码进行验证</div>
+        <el-form-item label="密码：" :label-width="formLabelWidth" v-show="step == 1" prop="password">
+          <el-input type="password" v-model="emailForm.password"></el-input>
+        </el-form-item>
+        <el-form-item label="新邮箱：" :label-width="formLabelWidth" v-show="step == 2" prop="email" required>
+          <el-input v-model="emailForm.email"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="next" v-show="step == 1"> 下一步 </el-button>
+        <el-button type="primary" @click="submit('email')" v-show="step == 2"> 保 存 </el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import filters from '../../../utils/filters';
 import common from '../../../service/common';
+import validate from '../../../utils/validation';
 import personalInfo from '../../../service/personalInfo';
 import { QINIU_BUCKET_DOMAIN, QINIU_SERVER } from '../../../data/constants';
 
 export default {
   name: 'user-personal-info',
-  created() {
-  },
   data() {
     return {
       headUrl: '../../../../static/img/head-img.png', // 填充图片
+      formLabelWidth: '100px',
       qiniuServer: QINIU_SERVER,
       uploadData: {
         token: '',
       },
       editing: false,
+      emailDialogVisible: false,
+      emailForm: {
+        password: undefined,
+        email: undefined,
+      },
+      step: 1,
       info: {
         id: '',
         idCardImgPositiveUrl: '',
@@ -107,6 +128,11 @@ export default {
         emailHide: '',
         authenticate: '',
       },
+      rules: {
+        email: [
+          { validator: this.checkEmail, trigger: 'blur' },
+        ],
+      },
     };
   },
   filters: {
@@ -114,7 +140,7 @@ export default {
       return filters.constantsFilter(arg1, arg2);
     },
   },
-  mounted() {
+  created() {
     this.initData();
     this.getQiNiuToken();
   },
@@ -130,23 +156,59 @@ export default {
       });
     },
     submit(type) {
-      let params;
+      const params = {};
+      params.id = this.info.id;
       if (type === 'portrait') {
-        params = {
-          id: this.info.id,
-          portrait: this.headUrl,
-        };
+        params.portrait = this.headUrl;
+        this.update(params);
       }
+      if (type === 'email') {
+        params.email = this.info.email;
+        this.$refs.emailForm.validate((valid) => {
+          if (valid) {
+            this.update(params);
+          }
+        });
+      }
+    },
+    update(params) {
       personalInfo.updateUserInfo(params).then((resp) => {
         if (resp) {
           this.$message.info('保存成功');
         }
+        this.initData();
         this.editing = false;
+        this.handleCloseEmail();
       });
     },
     cancel() {
       this.headUrl = this.info.portrait;
       this.editing = false;
+    },
+    openEmailDlg() {
+      this.emailDialogVisible = true;
+    },
+    next() {
+      common.checkPWD(this.emailForm.password).then(() => {
+        this.step = 2;
+      });
+    },
+    handleCloseEmail() {
+      this.emailDialogVisible = false;
+      this.emailForm = {
+        password: undefined,
+        email: undefined,
+      };
+      this.step = 1;
+      this.$refs.emailForm.resetFields();
+    },
+    checkEmail(rule, value, callback) {
+      const result = validate.isEmailAvailable(value);
+      if (result !== 'ok') {
+        callback(new Error(result));
+      } else {
+        callback();
+      }
     },
     getQiNiuToken() {
       common.getQiNiuToken().then((resp) => {
