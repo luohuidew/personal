@@ -60,7 +60,7 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="save('form')"> 确 认 </el-button>
+        <el-button type="success" @click="save('form')"> 确 认 </el-button>
       </span>
     </el-dialog>
     <!---->
@@ -99,7 +99,7 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="save('form')"> 确 认 </el-button>
+        <el-button type="success" @click="save('form')"> 确 认 </el-button>
       </span>
     </el-dialog>
   </div>
