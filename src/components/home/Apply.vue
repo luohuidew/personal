@@ -145,8 +145,8 @@ export default {
     checkEmail(rule, value, callback) {
       const msg = validate.isEmailAvailable(value);
       if (msg === 'ok') {
-        toolServer.checkEmail(value).then((resp) => {
-          if (resp.status !== '200') {
+        toolServer.checkEmailExist(value).then((resp) => {
+          if (resp.code === '200') {
             return callback(new Error(resp.msg)); // 该邮箱已存在，请直接<a href="/login/">登录</a>
           }
           return true;
@@ -157,8 +157,8 @@ export default {
     checkTel(rule, value, callback) {
       const msg = validate.isPhoneAvailable(value);
       if (msg === 'ok') {
-        toolServer.checkPhone(value).then((resp) => {
-          if (resp.status !== '200') {
+        toolServer.checkPhoneExist(value).then((resp) => {
+          if (resp.code === '200') {
             return callback(new Error(resp.msg)); // 手机号已存在
           }
           return true;
@@ -169,8 +169,12 @@ export default {
     applyLogin(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          Apply.apply(this.applyData).then(() => {
-            this.$router.push({ name: 'Login' });
+          Apply.apply(this.applyData).then((resp) => {
+            if (resp.data.code === '200') {
+              this.$router.push({ name: 'Login' });
+            } else {
+              this.$message.error(resp.data.msg);
+            }
           });
         }
       });
