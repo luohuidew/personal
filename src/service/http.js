@@ -5,12 +5,12 @@ import user from './user';
 import { MessageBox, Message } from 'element-ui';
 
 const axiosIns = axios.create({
-  timeout: 60000,
+  timeout: 20000,
   baseURL: '/api',
 });
 
 function errorMsgBox (statusText, msg) {
-  MessageBox(`错误类型：${statusText}; 错误描述：${msg}`, '异常提示', {
+  MessageBox(`错误类型：${statusText}； 错误描述：${msg}`, '异常提示', {
     confirmButtonText: '确定'
   });
 }
@@ -63,8 +63,8 @@ axiosIns.interceptors.response.use(
     return Promise.reject(res);
   },
   error => {
-    let errorInfo =  error.data.error ? error.data.error.message : error.data;
-    return Promise.reject(errorInfo);
+    errorMsgBox('网络异常', error);
+    return Promise.reject(error);
   }
 );
 
