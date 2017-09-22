@@ -32,6 +32,27 @@ export default {
      * */
     return api.post('/sendMsg', { account: arg1 }).then(resp => resp);
   },
+  checkPhoneExist(arg1) {
+    /*
+     * 检测电话已存在
+     * arg1：phone
+     * */
+    return api.post('/check/phone', { phone: arg1 }).then(resp => resp);
+  },
+  checkEmailExist(arg1) {
+    /*
+     * 检测邮箱已存在
+     * arg1：email
+     * */
+    return api.post('/check/email', { email: arg1 }).then(resp => resp);
+  },
+  checkCompanyNameEmail(arg1) {
+    /*
+     * 检测公司名称已存在
+     * arg1：companyName
+     * */
+    return api.post('/check/companyName', { companyName: arg1 }).then(resp => resp);
+  },
   checkPWD(arg1) {
     /*
      * 检测密码
