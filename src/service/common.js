@@ -70,24 +70,4 @@ export default {
       return result;
     });
   },
-  checkEmail(arg1) {
-    /*
-    * 检查邮箱是否已经注册
-    * arg1：email
-    * */
-    const params = {
-      email: arg1,
-    };
-    return api.post(' /check/email', params).then(resp => resp.data);
-  },
-  checkPhone(arg1) {
-    /*
-    * 检查手机号是否已经注册
-    * arg1：email
-    * */
-    const params = {
-      phone: arg1,
-    };
-    return api.post(' /check/phone', params).then(resp => resp.data);
-  },
 };
