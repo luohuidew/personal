@@ -87,10 +87,17 @@
         <el-form :model="stockAddMap" ref="stockAddForm" :rules="stockRules" label-width="100px">
           <el-row type="flex" justify="space-between">
             <el-col :span="11">
+              <el-form-item label="股东简称" required prop="shareholderAbbreviation">
+                <el-input v-model="stockAddMap.shareholderAbbreviation" size="small"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="11">
               <el-form-item label="股东名称" required prop="shareholderName">
                 <el-input v-model="stockAddMap.shareholderName" size="small"></el-input>
               </el-form-item>
             </el-col>
+          </el-row>
+          <el-row type="flex" justify="space-between">
             <el-col :span="11">
               <el-form-item label="股东类型" required prop="shareholderType">
                 <el-select v-model="stockAddMap.shareholderType" size="small">
@@ -98,8 +105,6 @@
                 </el-select>
               </el-form-item>
             </el-col>
-          </el-row>
-          <el-row type="flex" justify="space-between">
             <el-col :span="11">
               <el-form-item label="投资轮次" required prop="rounds">
                 <el-select v-model="stockAddMap.rounds" size="small">
@@ -107,29 +112,33 @@
                 </el-select>
               </el-form-item>
             </el-col>
+          </el-row>
+          <el-row type="flex" justify="space-between">
             <el-col :span="11">
               <el-form-item label="注册资本" required prop="registeredCapital">
                 <el-input v-model.number="stockAddMap.registeredCapital" size="small"></el-input>
               </el-form-item>
             </el-col>
-          </el-row>
-          <el-row type="flex" justify="space-between">
             <el-col :span="11">
               <el-form-item label="总注册资本" required prop="totalRegisteredCapital">
                 <el-input v-model.number="stockAddMap.totalRegisteredCapital" size="small"></el-input>
               </el-form-item>
             </el-col>
+          </el-row>
+          <el-row type="flex" justify="space-between">
             <el-col :span="11">
               <el-form-item label="股份比例" required prop="stockScale">
                 <el-input v-model="stockScale" size="small" :disabled="true"></el-input>
               </el-form-item>
             </el-col>
+            <el-col :span="11">
+              <span class="dialog-footer">
+                <el-button @click="checkStockForm('stockAddForm')">添加</el-button>
+                <el-button type="primary" @click="checkStockList()">保存</el-button>
+              </span>
+            </el-col>
           </el-row>
         </el-form>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="checkStockForm('stockAddForm')">添加</el-button>
-          <el-button type="primary" @click="checkStockList()">保存</el-button>
-        </span>
         <div class="dialog-table-wrap">
           <el-table :data="stockAddList">
             <el-table-column type="index" label="序号"></el-table-column>
@@ -235,6 +244,7 @@ export default {
       stockMap: [],
       financMap: [],
       stockAddMap: { // 添加股权
+        shareholderAbbreviation: '',
         shareholderName: '',
         shareholderType: '0',
         rounds: '1',
@@ -252,6 +262,9 @@ export default {
       shareholderType: SHAREHOLDER_TYPE, // 股东类型
       roundType: ROUND_TYPE, // 轮次类型
       stockRules: {
+        shareholderAbbreviation: [
+          { required: true, message: '股东简称不能为空' },
+        ],
         shareholderName: [
           { required: true, message: '股东名称不能为空' },
         ],

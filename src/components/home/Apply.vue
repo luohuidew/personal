@@ -6,13 +6,12 @@
     <div class="apply-inner">
       <a :href="homeUrl" class="logo"><img src="../../assets/login-logo.png"/></a>
         <div class="apply-main">
-          <el-form :model="applyData" :rules="rules" ref="applyData">
+          <el-form :model="applyData" :rules="rules" ref="applyForm">
             <el-form-item prop="username" required>
               <el-input type="text" v-model.trim="applyData.username" placeholder="请输入您的名称"></el-input>
             </el-form-item>
             <el-form-item prop="companyName" required>
-              <!-- <el-input type="text" v-model.trim="applyData.companyName" placeholder="请输入公司名称"></el-input> -->
-              <el-autocomplete v-model="applyData.companyName" :fetch-suggestions="querySearchAsync" placeholder="请输入内容" :trigger-on-focus="false" @select="handleSelect"></el-autocomplete>
+              <el-autocomplete v-model="applyData.company.companyName" :fetch-suggestions="querySearchAsync" placeholder="请输入公司名称" :trigger-on-focus="false" @select="companySelect"></el-autocomplete>
             </el-form-item>
             <el-form-item prop="email" required>
               <el-input type="email" v-model.trim="applyData.email" placeholder="请输入邮箱地址"></el-input>
@@ -24,7 +23,7 @@
               <el-input type="textarea" v-model.trim="applyData.remarks" :autosize="{ minRows: 1, maxRows: 4}" placeholder="备注点什么？" class="texarea"></el-input>
             </el-form-item>
             <el-form-item class="apply-btn">
-              <a class="apply-now" @click="applyLogin('applyData')">申请试用</a>
+              <a class="apply-now" @click="applyLogin('applyForm')">申请试用</a>
             </el-form-item>
           </el-form>
         </div>
@@ -42,13 +41,14 @@ export default {
   name: 'apply',
   data() {
     return {
-      restaurants: [],
-      timeout: null,
+      timeout: null,  // 公司搜索限制
       state2: '',
       homeUrl: 'http://localhost:8000/home.html',
       applyData: {
         username: '', // 名称
-        companyName: '', // 公司名称
+        company: { // 公司
+          companyName: '',
+        },
         email: '', // 邮箱地址
         phone: '', // 电话号码
         remarks: '', // 备注
@@ -58,7 +58,7 @@ export default {
           { required: true, message: '名称不能为空', trigger: 'blur' },
         ],
         companyName: [
-          { required: true, message: '公司名不能为空', trigger: 'blur' },
+          { validator: this.checkCompany, trigger: 'blur' },
         ],
         email: [
           { validator: this.checkEmail, trigger: 'blur' },
@@ -67,6 +67,7 @@ export default {
           { validator: this.checkTel, trigger: 'blur' },
         ],
       },
+      errorMsg: {}, // 公司接口错误信息
     };
   },
   mounted() {
@@ -86,17 +87,6 @@ export default {
       });
     },
     querySearchAsync(queryString, cb) {
-      /* const restaurants = this.restaurants;
-      let results;
-      if (queryString) {
-        results = restaurants.filter(this.createStateFilter(queryString));
-      } else {
-        results = restaurants;
-      }
-      clearTimeout(this.timeout);
-      this.timeout = setTimeout(() => {
-        cb(results);
-      }, 1000); */
       clearTimeout(this.timeout);
       this.timeout = setTimeout(() => {
         let results = [];
@@ -109,49 +99,72 @@ export default {
             results = resp.Result;
             cb(results);
           } else {
-            this.$message.error(resp.Message);
+            // this.$message.error(resp.Message);
+            cb([]);
+            this.errorMsg.status = resp.Status;
+            this.errorMsg.msg = resp.Message;
+            this.$refs.applyForm.validateField('companyName');
           }
         });
       }, 2000);
     },
-    createStateFilter(queryString) {
-      return state => (state.value.indexOf(queryString.toLowerCase()) === 0);
+    getCompanyInfo(id) {
+      toolServer.getDetailCompany(id).then((resp) => {
+        const rusults = resp.Result;
+        const money = rusults.RegistCapi;
+        const moneyNum = Number(rusults.RegistCapi);
+        this.applyData.company.companyType = '0'; // 境内
+        this.applyData.company.shareholderNum = rusults.Partners.length; // 股东人数
+        if (money.indexOf('美元') !== -1) {
+          this.applyData.company.currency = 'EUR';
+        } else if (money.indexOf('欧') !== -1) {
+          this.applyData.company.currency = 'USD';
+        } else {
+          this.applyData.company.currency = 'RMB';
+        }
+        if (money.indexOf('万') !== -1) {
+          this.applyData.company.totalRegisteredCapital = moneyNum;
+        } else {
+          this.applyData.company.totalRegisteredCapital = moneyNum / 10000;
+        }
+      });
     },
-    handleSelect(item) {
-      console.log(item);
+    companySelect(item) {
+      this.applyData.company.companyName = item.Name;
+      this.getCompanyInfo(item.No);
     },
-    loadAll() {
-      return [
-        { value: '三全鲜食（北新泾店）', address: '长宁区新渔路144号' },
-        { value: 'Hot honey 首尔炸鸡（仙霞路）', address: '上海市长宁区淞虹路661号' },
-        { value: '新旺角茶餐厅', address: '上海市普陀区真北路988号创邑金沙谷6号楼113' },
-        { value: '泷千家(天山西路店)', address: '天山西路438号' },
-      ];
-      // toolServer.searchWideCompany(text).then(resp => resp.Result);
+    checkCompany(rule, value, callback) {
+      if (!value) {
+        return callback(new Error('公司名称不能为空'));
+      }
+      if (this.errorMsg.status !== '200') {
+        return callback(new Error(this.errorMsg.msg));
+      }
+      return true;
     },
     checkEmail(rule, value, callback) {
-      let r = '';
-      if (!value) {
-        r = callback(new Error('邮箱不能为空！'));
-      } else if (!validate.isEmailAvailable(value)) {
-        // 如果不符合邮箱的情况下
-        r = callback(new Error('请输入正确的邮箱！'));
-      } else {
-        callback();
+      const msg = validate.isEmailAvailable(value);
+      if (msg === 'ok') {
+        toolServer.checkEmail(value).then((resp) => {
+          if (resp.status !== '200') {
+            return callback(new Error(resp.msg)); // 该邮箱已存在，请直接<a href="/login/">登录</a>
+          }
+          return true;
+        });
       }
-      return r;
+      return callback(new Error(msg));
     },
     checkTel(rule, value, callback) {
-      let r = '';
-      if (!value) {
-        r = callback(new Error('手机号不能为空！'));
-      } else if (!validate.isPhoneAvailable(value)) {
-        // 如果不符合电话号码的情况下
-        r = callback(new Error('请输入正确的手机号！'));
-      } else {
-        callback();
+      const msg = validate.isPhoneAvailable(value);
+      if (msg === 'ok') {
+        toolServer.checkPhone(value).then((resp) => {
+          if (resp.status !== '200') {
+            return callback(new Error(resp.msg)); // 手机号已存在
+          }
+          return true;
+        });
       }
-      return r;
+      return callback(new Error(msg));
     },
     applyLogin(formName) {
       this.$refs[formName].validate((valid) => {
