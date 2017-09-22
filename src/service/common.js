@@ -10,7 +10,7 @@ export default {
      * 获取图片验证码
      * arg1：手机号或邮箱
      * */
-    return api.post('/validateCode', { account: arg1 }).then(resp => resp);
+    return api.post('/validateCode', { account: arg1 }).then(resp => resp.temp);  // temp是mock接口数据
   },
   checkImgCode(arg1, arg2) {
     /*
@@ -78,7 +78,7 @@ export default {
     const params = {
       email: arg1,
     };
-    return api.post(' /check/email', params).then(resp => resp);
+    return api.post(' /check/email', params).then(resp => resp.data);
   },
   checkPhone(arg1) {
     /*
@@ -88,6 +88,6 @@ export default {
     const params = {
       phone: arg1,
     };
-    return api.post(' /check/phone', params).then(resp => resp);
+    return api.post(' /check/phone', params).then(resp => resp.data);
   },
 };
