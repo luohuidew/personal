@@ -6,63 +6,105 @@
     <section class="forget-inner">
       <a :href="homeUrl" class="logo"><img src="../../assets/login-logo.png"/></a>
       <div class="forget-main">
-        <el-form :model="forgetData" :rules="rules" ref="forgetData">
-          <el-form-item prop="userName" required>
-            <el-input type="text" v-model.trim="forgetData.userName" placeholder="请输入您的注册邮箱/手机号"></el-input>
+        <el-form :model="forgetData" :rules="rules" ref="forgetForm">
+          <el-form-item prop="account" required>
+            <el-input type="text" v-model.trim="forgetData.account" placeholder="请输入您的注册邮箱/手机号"></el-input>
           </el-form-item>
-          <el-form-item v-if="phoneImgCodeShow" prop="imgCode" required>
+          <el-form-item prop="code" required>
             <div class="get-code">
-              <el-input type="password" v-model.trim="forgetData.imgCode" placeholder="请输入图片验证码"></el-input>
-              <span class="code-info"><img class="hashImgCode" :src="`validateCode/${forgetData.userName}/?=_`+hash" role="button" @click="hash = Math.random()"/></span>
-            </div>
-          </el-form-item>
-          <el-form-item prop="phoneCode" required>
-            <div class="get-code">
-              <el-input type="password" v-model.trim="forgetData.phoneCode" placeholder="请输入验证码"></el-input>
-              <span class="code-info">获取验证码</span>
+              <el-input type="code" v-model.trim="forgetData.code" placeholder="请输入验证码"></el-input>
+              <el-button type="text" class="code-info" @click="getCode();">获取验证码</el-button>
             </div>
           </el-form-item>
           <el-form-item prop="newPassword" required>
             <el-input type="password" v-model.trim="forgetData.newPassword" placeholder="设置新密码"></el-input>
           </el-form-item>
+          <el-form-item prop="checkPassword" required>
+            <el-input type="password" v-model.trim="forgetData.checkPassword" placeholder="再次输入新密码"></el-input>
+          </el-form-item>
           <el-form-item class="submit-btn">
-            <a href="javascript:void(0)" class="submit-now">提交</a>
+            <a href="javascript:void(0)" @click="submit('forgetForm');" class="submit-now">提交</a>
           </el-form-item>
         </el-form>
       </div>
     </section>
+    <el-dialog :visible.sync="dialogVisible" size="tiny" class="forget-password">
+      <el-form :model="imgCodeData" :rules="rules" ref="forgetForm">
+        <el-form-item prop="imgcode" required>
+          <div class="get-code">
+            <el-input v-model.trim="imgCodeData.imgcode" placeholder="请输入图片验证码"></el-input>
+            <span class="code-info"><img class="hashImgCode" :src="imgCodeData.imgUrl" role="button" @click="getImgCode(forgetData.account);"/></span>
+          </div>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <!-- <el-button @click="dialogVisible = false">取 消</el-button> -->
+        <el-button type="primary" @click="checkImgCode(forgetData.account, imgCodeData.code)">点击获取</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import canvasbg from '../../lib/canvasbg';
 import validate from '../../utils/validation';
-import personal from '../../service/personalInfo';
+import toolServer from '../../service/common';
+import forgetPassServer from '../../service/forgetPassword';
 
 export default {
-  name: 'forget_password',
+  name: 'forget-password',
   data() {
+    const validatePass = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入密码'));
+      } else {
+        if (this.forgetData.newPassword !== '') {
+          this.$refs.forgetForm.validateField('checkPassword');
+        }
+        callback();
+      }
+    };
+    const validatePass2 = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请再次输入密码'));
+      } else if (value !== this.forgetData.newPassword) {
+        callback(new Error('两次输入密码不一致!'));
+      } else {
+        callback();
+      }
+    };
     return {
       homeUrl: 'http://localhost:8000/home.html',
       hash: Math.random(),
-      phoneImgCodeShow: false, // 默认进来图片验证码不可见
       forgetData: {
-        userName: '', // 用户名
-        phoneCode: '', // 验证码
+        account: '', // 用户名
+        code: '', // 验证码
         newPassword: '', // 设置新密码
-        imgCode: '',
+      },
+      imgCodeData: {  // 图形验证码
+        imgcode: '',
+        imgUrl: '',
       },
       rules: {
-        userName: [
+        account: [
           { validator: this.checkUserName, trigger: 'blur' },
         ],
-        newPassword: [
-          { validator: this.checkPassword, trigger: 'blur' },
+        code: [
+          { required: true, message: '验证码不能为空', trigger: 'blur' },
         ],
-        phoneCode: [
-          { validator: this.checkCaptcha, trigger: 'blur' },
+        newPassword: [
+          { validator: validatePass, trigger: 'blur' },
+        ],
+        checkPassword: [
+          { validator: validatePass2, trigger: 'blur' },
+        ],
+        imgcode: [
+          { validator: this.validateCode, trigger: 'blur' },
         ],
       },
+      isPhone: false, // 判断输入是否为手机号
+      dialogVisible: false,
+      errorMsg: {}, // 错误信息
     };
   },
   mounted() {
@@ -77,51 +119,86 @@ export default {
         },
       });
     },
-    checkUserName(rule, value, callback) {
+    getCode() {
+      this.$refs.forgetForm.validateField('account', (valid) => {
+        console.log(valid, this.isPhone);
+        if (valid) {
+          if (this.isPhone) {  // 手机号需要图片验证码
+            this.dialogVisible = true;
+            this.getImgCode(this.forgetData.account);
+          } else {
+            this.getPhoneCode(this.forgetData.account);
+          }
+        }
+      });
+    },
+    getImgCode(user) {
+      toolServer.getImgCode(user).then((resp) => {
+        this.imgCodeData.imgUrl = resp;
+      });
+    },
+    checkImgCode(arg1, arg2) {
+      toolServer.checkImgCode(arg1, arg2).then((resp) => {
+        if (resp.data.code === '200') {
+          this.getPhoneCode(arg1);
+          this.dialogVisible = false;
+        } else {
+          this.errorMsg = resp.data.msg;
+        }
+      });
+    },
+    getPhoneCode(arg) {
+      toolServer.sendMsg(arg);
+    },
+    submit(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          forgetPassServer.forgetPassword(this.forgetData).then((resp) => {
+            if (resp.data.code === '200') {
+              this.$router.push({ name: 'Login' });
+            } else {
+              this.$message.error(resp.data.msg);
+            }
+          });
+        }
+      });
+    },
+    validateCode(rule, value, callback) {
       let result = '';
-      if (validate.isPhoneAvailable(value)) { // 如果是手机号
-        this.phoneImgCodeShow = true;
-      }
       if (!value) {
-        result = callback(new Error('有户名（手机号/邮箱）不能为空！'));
-      } else if (!validate.isPhoneAvailable(value) && !validate.isEmailAvailable(value)) {
-        // 如果不符合邮箱也不符合电话号码的情况下
-        result = callback(new Error('请输入正确的手机号/邮箱！'));
-      } else {
-        callback();
+        result = callback(new Error('验证码不能为空！'));
+      } else if (this.errorMsg.code !== '200') {
+        result = callback(new Error('验证码错误'));
       }
       return result;
     },
-    checkImgCode() {
-      personal.checkImgCode(this.usefulData.newPhone, this.usefulData.imgCode).then((resp) => {
-        console.log(resp);
-        this.disabled = false;
-        return true;
-      //   if (resp.data === 'error') {
-      //     this.$message.error('图形验证码不正确');
-      //     this.disabled = true;
-      //     return false;
-      //   }
-      //   this.disabled = false;
-      //   return true;
-      // }, () => {
-      //   this.$message.error('图形验证码不正确');
-      // });
-      });
-    },
-    checkPassword(rule, value, callback) {
-      if (value === '') {
-        callback(new Error('密码不能为空'));
-      } else {
-        callback();
+    checkUserName(rule, value, callback) {
+      let result = '';
+      const result1 = validate.isPhoneAvailable(value);
+      const result2 = validate.isEmailAvailable(value);
+      if (!value) {
+        result = callback(new Error('用户名（手机号/邮箱）不能为空！'));
+      } else if (result1 !== 'ok' && result2 !== 'ok') {
+        result = callback(new Error('请输入正确的手机号/邮箱！'));
+      } else if (result1 === 'ok') {
+        toolServer.checkPhoneExist(value).then((resp) => {
+          if (resp.data.code === '-1') {
+            result = callback(new Error('该手机号不存在'));
+          } else {
+            this.isPhone = true;
+            result = callback();
+          }
+        });
+      } else if (result2 === 'ok') {
+        toolServer.checkEmailExist(value).then((resp) => {
+          if (resp.data.code === '-1') {
+            result = callback(new Error('该邮箱不存在'));
+          } else {
+            result = callback();
+          }
+        });
       }
-    },
-    checkCaptcha(rule, value, callback) {
-      if (value === '') {
-        callback(new Error('验证码不能为空'));
-      } else {
-        callback();
-      }
+      return result;
     },
   },
 };
@@ -131,7 +208,7 @@ export default {
 <style scoped>
 .get-code {
   position: relative;
-  margin: 20px 0;
+  margin: 20px 0 0;
   border-bottom: 1px solid rgba(213,213,213,0.40);
 }
 .get-code .el-input {
@@ -150,9 +227,9 @@ export default {
   line-height: 15px;
   border-left: 2px solid #EAEAEA;
   text-align: right;
-  cursor: default;
 }
 .el-form-item.submit-btn {
+  margin-top:44px;
   margin-bottom: 0 !important;
 }
 .code-info img {

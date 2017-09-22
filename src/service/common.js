@@ -20,13 +20,12 @@ export default {
     * */
     return api.post('/checkCode', { account: arg1, validateCode: arg2 }).then(resp => resp);
   },
-  sendMsg(arg1, arg2) {
+  sendMsg(arg1) {
     /*
      * 发送(手机邮箱)验证码
      * arg1：account
-     * arg2：validateCode
      * */
-    return api.post('/sendMsg', { account: arg1, validateCode: arg2 }).then(resp => resp);
+    return api.post('/sendMsg', { account: arg1 }).then(resp => resp);
   },
   checkPhoneExist(arg1) {
     /*

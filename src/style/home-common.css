@@ -219,6 +219,10 @@
     border-bottom: 1px solid rgba(213, 213, 213, 0.40) !important;
     letter-spacing: 4px;
 }
+.forget .get-code .el-input__inner {
+    border-bottom:none !important;
+}
+.forget-password .el-dialog__header{display: none;}
 .apply .el-textarea__inner {
     resize: none !important;
 }
