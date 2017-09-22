@@ -18,23 +18,40 @@ export default {
     * arg1：account
     * arg2：validateCode
     * */
-    const params = {
-      account: arg1,
-      validateCode: arg2,
-    };
-    return api.post('/checkCode', params).then(resp => resp);
+    return api.post('/checkCode', { account: arg1, validateCode: arg2 }).then(resp => resp);
   },
-  sendMsg(arg1) {
+  sendMsg(arg1, arg2) {
     /*
      * 发送(手机邮箱)验证码
      * arg1：account
      * arg2：validateCode
      * */
-    return api.post('/sendMsg', { account: arg1 }).then(resp => resp);
+    return api.post('/sendMsg', { account: arg1, validateCode: arg2 }).then(resp => resp);
+  },
+  checkPhoneExist(arg1) {
+    /*
+     * 检测电话已存在
+     * arg1：phone
+     * */
+    return api.post('/check/phone', { phone: arg1 }).then(resp => resp);
+  },
+  checkEmailExist(arg1) {
+    /*
+     * 检测邮箱已存在
+     * arg1：email
+     * */
+    return api.post('/check/email', { email: arg1 }).then(resp => resp);
+  },
+  checkCompanyNameEmail(arg1) {
+    /*
+     * 检测公司名称已存在
+     * arg1：companyName
+     * */
+    return api.post('/check/companyName', { companyName: arg1 }).then(resp => resp);
   },
   checkPWD(arg1) {
     /*
-     * 检测密码
+     * 检测密码是否正确
      * arg1：password
      * */
     return api.post('/check/pwd', { password: arg1 }).then(resp => resp);
