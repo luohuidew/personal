@@ -30,13 +30,13 @@
         <div class="in-row">
           <span>绑定邮箱</span>
           <span>{{info.emailHide}}</span>
-          <span @click="openEmailDlg">修改</span>
+          <span @click="emailDialogVisible = true">修改</span>
         </div>
         <div class="in-row">
           <span>绑定手机</span>
           <span>{{info.phoneHide}}</span>
-          <span v-if="info.phone">解绑</span>
-          <span v-else="">绑定</span>
+          <span v-show="info.phone" @click="phoneDialogVisible = true">解绑</span>
+          <span v-show="!info.phone" @click="openBunding">绑定</span>
         </div>
       </div>
       <div class="row row2">
@@ -70,19 +70,68 @@
       </div>
     </div>
     <!---->
-    <el-dialog title="修改邮箱" :visible.sync="emailDialogVisible" size="small" :before-close="handleCloseEmail">
+    <el-dialog title="修改邮箱" :visible.sync="emailDialogVisible" size="small" :before-close="handleCloseD1">
       <el-form :model="emailForm" ref="emailForm" :rules="rules">
-        <div style="margin-bottom: 10px;">为保障您的账号安全，请输入账号密码进行验证</div>
+        <div style="margin-bottom: 10px;" v-show="step == 1">为保障您的账号安全，请输入账号密码进行验证。</div>
         <el-form-item label="密码：" :label-width="formLabelWidth" v-show="step == 1" prop="password">
           <el-input type="password" v-model="emailForm.password"></el-input>
         </el-form-item>
-        <el-form-item label="新邮箱：" :label-width="formLabelWidth" v-show="step == 2" prop="email" required>
+        <el-form-item label="新邮箱：" :label-width="formLabelWidth" v-show="step == 2" prop="email">
           <el-input v-model="emailForm.email"></el-input>
+        </el-form-item>
+        <el-form-item label="验证码：" :label-width="formLabelWidth" v-show="step == 2">
+          <el-input class="e-code-l" v-model="emailForm.validateCode"></el-input>
+          <el-button class="e-code-r" @click="getEmailCode">{{yzmText}}</el-button>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="next" v-show="step == 1"> 下一步 </el-button>
-        <el-button type="primary" @click="submit('email')" v-show="step == 2"> 保 存 </el-button>
+        <el-button type="success" @click="next" v-show="step == 1"> 下一步 </el-button>
+        <el-button type="success" @click="submit('email')" v-show="step == 2"> 确 定 </el-button>
+        <el-button @click="handleCloseD1" v-show="step == 2"> 取 消 </el-button>
+      </span>
+    </el-dialog>
+    <!---->
+    <el-dialog title="手机解绑" :visible.sync="phoneDialogVisible" size="small" :before-close="handleCloseD1">
+      <el-form :model="emailForm" ref="emailForm" :rules="rules">
+        <div style="margin-bottom: 10px;" v-show="step == 1">为保障您的账号安全，请输入账号密码进行验证。</div>
+        <el-form-item label="密码：" :label-width="formLabelWidth" v-show="step == 1" prop="password">
+          <el-input type="password" v-model="emailForm.password"></el-input>
+        </el-form-item>
+        <el-form-item label="" label-width="10px" v-show="step == 2">
+          <span style="color:#2678B8;font-weight: bold">验证成功！ </span><br>
+          解除绑定后您将无法用当前绑定手机号继续登录CapTable平台并接收相关信息。
+          是否确定要接除绑定？
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="success" @click="next" v-show="step == 1"> 下一步 </el-button>
+        <el-button type="success" @click="submit('phoneUnbunding')" v-show="step == 2"> 确 定 </el-button>
+        <el-button @click="handleCloseD1" v-show="step == 2"> 取 消 </el-button>
+      </span>
+    </el-dialog>
+    <!---->
+    <el-dialog title="手机绑定" :visible.sync="phoneDialogVisible2" size="small" :before-close="handleCloseD1">
+      <el-form :model="emailForm" ref="emailForm" :rules="rules">
+        <div style="margin-bottom: 10px;" v-show="step == 1">为保障您的账号安全，请输入账号密码进行验证。</div>
+        <el-form-item label="密码：" :label-width="formLabelWidth" v-show="step == 1" prop="password">
+          <el-input type="password" v-model="emailForm.password"></el-input>
+        </el-form-item>
+        <el-form-item label="手机号：" label-width="120px" prop="phone" v-show="step == 2">
+          <el-input v-model="emailForm.phone"></el-input>
+        </el-form-item>
+        <el-form-item label="图形验证码：" label-width="120px" v-show="step == 2">
+          <el-input class="e-code-l" v-model="emailForm.validateCodeImg"></el-input>
+          <img class="e-code-r"  style="cursor: pointer" :src="imgSrc" alt="验证码图片" @click="getValidateCode">
+        </el-form-item>
+        <el-form-item label="短信验证码：" label-width="120px" v-show="step == 2">
+          <el-input class="e-code-l" v-model="emailForm.validateCode"></el-input>
+          <el-button class="e-code-r" @click="getPhoneCode">{{yzmText}}</el-button>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="success" @click="next" v-show="step == 1"> 下一步 </el-button>
+        <el-button type="success" @click="submit('phoneBunding')" v-show="step == 2"> 确 定 </el-button>
+        <el-button @click="handleCloseD1" v-show="step == 2"> 取 消 </el-button>
       </span>
     </el-dialog>
   </div>
@@ -91,6 +140,7 @@
 <script>
 import filters from '../../../utils/filters';
 import common from '../../../service/common';
+import user from '../../../service/user';
 import validate from '../../../utils/validation';
 import personalInfo from '../../../service/personalInfo';
 import { QINIU_BUCKET_DOMAIN, QINIU_SERVER } from '../../../data/constants';
@@ -100,16 +150,23 @@ export default {
   data() {
     return {
       headUrl: '../../../../static/img/head-img.png', // 填充图片
-      formLabelWidth: '100px',
+      formLabelWidth: '80px',
+      yzmText: '发送验证码',
       qiniuServer: QINIU_SERVER,
+      imgSrc: '',
       uploadData: {
         token: '',
       },
       editing: false,
       emailDialogVisible: false,
-      emailForm: {
+      phoneDialogVisible: false,
+      phoneDialogVisible2: false,
+      emailForm: {// phone email共用
         password: undefined,
         email: undefined,
+        validateCode: undefined,
+        phone: undefined,
+        validateCodeImg: undefined,
       },
       step: 1,
       info: {
@@ -131,6 +188,9 @@ export default {
       rules: {
         email: [
           { validator: this.checkEmail, trigger: 'blur' },
+        ],
+        phone: [
+          { validator: this.checkPhone, trigger: 'blur' },
         ],
       },
     };
@@ -163,44 +223,78 @@ export default {
         this.update(params);
       }
       if (type === 'email') {
-        params.email = this.info.email;
+        params.email = this.emailForm.email;
+        params.validateCode = this.emailForm.validateCode;
         this.$refs.emailForm.validate((valid) => {
           if (valid) {
-            this.update(params);
+            this.update(params, 'logout');
           }
         });
       }
+      if (type === 'phoneBunding') {
+        params.phone = this.emailForm.phone;
+        params.validateCode = this.emailForm.validateCode;
+        this.$refs.emailForm.validate((valid) => {
+          if (valid) {
+            this.update(params, 'logout');
+          }
+        });
+      }
+      if (type === 'phoneUnbunding') {
+        params.phone = '';
+        this.update(params, 'logout');
+      }
     },
-    update(params) {
+    update(params, type) {
       personalInfo.updateUserInfo(params).then((resp) => {
-        if (resp) {
+        if (resp && type === 'logout') {
+          this.$alert('保存成功,请重新登录。', '提示', {
+            confirmButtonText: '确定',
+            callback: () => {
+              user.logout();
+            },
+            beforeClose: (done) => {
+              user.logout();
+              done();
+            },
+          });
+        } else if (resp) {
           this.$message.info('保存成功');
+          this.initData();
         }
-        this.initData();
         this.editing = false;
-        this.handleCloseEmail();
+        this.handleCloseD1();
       });
     },
     cancel() {
       this.headUrl = this.info.portrait;
       this.editing = false;
     },
-    openEmailDlg() {
-      this.emailDialogVisible = true;
+    openBunding() {
+      this.phoneDialogVisible2 = true;
+      this.getValidateCode();
     },
     next() {
-      common.checkPWD(this.emailForm.password).then(() => {
-        this.step = 2;
+      common.checkPWD(this.emailForm.password).then((resp) => {
+        if (resp.data.code === 200) {
+          this.step = 2;
+        } else {
+          this.$message.warning(resp.data.msg);
+        }
       });
     },
-    handleCloseEmail() {
-      this.emailDialogVisible = false;
+    handleCloseD1() {
       this.emailForm = {
         password: undefined,
         email: undefined,
+        validateCode: undefined,
+        phone: undefined,
       };
-      this.step = 1;
       this.$refs.emailForm.resetFields();
+      this.emailDialogVisible = false;
+      this.phoneDialogVisible = false;
+      this.phoneDialogVisible2 = false;
+      this.step = 1;
     },
     checkEmail(rule, value, callback) {
       const result = validate.isEmailAvailable(value);
@@ -209,6 +303,82 @@ export default {
       } else {
         callback();
       }
+    },
+    checkPhone(rule, value, callback) {
+      const result = validate.isPhoneAvailable(value);
+      if (result !== 'ok') {
+        callback(new Error(result));
+      } else {
+        callback();
+      }
+    },
+    checkCode(rule, value, callback) {
+      if (!value && this.emailForm.email) {
+        callback(new Error('请填写验证码'));
+      } else {
+        callback();
+      }
+    },
+    getEmailCode() {
+      if (this.yzmText !== '发送验证码') {
+        return;
+      }
+      this.$refs.emailForm.validate((valid) => {
+        if (valid) {
+          common.checkEmailExist(this.emailForm.email).then((resp) => {
+            if (resp.data.code === 200) {
+              this.$message.warning(resp.data.msg);
+            } else {
+              common.sendMsg(this.emailForm.email);
+              let init = 120;
+              const timer = setInterval(() => {
+                this.yzmText = `${init} s`;
+                init -= 1;
+                if (init < 0) {
+                  this.yzmText = '发送验证码';
+                  clearInterval(timer);
+                }
+              }, 1000);
+            }
+          });
+        }
+      });
+    },
+    getValidateCode() {
+      common.getImgCode(this.emailForm.phone).then((resp) => {
+        this.imgSrc = resp;
+      });
+    },
+    getPhoneCode() {
+      if (this.yzmText !== '发送验证码') {
+        return;
+      }
+      common.checkImgCode(this.emailForm.phone, this.emailForm.validateCodeImg).then((response) => {
+        if (response) {
+          this.$refs.emailForm.validate((valid) => {
+            if (valid) {
+              common.checkPhoneExist(this.emailForm.phone).then((resp) => {
+                if (resp.data.code === 200) {
+                  this.$message.warning(resp.data.msg);
+                } else {
+                  common.sendMsg(this.emailForm.phone);
+                  let init = 120;
+                  const timer = setInterval(() => {
+                    this.yzmText = `${init} s`;
+                    init -= 1;
+                    if (init < 0) {
+                      this.yzmText = '发送验证码';
+                      clearInterval(timer);
+                    }
+                  }, 1000);
+                }
+              });
+            }
+          });
+        } else {
+          this.$message.warning('图形验证码错误');
+        }
+      });
     },
     getQiNiuToken() {
       common.getQiNiuToken().then((resp) => {
@@ -318,7 +488,7 @@ export default {
     color: #666;
   }
 
-  .in-row span:nth-child(3){
+  .in-row span:nth-child(3),.in-row span:nth-child(4){
     width: 100px;
     color: #546AAC;
     cursor: pointer;
@@ -338,5 +508,17 @@ export default {
   .row3>div{
     float: left;
     color: #999;
+  }
+
+  .e-code-l {
+    float: left;
+    width: 180px;
+  }
+
+  .e-code-r {
+    float: left;
+    width: 100px;
+    margin-left: 20px;
+    height: 40px;
   }
 </style>
