@@ -18,19 +18,15 @@ export default {
     * arg1：account
     * arg2：validateCode
     * */
-    const params = {
-      account: arg1,
-      validateCode: arg2,
-    };
-    return api.post('/checkCode', params).then(resp => resp);
+    return api.post('/checkCode', { account: arg1, validateCode: arg2 }).then(resp => resp);
   },
-  sendMsg(arg1) {
+  sendMsg(arg1, arg2) {
     /*
      * 发送(手机邮箱)验证码
      * arg1：account
      * arg2：validateCode
      * */
-    return api.post('/sendMsg', { account: arg1 }).then(resp => resp);
+    return api.post('/sendMsg', { account: arg1, validateCode: arg2 }).then(resp => resp);
   },
   checkPhoneExist(arg1) {
     /*
@@ -55,7 +51,7 @@ export default {
   },
   checkPWD(arg1) {
     /*
-     * 检测密码
+     * 检测密码是否正确
      * arg1：password
      * */
     return api.post('/check/pwd', { password: arg1 }).then(resp => resp);
