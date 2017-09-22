@@ -276,7 +276,7 @@ export default {
     },
     next() {
       common.checkPWD(this.emailForm.password).then((resp) => {
-        if (resp.data.code === 200) {
+        if (resp.code.code === 200) {
           this.step = 2;
         } else {
           this.$message.warning(resp.data.msg);
