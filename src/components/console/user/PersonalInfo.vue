@@ -58,7 +58,7 @@
         <div class="in-row">
           <span>账号安全</span>
           <span></span>
-          <span>修改密码</span>
+          <span @click="pwdDialogVisible = true">修改密码</span>
         </div>
       </div>
       <div class="row row3">
@@ -198,6 +198,24 @@
         <el-button type="success" @click="submit('authoration')"> 认 证 </el-button>
       </span>
     </el-dialog>
+    <!---->
+    <el-dialog title="修改密码" :visible.sync="pwdDialogVisible" size="small" :before-close="handleCloseD3">
+      <el-form :model="pwdForm" ref="pwdForm" :rules="rules">
+        <el-form-item label="旧密码：" :label-width="formLabelWidth2" prop="oldPassword">
+          <el-input type="password" v-model="pwdForm.oldPassword"></el-input>
+        </el-form-item>
+        <el-form-item label="新密码：" :label-width="formLabelWidth2" prop="newPassword">
+          <el-input type="password" v-model="pwdForm.newPassword"></el-input>
+        </el-form-item>
+        <el-form-item label="确认密码：" :label-width="formLabelWidth2" prop="newPassword2">
+          <el-input type="password" v-model="pwdForm.newPassword2"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleCloseD3"> 取 消 </el-button>
+        <el-button type="success" @click="submit('pwdRest')"> 确 定 </el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -230,6 +248,7 @@ export default {
       emailDialogVisible: false,
       phoneDialogVisible: false,
       phoneDialogVisible2: false,
+      pwdDialogVisible: false,
       idDialogVisible: false,
       emailForm: {// phone email共用
         password: undefined,
@@ -245,6 +264,11 @@ export default {
         handheldIdCardImgUrl: '',
         idCardImgPositiveUrl: '',
         idCardImgNegativeUrl: '',
+      },
+      pwdForm: {
+        oldPassword: '',
+        newPassword: '',
+        newPassword2: '',
       },
       step: 1,
       info: {
@@ -287,6 +311,17 @@ export default {
         ],
         idCardImgNegativeUrl: [
           { required: true, message: '请上传反面证件照', trigger: 'blur' },
+        ],
+        oldPassword: [
+          { required: true, message: '请填写旧密码', trigger: 'blur' },
+        ],
+        newPassword: [
+          { required: true, message: '请填写新密码', trigger: 'blur' },
+          { validator: this.checkPassword, trigger: 'blur' },
+        ],
+        newPassword2: [
+          { required: true, message: '请确认密码', trigger: 'blur' },
+          { validator: this.checkNewPasswordEq, trigger: 'blur' },
         ],
       },
     };
@@ -353,6 +388,15 @@ export default {
           }
         });
       }
+      if (type === 'pwdRest') {
+        params.oldPassword = this.pwdForm.oldPassword;
+        params.newPassword = this.pwdForm.newPassword;
+        this.$refs.pwdForm.validate((valid) => {
+          if (valid) {
+            this.update(params, 'pwdRest');
+          }
+        });
+      }
     },
     update(params, type) {
       personalInfo.updateUserInfo(params).then(() => {
@@ -368,14 +412,18 @@ export default {
             },
           });
         } else if (type === 'portrait') {
-          this.$message.info('保存成功');
+          this.$message.info('修改成功');
           this.initData();
           this.editing = false;
           this.handleCloseD1();
         } else if (type === 'authoration') {
-          this.$message.info('保存成功');
+          this.$message.info('已提交');
           this.initData();
           this.handleCloseD2();
+        } else if (type === 'pwdRest') {
+          this.$message.info('修改成功');
+          this.initData();
+          this.handleCloseD3();
         }
       });
     },
@@ -416,6 +464,10 @@ export default {
       this.$refs.idForm.resetFields();
       this.idDialogVisible = false;
     },
+    handleCloseD3() {
+      this.$refs.pwdForm.resetFields();
+      this.pwdDialogVisible = false;
+    },
     checkEmail(rule, value, callback) {
       const result = validate.isEmailAvailable(value);
       if (result !== 'ok') {
@@ -435,6 +487,21 @@ export default {
     checkCode(rule, value, callback) {
       if (!value && this.emailForm.email) {
         callback(new Error('请填写验证码'));
+      } else {
+        callback();
+      }
+    },
+    checkNewPasswordEq(rule, value, callback) {
+      if (this.pwdForm.newPassword !== this.pwdForm.newPassword2) {
+        callback(new Error('两次密码输入不一致'));
+      } else {
+        callback();
+      }
+    },
+    checkPassword(rule, value, callback) {
+      const result = validate.isPasswordAvailable(value);
+      if (result !== 'ok') {
+        callback(new Error(result));
       } else {
         callback();
       }
