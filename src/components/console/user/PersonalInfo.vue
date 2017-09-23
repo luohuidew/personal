@@ -47,7 +47,7 @@
           <span>实名认证</span>
           <span v-if="info.authenticate != '2'">{{info.authenticate | filter('ID_AUTHENTICATION')}}</span>
           <span v-else="">{{info.username}}</span>
-          <span v-if="info.authenticate != '2'">实名认证</span>
+          <span v-if="info.authenticate != '2'" @click="idDialogVisible = true">实名认证</span>
           <span v-else="">已认证</span>
         </div>
         <div class="in-row">
@@ -86,8 +86,8 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button type="success" @click="next" v-show="step == 1"> 下一步 </el-button>
-        <el-button type="success" @click="submit('email')" v-show="step == 2"> 确 定 </el-button>
         <el-button @click="handleCloseD1" v-show="step == 2"> 取 消 </el-button>
+        <el-button type="success" @click="submit('email')" v-show="step == 2"> 确 定 </el-button>
       </span>
     </el-dialog>
     <!---->
@@ -105,8 +105,8 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button type="success" @click="next" v-show="step == 1"> 下一步 </el-button>
-        <el-button type="success" @click="submit('phoneUnbunding')" v-show="step == 2"> 确 定 </el-button>
         <el-button @click="handleCloseD1" v-show="step == 2"> 取 消 </el-button>
+        <el-button type="success" @click="submit('phoneUnbunding')" v-show="step == 2"> 确 定 </el-button>
       </span>
     </el-dialog>
     <!---->
@@ -116,22 +116,86 @@
         <el-form-item label="密码：" :label-width="formLabelWidth" v-show="step == 1" prop="password">
           <el-input type="password" v-model="emailForm.password"></el-input>
         </el-form-item>
-        <el-form-item label="手机号：" label-width="120px" prop="phone" v-show="step == 2">
+        <el-form-item label="手机号：" :label-width="formLabelWidth2" prop="phone" v-show="step == 2">
           <el-input v-model="emailForm.phone"></el-input>
         </el-form-item>
-        <el-form-item label="图形验证码：" label-width="120px" v-show="step == 2">
+        <el-form-item label="图形验证码：" :label-width="formLabelWidth2" v-show="step == 2">
           <el-input class="e-code-l" v-model="emailForm.validateCodeImg"></el-input>
           <img class="e-code-r"  style="cursor: pointer" :src="imgSrc" alt="验证码图片" @click="getValidateCode">
         </el-form-item>
-        <el-form-item label="短信验证码：" label-width="120px" v-show="step == 2">
+        <el-form-item label="短信验证码：" :label-width="formLabelWidth2" v-show="step == 2">
           <el-input class="e-code-l" v-model="emailForm.validateCode"></el-input>
           <el-button class="e-code-r" @click="getPhoneCode">{{yzmText}}</el-button>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button type="success" @click="next" v-show="step == 1"> 下一步 </el-button>
-        <el-button type="success" @click="submit('phoneBunding')" v-show="step == 2"> 确 定 </el-button>
         <el-button @click="handleCloseD1" v-show="step == 2"> 取 消 </el-button>
+        <el-button type="success" @click="submit('phoneBunding')" v-show="step == 2"> 确 定 </el-button>
+      </span>
+    </el-dialog>
+    <!---->
+    <el-dialog title="实名认证" :visible.sync="idDialogVisible" size="normal"  :before-close="handleCloseD2">
+      <el-form :model="idForm" ref="idForm" :rules="rules">
+        <el-form-item label="真实姓名：" :label-width="formLabelWidth2" prop="username">
+          <el-input v-model="idForm.username" size="large"></el-input>
+        </el-form-item>
+        <el-form-item label="证件号：" :label-width="formLabelWidth2" prop="idNumber">
+          <el-select v-model="idForm.idType" placeholder="请选择" size="mini100">
+            <el-option v-for="item in id_type" :key="item.id" :label="item.text" :value="item.id"></el-option>
+          </el-select>
+          <el-input v-model="idForm.idNumber" style="width: 285px;margin-left: 10px;"></el-input>
+        </el-form-item>
+        <el-form-item label="手持证件照：" :label-width="formLabelWidth2" prop="handheldIdCardImgUrl">
+          <el-upload
+            class="avatar-uploader"
+            :action="qiniuServer"
+            :show-file-list="false"
+            :on-error="handleError"
+            :data="uploadData"
+            :on-success="handleAvatarSuccessId1"
+            :before-upload="beforeAvatarUpload2">
+            <img v-if="handImageUrl1" :src="handImageUrl1" class="avatar">
+            <i class="avatar-uploader-icon">+ 上传并预览</i>
+          </el-upload>
+          <div class="tips">
+            注意： <br>
+            选取纯色干净背景拍摄<br>
+            手臂和脸部完全露出无遮挡<br>
+            证件全部信息清晰无遮挡<br>
+          </div>
+        </el-form-item>
+        <el-form-item label="证件正反面：" :label-width="formLabelWidth2" required>
+          <el-form-item prop="idCardImgPositiveUrl" style="width: 200px;float: left">
+            <el-upload
+              class="avatar-uploader2"
+              :action="qiniuServer"
+              :show-file-list="false"
+              :on-error="handleError"
+              :data="uploadData"
+              :on-success="handleAvatarSuccessId2"
+              :before-upload="beforeAvatarUpload2">
+              <img v-if="handImageUrl2" :src="handImageUrl2" class="avatar">
+              <i class="avatar-uploader-icon">+ 上传并预览</i>
+            </el-upload>
+          </el-form-item>
+          <el-form-item prop="idCardImgNegativeUrl" style="width: 200px;float: left">
+            <el-upload
+              class="avatar-uploader2 upRt"
+              :action="qiniuServer"
+              :on-error="handleError"
+              :show-file-list="false"
+              :data="uploadData"
+              :on-success="handleAvatarSuccessId3"
+              :before-upload="beforeAvatarUpload2">
+              <img v-if="handImageUrl3" :src="handImageUrl3" class="avatar">
+              <i class="avatar-uploader-icon icon2">+ 上传并预览</i>
+            </el-upload>
+          </el-form-item>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="success" @click="submit('authoration')"> 认 证 </el-button>
       </span>
     </el-dialog>
   </div>
@@ -143,16 +207,21 @@ import common from '../../../service/common';
 import user from '../../../service/user';
 import validate from '../../../utils/validation';
 import personalInfo from '../../../service/personalInfo';
-import { QINIU_BUCKET_DOMAIN, QINIU_SERVER } from '../../../data/constants';
+import { QINIU_BUCKET_DOMAIN, QINIU_SERVER, ID_TYPE } from '../../../data/constants';
 
 export default {
   name: 'user-personal-info',
   data() {
     return {
       headUrl: '../../../../static/img/head-img.png', // 填充图片
+      handImageUrl1: '',
+      handImageUrl2: '',
+      handImageUrl3: '',
       formLabelWidth: '80px',
+      formLabelWidth2: '120px',
       yzmText: '发送验证码',
       qiniuServer: QINIU_SERVER,
+      id_type: ID_TYPE,
       imgSrc: '',
       uploadData: {
         token: '',
@@ -161,12 +230,21 @@ export default {
       emailDialogVisible: false,
       phoneDialogVisible: false,
       phoneDialogVisible2: false,
+      idDialogVisible: false,
       emailForm: {// phone email共用
         password: undefined,
         email: undefined,
         validateCode: undefined,
         phone: undefined,
         validateCodeImg: undefined,
+      },
+      idForm: {
+        username: '',
+        idNumber: '',
+        idType: '0',
+        handheldIdCardImgUrl: '',
+        idCardImgPositiveUrl: '',
+        idCardImgNegativeUrl: '',
       },
       step: 1,
       info: {
@@ -191,6 +269,24 @@ export default {
         ],
         phone: [
           { validator: this.checkPhone, trigger: 'blur' },
+        ],
+        username: [
+          { required: true, message: '请填写真实姓名', trigger: 'blur' },
+        ],
+        idType: [
+          { required: true, message: '请选择证件类型', trigger: 'blur' },
+        ],
+        idNumber: [
+          { required: true, message: '请填写证件号', trigger: 'blur' },
+        ],
+        handheldIdCardImgUrl: [
+          { required: true, message: '请上传手持证件照', trigger: 'blur' },
+        ],
+        idCardImgPositiveUrl: [
+          { required: true, message: '请上传正面证件照', trigger: 'blur' },
+        ],
+        idCardImgNegativeUrl: [
+          { required: true, message: '请上传反面证件照', trigger: 'blur' },
         ],
       },
     };
@@ -220,7 +316,7 @@ export default {
       params.id = this.info.id;
       if (type === 'portrait') {
         params.portrait = this.headUrl;
-        this.update(params);
+        this.update(params, 'portrait');
       }
       if (type === 'email') {
         params.email = this.emailForm.email;
@@ -244,10 +340,23 @@ export default {
         params.phone = '';
         this.update(params, 'logout');
       }
+      if (type === 'authoration') {
+        params.username = this.idForm.username;
+        params.idNumber = this.idForm.idNumber;
+        params.idType = this.idForm.idType;
+        params.handheldIdCardImgUrl = this.idForm.handheldIdCardImgUrl;
+        params.idCardImgPositiveUrl = this.idForm.idCardImgPositiveUrl;
+        params.idCardImgNegativeUrl = this.idForm.idCardImgNegativeUrl;
+        this.$refs.idForm.validate((valid) => {
+          if (valid) {
+            this.update(params, 'authoration');
+          }
+        });
+      }
     },
     update(params, type) {
-      personalInfo.updateUserInfo(params).then((resp) => {
-        if (resp && type === 'logout') {
+      personalInfo.updateUserInfo(params).then(() => {
+        if (type === 'logout') {
           this.$alert('保存成功,请重新登录。', '提示', {
             confirmButtonText: '确定',
             callback: () => {
@@ -258,12 +367,16 @@ export default {
               done();
             },
           });
-        } else if (resp) {
+        } else if (type === 'portrait') {
           this.$message.info('保存成功');
           this.initData();
+          this.editing = false;
+          this.handleCloseD1();
+        } else if (type === 'authoration') {
+          this.$message.info('保存成功');
+          this.initData();
+          this.handleCloseD2();
         }
-        this.editing = false;
-        this.handleCloseD1();
       });
     },
     cancel() {
@@ -295,6 +408,13 @@ export default {
       this.phoneDialogVisible = false;
       this.phoneDialogVisible2 = false;
       this.step = 1;
+    },
+    handleCloseD2() {
+      this.handImageUrl1 = '';
+      this.handImageUrl2 = '';
+      this.handImageUrl3 = '';
+      this.$refs.idForm.resetFields();
+      this.idDialogVisible = false;
     },
     checkEmail(rule, value, callback) {
       const result = validate.isEmailAvailable(value);
@@ -382,7 +502,7 @@ export default {
     },
     getQiNiuToken() {
       common.getQiNiuToken().then((resp) => {
-        this.uploadData.token = resp.token;
+        this.uploadData.token = resp;
       });
     },
     /* upload */
@@ -408,6 +528,35 @@ export default {
     },
     handleAvatarSuccess(res) {
       this.headUrl = `${QINIU_BUCKET_DOMAIN}/${res.key}`;
+    },
+    handleAvatarSuccessId1(res, file) {
+      this.handImageUrl1 = URL.createObjectURL(file.raw);
+      this.idForm.handheldIdCardImgUrl = `${QINIU_BUCKET_DOMAIN}/${res.key}`;
+    },
+    handleAvatarSuccessId2(res, file) {
+      this.handImageUrl2 = URL.createObjectURL(file.raw);
+      this.idForm.idCardImgPositiveUrl = `${QINIU_BUCKET_DOMAIN}/${res.key}`;
+    },
+    handleAvatarSuccessId3(res, file) {
+      this.handImageUrl3 = URL.createObjectURL(file.raw);
+      this.idForm.idCardImgNegativeUrl = `${QINIU_BUCKET_DOMAIN}/${res.key}`;
+    },
+    beforeAvatarUpload2(file) {
+      let result = true;
+      const isJPEG = file.type === 'image/jpeg';
+      const isJPG = file.type === 'image/jpg';
+      const isPNG = file.type === 'image/png';
+      const isLt5M = file.size / 1024 / 1024 < 2;
+
+      if (!isJPG && !isJPEG && !isPNG) {
+        this.$message.error('上传图片只能是 JPG、PNG 格式!');
+        result = false;
+      }
+      if (!isLt5M) {
+        this.$message.error('上传图片大小不能超过 2MB!');
+        result = false;
+      }
+      return result;
     },
     handleError() {
       this.getQiNiuToken();
@@ -521,4 +670,63 @@ export default {
     margin-left: 20px;
     height: 40px;
   }
+
+  .tips {
+    width: 170px;
+    height: 120px;
+    line-height: 25px;
+    margin-left: 40px;
+    float: left;
+    font-size: 12px;
+    color: #ACB3C9;
+  }
+
+  .avatar-uploader,.avatar-uploader2{
+    border: 1px dashed #d9d9d9;
+    float: left;
+    width: 170px;
+    height: 120px;
+    margin-bottom: 50px;
+    background-image: url(../../../assets/hand-idphoto.png);
+    background-size: 98%;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  .avatar-uploader2{
+    background-image: url(../../../assets/id-img.png);
+  }
+  .upRt{
+    margin-left: 40px;
+  }
+
+  .avatar-uploader .el-upload {
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .avatar-uploader-icon {
+    border: 1px solid #D7DDEC;
+    font-size: 18px;
+    font-style: normal;
+    color: #cfcfcf;
+    width: 170px;
+    height: 30px;
+    line-height: 30px;
+    position: absolute;
+    top:140px;
+    left: 0;
+  }
+
+  .icon2{
+    left: 40px;
+  }
+
+  .avatar {
+    width: 170px;
+    height: 120px;
+    display: block;
+  }
+
 </style>
