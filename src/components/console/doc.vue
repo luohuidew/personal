@@ -94,7 +94,7 @@
             :value="item.value">
           </el-option>
         </el-select>
-        <pre>size="mini", width=180；</pre>
+        <pre>size="mini", width=180； size="mini100",width=100</pre>
       </el-col>
       <el-col :span="12">
         <el-select v-model="value" size="small" clearable placeholder="请选择">
@@ -201,6 +201,7 @@
       <el-col :span="24">
         <el-button type="text" @click="dialogVisibleT = true">点击打开 Dialog;size="tiny" </el-button>
         <el-button type="text" @click="dialogVisibleS = true">点击打开 Dialog;size="small" </el-button>
+        <el-button type="text">另外还有，size="large" size="normal" Dialog;size="full" </el-button>
       </el-col>
     </el-row>
     <el-dialog title="添加融资信息" :visible.sync="dialogVisibleT" size="tiny" :before-close="handleClose">
