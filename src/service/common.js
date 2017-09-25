@@ -57,16 +57,10 @@ export default {
   },
   // 企业关键字多维度查询
   searchWideCompany(text) {
-    return api.get(`/ECI/SearchWide?key=${userKey}&keyWord=${text}`, { baseURL: 'http://i.yjapi.com' }).then((resp) => {
-      const result = resp;
-      return result;
-    });
+    return api.get(`/ECI/SearchWide?key=${userKey}&keyWord=${text}`, { baseURL: 'http://i.yjapi.com' }).then(resp => resp);
   },
   // 企业关键字精确获取详细信息
   getDetailCompany(text) {
-    return api.get(`/ECI/GetDetailsByName?key=${userKey}&keyWord=${text}`, { baseURL: 'http://i.yjapi.com' }).then((resp) => {
-      const result = resp;
-      return result;
-    });
+    return api.get(`/ECI/GetDetailsByName?key=${userKey}&keyWord=${text}`, { baseURL: 'http://i.yjapi.com' }).then(resp => resp);
   },
 };
