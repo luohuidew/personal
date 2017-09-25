@@ -52,8 +52,8 @@
         </div>
         <div class="in-row">
           <span>签名管理</span>
-          <span><img src="" alt="签名图片"></span>
-          <span>设置</span>
+          <span><img style="vertical-align: middle;border: 1px solid #666;"  height="30" :src="info.signatureUrl" alt="签名图片"></span>
+          <span @click="signDialogVisible = true">设置</span>
         </div>
         <div class="in-row">
           <span>账号安全</span>
@@ -216,6 +216,67 @@
         <el-button type="success" @click="submit('pwdRest')"> 确 定 </el-button>
       </span>
     </el-dialog>
+    <!---->
+    <el-dialog title="签名管理" :visible.sync="signDialogVisible" size="small" :before-close="handleCloseD4">
+      <div class="sign" v-show="signStep==1">
+        当前签名样式为：
+        <p><img  height="120" :src="info.signatureUrl" alt="签名"></p>
+      </div>
+      <div class="sign2" v-show="signStep==2">
+        <div style="margin-bottom: 10px;">您可通过以下3种方式提供您的签名：</div>
+        <el-radio-group v-model="signRadio">
+          <el-radio :label="1">输入签名</el-radio>
+          <el-radio :label="2">微信扫码签名</el-radio>
+          <el-radio :label="3">上传签名</el-radio>
+        </el-radio-group>
+        <div class="sign-content" v-show="signRadio == 1">
+          <el-input class="sign-c1" v-model="pwdForm.newPassword2"></el-input>
+        </div>
+        <div class="sign-content" v-show="signRadio == 2">
+          <el-popover
+            ref="popover1"
+            placement="right-start"
+            title=""
+            width="140"
+            trigger="hover">
+            <div>
+              <img src="../../../assets/signEWM.png" alt="二维码图片"> <br>
+              <p style="font-size: 12px;color: #3A85BF;text-align: center">使用手机扫描以上二维码 <br>在手机上完成签名</p>
+            </div>
+          </el-popover>
+          使用手机扫描 <el-button type="text" v-popover:popover1>二维码</el-button> ，在手机上完成签字后可在下侧预览
+          <p style="height: 100px;">
+            预览：<br>
+            <img  src="" alt="">
+          </p>
+        </div>
+        <div class="sign-content" v-show="signRadio == 3">
+          <el-popover
+            ref="popover2"
+            placement="right-start"
+            title=""
+            width="140"
+            trigger="hover">
+            <div>
+              <img src="../../../assets/signEWM.png" alt="二维码图片"> <br>
+              <p style="font-size: 12px;color: #3A85BF;text-align: center">使用手机扫描以上二维码 <br>在手机上完成上传</p>
+            </div>
+          </el-popover>
+          <p style="color: #ccc;">请将您的签名写到 A4 纸上，然后用相机或手机拍照再上传。目前只支持背景透明的 png 图片与白色背景的 jpg 图片。请确保上传的图片为纯白色或透明背景。</p>
+          <p style="margin-top: 10px;"><el-button type="success">上传</el-button> 或扫描<el-button type="text" v-popover:popover2>二维码</el-button>上传 </p>
+          <p style="height: 100px;">
+            <br>
+            预览：<br>
+            <img src="" alt="">
+          </p>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleCloseD4"> 关 闭 </el-button>
+        <el-button type="success" v-show="signStep==2" @click="submit('sign')"> 保 存 </el-button>
+        <el-button type="success" v-show="signStep==1" @click="signStep = 2"> 编 辑 </el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -250,6 +311,7 @@ export default {
       phoneDialogVisible2: false,
       pwdDialogVisible: false,
       idDialogVisible: false,
+      signDialogVisible: false,
       emailForm: {// phone email共用
         password: undefined,
         email: undefined,
@@ -271,6 +333,11 @@ export default {
         newPassword2: '',
       },
       step: 1,
+      signStep: 1,
+      signRadio: 1,
+      signForm: {
+        signatureUrl: '',
+      },
       info: {
         id: '',
         idCardImgPositiveUrl: '',
@@ -397,6 +464,10 @@ export default {
           }
         });
       }
+      if (type === 'sign') {
+        params.signatureUrl = this.signForm.signatureUrl;
+        this.update(params, 'sign');
+      }
     },
     update(params, type) {
       personalInfo.updateUserInfo(params).then(() => {
@@ -424,6 +495,10 @@ export default {
           this.$message.info('修改成功');
           this.initData();
           this.handleCloseD3();
+        } else if (type === 'sign') {
+          this.$message.info('保存成功');
+          this.initData();
+          this.handleCloseD4();
         }
       });
     },
@@ -467,6 +542,10 @@ export default {
     handleCloseD3() {
       this.$refs.pwdForm.resetFields();
       this.pwdDialogVisible = false;
+    },
+    handleCloseD4() {
+      this.signDialogVisible = false;
+      this.signStep = 1;
     },
     checkEmail(rule, value, callback) {
       const result = validate.isEmailAvailable(value);
@@ -794,6 +873,28 @@ export default {
     width: 170px;
     height: 120px;
     display: block;
+  }
+
+  .sign, .sign2 {
+    padding: 0 30px;
+  }
+
+  .sign>p{
+    border: 1px solid #666;
+    text-align: center;
+    height: 130px;
+    line-height: 130px;
+  }
+
+  .sign-content {
+    margin: 10px 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ccc;
+  }
+
+  .sign-c1 {
+    width: 100%;
+    font-size: 90px;
   }
 
 </style>
