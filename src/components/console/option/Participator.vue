@@ -208,7 +208,6 @@ export default {
     },
     // 添加
     addPerson() {
-      // console.log(this.person);
       this.$refs.person.validate((valid) => {
         if (valid) {
           pService.addParticipator(this.person).then(() => {
@@ -223,7 +222,6 @@ export default {
     },
     // 编辑
     editPerson() {
-      // console.log(this.person);
       this.$refs.dialogEditData.validate((valid) => {
         if (valid) {
           this.dialogEditData.companyId = companyService.getStoredCompany().companyList.companyId;
@@ -239,7 +237,6 @@ export default {
     },
     // 删除
     deletePerson(command) {
-      // console.log(command);
       pService.deleteParticipator(command.id).then(() => {
         this.dialogDeletePerson = false;
         this.account.splice(command.index, 1);
@@ -289,7 +286,6 @@ export default {
     handleCommand(scope, index) {
       const name = event.target.id;
       const command = scope.row;
-      // console.log(command);
       switch (name) {
         case 'edit':
           this.dialogEditPerson = true;

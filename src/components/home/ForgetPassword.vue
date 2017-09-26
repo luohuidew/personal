@@ -38,8 +38,7 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <!-- <el-button @click="dialogVisible = false">取 消</el-button> -->
-        <el-button type="primary" @click="checkImgCode(forgetData.account, imgCodeData.code)">点击获取</el-button>
+        <el-button type="primary" @click="checkImageCode(forgetData.account)">点击获取</el-button>
       </span>
     </el-dialog>
   </div>
@@ -121,8 +120,7 @@ export default {
     },
     getCode() {
       this.$refs.forgetForm.validateField('account', (valid) => {
-        console.log(valid, this.isPhone);
-        if (valid) {
+        if (valid === '') {
           if (this.isPhone) {  // 手机号需要图片验证码
             this.dialogVisible = true;
             this.getImgCode(this.forgetData.account);
@@ -137,13 +135,11 @@ export default {
         this.imgCodeData.imgUrl = resp;
       });
     },
-    checkImgCode(arg1, arg2) {
-      toolServer.checkImgCode(arg1, arg2).then((resp) => {
-        if (resp.data.code === '200') {
+    checkImageCode(arg1) {
+      this.$refs.forgetForm.validateField('imgcode', (valid) => {
+        if (valid === '') {
           this.getPhoneCode(arg1);
           this.dialogVisible = false;
-        } else {
-          this.errorMsg = resp.data.msg;
         }
       });
     },
@@ -154,10 +150,10 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           forgetPassServer.forgetPassword(this.forgetData).then((resp) => {
-            if (resp.data.code === '200') {
+            if (resp.code.code === 200) {
               this.$router.push({ name: 'Login' });
             } else {
-              this.$message.error(resp.data.msg);
+              this.$message.error(resp.code.msg);
             }
           });
         }
@@ -167,8 +163,16 @@ export default {
       let result = '';
       if (!value) {
         result = callback(new Error('验证码不能为空！'));
-      } else if (this.errorMsg.code !== '200') {
-        result = callback(new Error('验证码错误'));
+      } else {
+        toolServer.checkImgCode(this.forgetData.account, this.imgCodeData.imgcode).then((resp) => {
+          if (resp.code.code === 200) {
+            this.errorMsg = resp.code;
+            result = callback();
+          } else {
+            this.errorMsg = resp.code;
+            result = callback(new Error('验证码错误'));
+          }
+        });
       }
       return result;
     },
@@ -182,7 +186,7 @@ export default {
         result = callback(new Error('请输入正确的手机号/邮箱！'));
       } else if (result1 === 'ok') {
         toolServer.checkPhoneExist(value).then((resp) => {
-          if (resp.data.code === '-1') {
+          if (resp.code.code === -1) {
             result = callback(new Error('该手机号不存在'));
           } else {
             this.isPhone = true;
@@ -190,8 +194,9 @@ export default {
           }
         });
       } else if (result2 === 'ok') {
+        this.isPhone = false;
         toolServer.checkEmailExist(value).then((resp) => {
-          if (resp.data.code === '-1') {
+          if (resp.code.code === -1) {
             result = callback(new Error('该邮箱不存在'));
           } else {
             result = callback();
@@ -225,8 +230,9 @@ export default {
   color: #546AAC;
   letter-spacing: 6px;
   line-height: 15px;
-  border-left: 2px solid #EAEAEA;
+  border-left: 1px solid #EAEAEA;
   text-align: right;
+  padding:5px 15px;
 }
 .el-form-item.submit-btn {
   margin-top:44px;
