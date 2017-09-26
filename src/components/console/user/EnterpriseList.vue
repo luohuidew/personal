@@ -24,7 +24,8 @@
     <el-dialog title="新建企业" :visible.sync="dialogVisible" size="small" :before-close="handleClose">
       <el-form :model="form" ref="form" :rules="rules">
         <el-form-item label="企业全称" :label-width="formLabelWidth" required  prop="companyName">
-          <el-input v-model="form.companyName" auto-complete="off"></el-input>
+          <!-- <el-input v-model="form.companyName" auto-complete="off"></el-input> -->
+          <el-autocomplete v-model="form.companyName" :fetch-suggestions="querySearchAsync" placeholder="请输入公司名称" :trigger-on-focus="false" @select="companySelect"></el-autocomplete>
         </el-form-item>
         <el-form-item label="简称" :label-width="formLabelWidth" prop="companyAbbreviation">
           <el-input v-model="form.companyAbbreviation" auto-complete="off"></el-input>
@@ -130,7 +131,7 @@ export default {
       },
       rules: {
         companyName: [
-          { required: true, message: '请填写企业全称', trigger: 'blur' },
+          { validator: this.checkCompany, trigger: 'blur' },
         ],
         companyName2: [
           { required: false, message: '请填写企业全称', trigger: 'blur' },
@@ -143,6 +144,7 @@ export default {
       hasBackImageUrl: false,
       fileList: [],
       upText: '上传营业执照扫描件',
+      errorMsg: {}, // 公司接口错误信息
     };
   },
   created() {
@@ -264,6 +266,68 @@ export default {
     },
     handlePreview() {
       window.open(this.backImageUrl);
+    },
+    querySearchAsync(queryString, cb) {
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
+        let results = [];
+        console.log(queryString);
+        base.searchWideCompany(queryString).then((resp) => {
+          if (resp.Status === '200') {
+            resp.Result.forEach((v) => {
+              const c = v;
+              c.value = v.Name;
+            });
+            results = resp.Result;
+            this.errorMsg.status = resp.Status;
+            this.errorMsg.msg = '';
+            cb(results);
+          } else {
+            // this.$message.error(resp.Message);
+            cb([]);
+            this.errorMsg.status = resp.Status;
+            this.errorMsg.msg = resp.Message;
+            this.$refs.form.validateField('companyName');
+          }
+        });
+      }, 2000);
+    },
+    getCompanyInfo(id) {
+      base.getDetailCompany(id).then((resp) => {
+        const rusults = resp.Result;
+        const money = rusults.RegistCapi;
+        const moneyNum = parseFloat(rusults.RegistCapi);
+        this.applyData.company.companyType = '0'; // 境内
+        this.applyData.company.shareholderNum = rusults.Partners.length; // 股东人数
+        if (money.indexOf('美元') !== -1) {
+          this.applyData.company.currency = 'EUR';
+        } else if (money.indexOf('欧') !== -1) {
+          this.applyData.company.currency = 'USD';
+        } else {
+          this.applyData.company.currency = 'RMB';
+        }
+        if (money.indexOf('万') !== -1) {
+          this.applyData.company.totalRegisteredCapital = moneyNum;
+        } else {
+          this.applyData.company.totalRegisteredCapital = moneyNum / 10000;
+        }
+      });
+    },
+    companySelect(item) {
+      this.applyData.company.companyName = item.Name;
+      this.getCompanyInfo(item.No);
+    },
+    checkCompany(rule, value, callback) {
+      let result = '';
+      if (!value) {
+        result = callback(new Error('公司名称不能为空'));
+      }
+      if (this.errorMsg.status !== '200') {
+        result = callback(new Error(this.errorMsg.msg));
+      } else {
+        result = callback();
+      }
+      return result;
     },
   },
 };
