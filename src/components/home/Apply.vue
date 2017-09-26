@@ -43,7 +43,7 @@ export default {
     return {
       timeout: null,  // 公司搜索限制
       state2: '',
-      homeUrl: 'http://localhost:8000/home.html',
+      homeUrl: '/home.html',
       applyData: {
         username: '', // 名称
         company: { // 公司

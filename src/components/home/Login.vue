@@ -38,7 +38,7 @@ export default {
   name: 'login',
   data() {
     return {
-      homeUrl: 'http://localhost:8000/home.html',
+      homeUrl: '/home.html',
       loginData: {
         username: '', // 用户名
         password: '', // 密码
