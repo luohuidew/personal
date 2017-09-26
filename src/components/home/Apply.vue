@@ -141,7 +141,7 @@ export default {
       if (!value) {
         result = callback(new Error('公司名称不能为空'));
       }
-      if (this.errorMsg.status !== 200) {
+      if (this.errorMsg.status !== '200') {
         result = callback(new Error(this.errorMsg.msg));
       } else {
         result = callback();

@@ -271,6 +271,7 @@ export default {
       clearTimeout(this.timeout);
       this.timeout = setTimeout(() => {
         let results = [];
+        console.log(queryString);
         base.searchWideCompany(queryString).then((resp) => {
           if (resp.Status === '200') {
             resp.Result.forEach((v) => {
@@ -286,7 +287,7 @@ export default {
             cb([]);
             this.errorMsg.status = resp.Status;
             this.errorMsg.msg = resp.Message;
-            this.$refs.applyForm.validateField('companyName');
+            this.$refs.form.validateField('companyName');
           }
         });
       }, 2000);
@@ -321,7 +322,7 @@ export default {
       if (!value) {
         result = callback(new Error('公司名称不能为空'));
       }
-      if (this.errorMsg.status !== 200) {
+      if (this.errorMsg.status !== '200') {
         result = callback(new Error(this.errorMsg.msg));
       } else {
         result = callback();

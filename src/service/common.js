@@ -1,3 +1,4 @@
+import axios from 'axios';
 import api from './http';
 
 const userKey = 'f5e6d93974cd4effb849f7441ad4ad5d';
@@ -57,10 +58,10 @@ export default {
   },
   // 企业关键字多维度查询
   searchWideCompany(text) {
-    return api.get(`/ECI/SearchWide?key=${userKey}&keyWord=${text}`, { baseURL: 'http://i.yjapi.com' }).then(resp => resp);
+    return axios.get(`http://i.yjapi.com/ECI/SearchWide?key=${userKey}&keyWord=${text}`).then(resp => resp.data);
   },
   // 企业关键字精确获取详细信息
   getDetailCompany(text) {
-    return api.get(`/ECI/GetDetailsByName?key=${userKey}&keyWord=${text}`, { baseURL: 'http://i.yjapi.com' }).then(resp => resp);
+    return axios.get(`http://i.yjapi.com/ECI/GetDetailsByName?key=${userKey}&keyWord=${text}`).then(resp => resp.data);
   },
 };

@@ -73,6 +73,7 @@ let api = {};
 ajaxMethod.forEach((method)=> {
   api[method] = function (uri, data, config) {
     return new Promise(function (resolve, reject) {
+      console.log(`uri:${uri}`,`data:${data}`,`config:${config}`);
       axiosIns[method](uri, data, config).then((response)=> {
         resolve(response);
       }).catch((response)=> {
