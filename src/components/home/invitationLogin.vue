@@ -117,6 +117,9 @@
   top: 25px;
   right: 5px;
 }
+span{
+  cursor: pointer;
+}
 .btn{
   background-color: #546AAC;
   color: #fff;
