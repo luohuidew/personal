@@ -92,14 +92,14 @@ export default {
       this.timeout = setTimeout(() => {
         let results = [];
         toolServer.searchWideCompany(queryString).then((resp) => {
-          if (resp.Status === 200) {
+          if (resp.Status === '200') {
             resp.Result.forEach((v) => {
               const c = v;
               c.value = v.Name;
             });
             results = resp.Result;
             this.errorMsg.status = resp.Status;
-            this.errorMsg.msg = resp.Message;
+            this.errorMsg.msg = '';
             cb(results);
           } else {
             // this.$message.error(resp.Message);
@@ -142,7 +142,6 @@ export default {
         result = callback(new Error('公司名称不能为空'));
       }
       if (this.errorMsg.status !== 200) {
-        console.log(this.errorMsg);
         result = callback(new Error(this.errorMsg.msg));
       } else {
         result = callback();
@@ -179,7 +178,6 @@ export default {
     },
     applyLogin(formName) {
       this.$refs[formName].validate((valid) => {
-        console.log(valid);
         if (valid) {
           Apply.apply(this.applyData).then((resp) => {
             if (resp.data.code.code === 200) {
