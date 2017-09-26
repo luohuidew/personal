@@ -99,7 +99,6 @@ export default {
     sendCode() {
       // TODO:打开输入验证码弹框
       commonService.getImgCode(this.registerData.email).then((resp) => {
-        console.log(resp);
         this.dialogCode = true;
         this.dialogCodeData.imgUrl = resp;
       });

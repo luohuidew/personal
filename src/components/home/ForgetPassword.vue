@@ -38,7 +38,6 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <!-- <el-button @click="dialogVisible = false">取 消</el-button> -->
         <el-button type="primary" @click="checkImageCode(forgetData.account)">点击获取</el-button>
       </span>
     </el-dialog>
