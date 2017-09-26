@@ -7724,6 +7724,11 @@
   width: 300px;
 }
 
+.el-input--mini100 {
+  font-size: 14px;
+  width: 100px;
+}
+
 .el-input--mini {
   font-size: 14px;
   width: 180px;
@@ -8476,6 +8481,10 @@
   width: 600px;
 }
 
+.el-dialog--normal{
+  width: 700px;
+}
+
 .el-dialog--large{
   width: 1000px;
 }
@@ -8487,6 +8496,11 @@
 
 .el-dialog--small .el-form {
   width: 430px;
+  margin: 0 auto;
+}
+
+.el-dialog--normal .el-form {
+  width: 520px;
   margin: 0 auto;
 }
 

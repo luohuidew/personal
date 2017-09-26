@@ -14,11 +14,11 @@ export default {
       if (resp.token) {
         this.setToken(resp.token);
       }
-      if (resp.user) {
+      if (resp.data) {
         const itemStr = {};
-        const arr = Object.keys(resp.user);
+        const arr = Object.keys(resp.data);
         arr.forEach((v) => {
-          itemStr[v] = resp.user[v];
+          itemStr[v] = resp.data[v];
         });
         sessionStorage.setItem(USER_KEY, JSON.stringify(itemStr));
       }
