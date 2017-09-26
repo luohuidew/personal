@@ -24,7 +24,6 @@
     <el-dialog title="新建企业" :visible.sync="dialogVisible" size="small" :before-close="handleClose">
       <el-form :model="form" ref="form" :rules="rules">
         <el-form-item label="企业全称" :label-width="formLabelWidth" required  prop="companyName">
-          <!-- <el-input v-model="form.companyName" auto-complete="off"></el-input> -->
           <el-autocomplete v-model="form.companyName" :fetch-suggestions="querySearchAsync" placeholder="请输入公司名称" :trigger-on-focus="false" @select="companySelect"></el-autocomplete>
         </el-form-item>
         <el-form-item label="简称" :label-width="formLabelWidth" prop="companyAbbreviation">
@@ -271,7 +270,6 @@ export default {
       clearTimeout(this.timeout);
       this.timeout = setTimeout(() => {
         let results = [];
-        console.log(queryString);
         base.searchWideCompany(queryString).then((resp) => {
           if (resp.Status === '200') {
             resp.Result.forEach((v) => {
