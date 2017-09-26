@@ -43,17 +43,17 @@ export default new Router({
     },
     // 邮件邀请
     {
-      path: '/invitation_index',
+      path: '/invitation_index/:code',
       name: 'InvitationIndex',
       component: InvitationIndex,
     },
     {
-      path: '/invitation_login',
+      path: '/invitation_login/:code',
       name: 'InvitationLogin',
       component: InvitationLogin,
     },
     {
-      path: '/invitation_register',
+      path: '/invitation_register/:code',
       name: 'InvitationRegister',
       component: InvitationRegister,
     },
