@@ -289,7 +289,7 @@ export default {
     handleCommand(scope, index) {
       const name = event.target.id;
       const command = scope.row;
-      console.log(command);
+      // console.log(command);
       switch (name) {
         case 'edit':
           this.dialogEditPerson = true;

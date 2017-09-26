@@ -159,7 +159,7 @@ export default {
   methods: {
     initData() {
       company.getCompanyListByUid().then((resp) => {
-        this.companyList = resp.data;
+        this.companyList = resp;
       });
     },
     selectCompany(cItem) {

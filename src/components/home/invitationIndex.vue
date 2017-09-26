@@ -11,7 +11,7 @@
         <div class="noneBlock"></div>
         <div class="btnDiv">
           <router-link class="return btn" :to="{ path: '/invitation_register' }">注册新账号并接受邀请</router-link>
-          <router-link class="return btn1" :to="{ path: '/login' }">登录已有账号接受邀请</router-link>
+          <router-link class="return btn1" :to="{ path: '/invitation_login' }">登录已有账号接受邀请</router-link>
         </div>
       </div>
     </div>
@@ -26,7 +26,13 @@ export default {
       companyName: undefined,
     };
   },
+  created() {
+    this.initData();
+  },
   methods: {
+    initData() {
+      // TODO：通过code获取公司名称
+    },
   },
 };
 </script>

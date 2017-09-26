@@ -3,7 +3,7 @@ import api from './http';
 const userKey = 'f5e6d93974cd4effb849f7441ad4ad5d';
 export default {
   getQiNiuToken() {
-    return api.get('/qiniu/token').then(resp => resp);
+    return api.get('/qiniu/token').then(resp => resp.data.token);
   },
   getImgCode(arg1) {
     /*

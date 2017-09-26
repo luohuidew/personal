@@ -5,7 +5,7 @@ export default {
   getUserInfoByUid() {
     const userId = user.getUser().id;
     return api.get(`/user/myInfo/${userId}`).then((resp) => {
-      const respData = resp;
+      const respData = resp.data;
       const repEmail = respData.email;
       const idx = repEmail.indexOf('@');
       if (idx > 0) respData.emailHide = repEmail.replace(repEmail.substring(0, idx), '*'.repeat(idx));
