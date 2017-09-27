@@ -9,16 +9,17 @@
             <el-table-column>
               <template scope="scope">
                 <ul class="round-wrap">
-                  <li v-for="item in roundType" v-bind:class="{active: checkRound(item.id, scope.row.rounds)}">{{item.text}}</li>
+                  <!-- <li v-for="item in roundType" v-bind:class="{active: checkRound(item.id, scope.row.rounds)}" :key="item.id">{{item.text}}</li> -->
+                  <li v-for="item in roundType" v-bind:class="{active: [scope.row.rounds].includes(item.id)}" :key="item.id">{{item.text}}</li>
                 </ul>
               </template>
             </el-table-column>
             <el-table-column prop="registeredCapital"></el-table-column>
             <el-table-column>
-              <template scope="scope">{{scope.row.registeredCapital | stockScalefilter(companyMap.totalRegisteredCapital)}}</template>
+              <template scope="scope">{{scope.row.registeredCapital | stockScalefilter(totalRegisteredCapital)}}</template>
             </el-table-column>
             <el-table-column>
-              <template scope="scope"><el-button @click="delete(scope.row)">删除</el-button></template>
+              <template scope="scope"><el-button @click="deleteid(scope.row)">删除</el-button></template>
             </el-table-column>
           </el-table>
         </template>
@@ -27,16 +28,16 @@
       <el-table-column label="投资轮次">
         <template scope="scope">
           <ul class="round-wrap">
-            <li v-for="item in roundType" v-bind:class="{active: checkRound(item.id, scope.row.rounds)}">{{item.text}}</li>
+            <li v-for="item in roundType" v-bind:class="{active: scope.row.rounds.includes(item.id)}" :key="item.id">{{item.text}}</li>
           </ul>
         </template>
       </el-table-column>
       <el-table-column prop="registeredCapital" label="注册资本"></el-table-column>
       <el-table-column label="股份比例">
-        <template scope="scope">{{scope.row.registeredCapital | stockScalefilter(companyMap.totalRegisteredCapital)}}</template>
+        <template scope="scope">{{scope.row.registeredCapital | stockScalefilter(totalRegisteredCapital)}}</template>
       </el-table-column>
       <el-table-column label="操作">
-        <template scope="scope"><el-button @click="delete(scope.row)">删除</el-button></template>
+        <template scope="scope"><el-button @click="deleteid(scope.row)">删除</el-button></template>
       </el-table-column>
     </el-table>
   </div>
@@ -50,26 +51,21 @@ export default {
   name: 'tree-table',
   data() {
     return {
-      // totalMoney: '140000',
       treeDataMap: [],
       roundType: ROUND_TYPE,
-      companyMap: '',
+      totalRegisteredCapital: '',
     };
   },
   props: ['treelistdata'],
   created() {
     this.treeDataMap = this.treelistdata;
     companyServer.getCompanyInfoById().then((r) => {
-      this.companyMap = r;
+      this.totalRegisteredCapital = r.totalRegisteredCapital;
     });
   },
   methods: {
-    delete(row) {
-      stockServer.deleteStock(row.id);
-    },
-    checkRound(r, rounds) {
-      const roundList = rounds.split(',');
-      return roundList.includes(r);
+    deleteid(row) {
+      this.$emit('deleteFinanc', row.id);
     },
   },
   filters: {

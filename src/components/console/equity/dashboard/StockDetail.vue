@@ -21,7 +21,7 @@
           <el-button class="addbtn" type="primary" @click="dialogVisible = true">新增股东</el-button>
         </div>
         <div class="table-wrap">
-          <treelist-table :treelistdata="stocklistdata" v-if="isloading"></treelist-table>
+          <treelist-table :treelistdata="stocklistdata" v-if="isloading" v-on:deleteFinanc="deleteFinancbyId"></treelist-table>
         </div>
       </div>
     </div>
@@ -178,7 +178,7 @@ export default {
       this.stocklistdata.forEach((value) => {
         this.eChartList.xAxiasMap.push(`
         ${value.shareholderAbbreviation}
-        /${value.rate}
+        /${stockServer.getPercent(value.registeredCapital, this.totalMoney)}
         `);
         this.eChartList.yAxiasMap.push(value.registeredCapital);
       });
@@ -209,10 +209,25 @@ export default {
     getStockList() {
       companyServer.getCompanyInfoById().then((r) => {
         this.totalMoney = r.totalRegisteredCapital;
-        stockServer.getStockGroupByCompanyId(this.totalMoney).then((resp) => {
+        stockServer.getStockGroupByCompanyId().then((resp) => {
           this.stocklistdata = resp;
           this.isloading = true;
           this.createEchart();
+        });
+      });
+    },
+    deleteFinancbyId(arg1) {
+      this.$confirm('是否确认删除此条股东信息?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }).then(() => {
+        stockServer.deleteStock(arg1);
+        this.getStockList();
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除',
         });
       });
     },

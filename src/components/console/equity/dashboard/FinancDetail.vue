@@ -25,7 +25,7 @@
             <el-table-column label="融资轮次">
               <template scope="scope">
                 <ul class="round-wrap">
-                  <li v-for="item in roundType" v-bind:class="{active: scope.row.round == item.id}">{{item.text}}</li>
+                  <li v-for="item in roundType" v-bind:class="{active: scope.row.round == item.id}" :key="item.id">{{item.text}}</li>
                 </ul>
               </template>
             </el-table-column>
@@ -33,7 +33,7 @@
             <el-table-column  prop="financedDate" label="融资时间"></el-table-column>
             <el-table-column  prop="equity.shareholderName" label="投资方"></el-table-column>
             <el-table-column label="操作">
-              <template scope="scope"><el-button @click="delete(scope.row)">删除</el-button></template>
+              <template scope="scope"><el-button @click="deleteid(scope.row)">删除</el-button></template>
             </el-table-column>
           </el-table>
         </div>
@@ -111,13 +111,13 @@ export default {
     const companyMap = JSON.parse(sessionStorage.getItem('_COMPANY_KEY'));
     this.companyId = companyMap.companyInfo.companyId;
     this.financAddMap.companyId = this.companyId;
-    financServer.getFinancListByCompanyId().then((resp) => {
-      this.financlistdata = resp;
-      this.createEchart();
-    });
-    this.getShareholderList();
+    this.initData();
   },
   methods: {
+    initData() {
+      this.getFinancList();  // 初始化
+      this.getShareholderList();
+    },
     createEchart() {
       this.xyEchartData();
       this.myChartDiv = document.getElementById('financChart');
@@ -228,9 +228,22 @@ export default {
           type: 'success',
         });
       });
+      this.initData();
     },
-    delete(row) {
-      financServer.deleteFinanc(row.id);
+    deleteid(row) {
+      this.$confirm('是否确认删除此条股东信息?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }).then(() => {
+        financServer.deleteFinanc(row.id);
+        this.initData();
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除',
+        });
+      });
     },
     handleClose() {
       this.resetForm('financAddForm');
@@ -242,6 +255,12 @@ export default {
     getShareholderList() {
       stockServer.getStockListByCompanyId().then((resp) => {
         this.shareholderMap = resp;
+      });
+    },
+    getFinancList() {
+      financServer.getFinancListByCompanyId().then((resp) => {
+        this.financlistdata = resp;
+        this.createEchart();
       });
     },
   },

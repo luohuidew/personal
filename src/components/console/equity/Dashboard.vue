@@ -34,7 +34,7 @@
                 <el-table-column label="投资轮次">
                   <template scope="scope">
                     <ul class="round-wrap">
-                      <li v-for="item in roundType" v-bind:class="{active: checkRound(item.id, scope.row.rounds)}">{{item.text}}</li>
+                      <li v-for="item in roundType" v-bind:class="{active: checkRound(item.id, scope.row.rounds)}" :key="item.id">{{item.text}}</li>
                     </ul>
                   </template>
                 </el-table-column>
@@ -53,14 +53,14 @@
             </div>
             <div class="main-wrap">
               <div class="step-list">
-                <div class="step-wrap" v-for="item in financMap">
+                <div class="step-wrap" v-for="item in financMap" :key="item.id">
                   <div class="step-head">
                     <div class="step-line"></div>
                     <div class="step-icon"></div>
                   </div>
                   <div class="step-main">
                     <div class="step-title">{{item.financedDate}}</div>
-                    <div class="step-description"><span class="bold">{{item.round | roundFilter('ROUND_TYPE')}}</span>&nbsp;&nbsp;获<span class="bold">{{item.financedAccount}}</span>{{item.equity.shareholderName}}投资</div>
+                    <div class="step-description"><span class="bold">{{item.round | roundFilter('ROUND_TYPE')}}</span>&nbsp;&nbsp;获<span class="bold">{{item.financedAccount | moneyFormat}}万元</span>{{item.shareholderName}}投资</div>
                   </div>
                 </div>
               </div>
@@ -239,10 +239,10 @@ export default {
         totalRegisteredCapital: 0,  // 总注册资本
         totalFinancingCapital: 0,  // 总融资额
       },
-      dialogVisible1: true,
+      dialogVisible1: false,
       dialogVisible2: false,
-      stockMap: [],
-      financMap: [],
+      stockMap: [], // 股权概况列表
+      financMap: [], // 融资历史列表
       stockAddMap: { // 添加股权
         shareholderAbbreviation: '',
         shareholderName: '',
@@ -300,9 +300,9 @@ export default {
   created() {
     const company = JSON.parse(sessionStorage.getItem('_COMPANY_KEY'));
     this.companyId = company.companyInfo.companyId;
-    companyServer.getCompanyInfoById().then((r) => {
-      this.companyMap = r;
-      this.stockAddMap.totalRegisteredCapital = Number(r.totalRegisteredCapital);
+    companyServer.getCompanyInfoById().then((resp) => {
+      this.companyMap = resp;
+      this.stockAddMap.totalRegisteredCapital = Number(resp.totalRegisteredCapital);
     });
     stockServer.getStockListByCompanyId().then((resp) => {
       if (resp && resp.length !== 0) {
@@ -311,10 +311,10 @@ export default {
         this.dialogVisible1 = true;
       }
     });
-    financServer.getFinancListByCompanyId().then((resp) => {
+    financServer.getFinancHistoryByCompanyId().then((resp) => {
       if (resp && resp.length !== 0) {
         this.financMap = resp;
-      } else if (this.dialogVisible1 !== true) {
+      } else if (resp.length === 0 && this.dialogVisible1 !== true) {
         this.dialogVisible2 = true;
       }
     });
@@ -399,8 +399,8 @@ export default {
     roundFilter(arg1, arg2) {
       return filters.constantsFilter(arg1, arg2);
     },
-    moneyFormat(arg1) {
-      let num;
+    moneyFormat(arg1 = 0) {
+      let num = 0;
       if (Number(arg1) > 9999) {
         num = Number(arg1) / 10000;
       }
@@ -452,7 +452,7 @@ export default {
 .step-line{position:absolute;display:inline-block;width:0;top:12px;left:5px;bottom: 0;border: 1px solid #F4F4F4;}
 .step-main{padding-left:20px;}
 .step-title{font-size: 14px;}
-.step-description{font-size: 16px;color: #999;padding-right:10px;line-height: 66px;}
+.step-description{font-size: 16px;color: #999;padding:10px 10px 0 0;}
 .step-description .bold{font-weight: bold;color: #666;}
 .dialog-table-wrap{padding:30px 0 30px 30px;}
 .dialog-footer{display:block;text-align:right;}

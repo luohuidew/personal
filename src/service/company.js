@@ -17,7 +17,7 @@ export default {
   getCompanyInfoById() {
     const cInfo = this.getStoredCompany();
     const id = cInfo.companyInfo.companyId;
-    return api.get(`/company/companyInfo/${id}`).then(resp => resp);
+    return api.get(`/company/companyInfo/${id}`).then(resp => resp.data);
   },
   /* *
    * 存储内容：

@@ -1,18 +1,19 @@
 import api from './http';
 
 const companyMap = JSON.parse(sessionStorage.getItem('_COMPANY_KEY'));
-const companyId = companyMap ? companyMap.companyInfo.companyId : '';
+const id = companyMap ? companyMap.companyInfo.companyId : '';
 export default {
-  getFinancListByCompanyId(id = companyId) {
-    return api.get(`/financing/findAll/${id}`).then(resp => resp.data, (resp) => {
-      this.$message.error(resp.errMsg);
-    });
+  getFinancHistoryByCompanyId() {
+    return api.post('/financing/findAllInfo', { companyId: id }).then(resp => resp.data);
+  },
+  getFinancListByCompanyId() {
+    return api.post('/financing/findAllFinancs', { companyId: id }).then(resp => resp.data);
   },
   addFinanc(params) {
     return api.put('/financing/add', params);
   },
-  deleteFinanc(id) {
-    return api.delete(`/financing/deleteById/${id}`);
+  deleteFinanc(financid) {
+    return api.delete(`/financing/deleteById/${financid}`);
   },
   addFinancList(params) {
     return api.put('/financing/addList', params);
