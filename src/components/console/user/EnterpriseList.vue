@@ -30,12 +30,12 @@
           <el-input v-model="form.companyAbbreviation" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="公司类型" :label-width="formLabelWidth" prop="companyType">
-          <el-select v-model="form.companyType" placeholder="请选择活动区域">
+          <el-select v-model="form.companyType" disabled placeholder="请输入企业全称">
             <el-option v-for="item in companyTypes" :label="item.text" :value="item.id" :key="item.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="资本币种" :label-width="formLabelWidth"  prop="currency">
-          <el-select v-model="form.currency" placeholder="请选择活动区域">
+          <el-select v-model="form.currency" disabled placeholder="请输入企业全称">
             <el-option v-for="item in moneyTypes" :label="item.text" :value="item.id" :key="item.id"></el-option>
           </el-select>
         </el-form-item>
@@ -125,15 +125,18 @@ export default {
       form: {
         companyName: '',
         companyAbbreviation: '',
-        companyType: '0',
-        currency: 'RMB',
+        companyType: '',
+        currency: '',
       },
       rules: {
+        companyAbbreviation: [
+          { required: true, message: '请填写企业简称', trigger: 'blur' },
+        ],
         companyName: [
           { validator: this.checkCompany, trigger: 'blur' },
         ],
         companyName2: [
-          { required: false, message: '请填写企业全称', trigger: 'blur' },
+          { required: true, message: '请填写企业全称', trigger: 'blur' },
         ],
       },
       backImageUrl: '',
@@ -295,24 +298,24 @@ export default {
         const rusults = resp.Result;
         const money = rusults.RegistCapi;
         const moneyNum = parseFloat(rusults.RegistCapi);
-        this.applyData.company.companyType = '0'; // 境内
-        this.applyData.company.shareholderNum = rusults.Partners.length; // 股东人数
+        this.form.companyType = '0'; // 境内
+        this.form.shareholderNum = rusults.Partners.length; // 股东人数
         if (money.indexOf('美元') !== -1) {
           this.applyData.company.currency = 'EUR';
         } else if (money.indexOf('欧') !== -1) {
-          this.applyData.company.currency = 'USD';
+          this.form.currency = 'USD';
         } else {
-          this.applyData.company.currency = 'RMB';
+          this.form.currency = 'RMB';
         }
         if (money.indexOf('万') !== -1) {
-          this.applyData.company.totalRegisteredCapital = moneyNum;
+          this.form.totalRegisteredCapital = moneyNum;
         } else {
-          this.applyData.company.totalRegisteredCapital = moneyNum / 10000;
+          this.form.totalRegisteredCapital = moneyNum / 10000;
         }
       });
     },
     companySelect(item) {
-      this.applyData.company.companyName = item.Name;
+      this.form.companyName = item.Name;
       this.getCompanyInfo(item.No);
     },
     checkCompany(rule, value, callback) {
