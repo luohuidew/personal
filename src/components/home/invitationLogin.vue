@@ -20,10 +20,10 @@
           </el-form-item>
           <el-form :inline="true" class="demo-form-inline">
             <el-form-item>
-              <router-link class="return backLt" :to="{ path: '/invitation_index' }">&lt;返回</router-link>
+              <span class="return backLt" @click="indexLink">&lt;返回</span>
             </el-form-item>
             <el-form-item>
-              <router-link class="return backRt" :to="{ path: '/invitation_register' }">注册新账号</router-link>接受邀请
+              <span class="return backRt" @click="registerLink">注册新账号</span>接受邀请
             </el-form-item>
           </el-form>
         </el-form>
@@ -39,7 +39,7 @@
   // import commonService from '../../service/common';
 
   export default {
-    name: '',
+    name: 'InvitationLogin',
     data() {
       return {
         loginData: {
@@ -54,10 +54,23 @@
     methods: {
       initData() {
         // TODO:通过code获取受邀人的邮箱和信息
+        this.companyCode = this.$route.params.code;
       },
       // --------
       Login() {
         // TODO：登录接口
+      },
+      registerLink() {
+        this.$router.push({
+          name: 'InvitationRegister',
+          params: { code: this.companyCode },
+        });
+      },
+      indexLink() {
+        this.$router.push({
+          name: 'InvitationIndex',
+          params: { code: this.companyCode },
+        });
       },
     },
   };
@@ -104,6 +117,9 @@
   top: 25px;
   right: 5px;
 }
+span{
+  cursor: pointer;
+}
 .btn{
   background-color: #546AAC;
   color: #fff;
@@ -121,7 +137,7 @@
   filter:alpha(opacity=80);
 }
 .backLt{
-  margin-right: 185px;
+  margin-right: 210px;
   color: #555;
 }
 .backRt{

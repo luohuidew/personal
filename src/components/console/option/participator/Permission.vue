@@ -147,7 +147,6 @@ export default {
       this.permission.companyId = companyService.getStoredCompany().companyInfo.companyId;
       this.typeTest = this.$route.params.type;
       pService.getParticipatorLicenseList(this.permission).then((resp) => {
-        // console.log(resp);
         this.licenseList = resp.licenseList;
         this.dataProcessing(this.licenseList);
       });
@@ -155,7 +154,6 @@ export default {
     // 保存权限
     Save() {
       this.permission.licenseList = this.getThisPageData();
-      // console.log(this.permission);
       pService.updateParticipatorLicenseList(this.permission).then(() => {
         this.$message({
           message: '权限设置成功',

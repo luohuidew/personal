@@ -11,7 +11,7 @@
               <el-input type="text" v-model.trim="applyData.username" placeholder="请输入您的名称"></el-input>
             </el-form-item>
             <el-form-item prop="companyName" required>
-              <el-autocomplete v-model="applyData.company.companyName" :fetch-suggestions="querySearchAsync" placeholder="请输入公司名称" :trigger-on-focus="false" @select="companySelect"></el-autocomplete>
+              <el-autocomplete v-model="applyData.companyName" :fetch-suggestions="querySearchAsync" placeholder="请输入公司名称" :trigger-on-focus="false" @select="companySelect"></el-autocomplete>
             </el-form-item>
             <el-form-item prop="email" required>
               <el-input type="email" v-model.trim="applyData.email" placeholder="请输入邮箱地址"></el-input>
@@ -46,6 +46,7 @@ export default {
       homeUrl: '/home.html',
       applyData: {
         username: '', // 名称
+        companyName: '',
         company: { // 公司
           companyName: '',
         },
@@ -97,6 +98,8 @@ export default {
               c.value = v.Name;
             });
             results = resp.Result;
+            this.errorMsg.status = resp.Status;
+            this.errorMsg.msg = '';
             cb(results);
           } else {
             // this.$message.error(resp.Message);
@@ -112,7 +115,7 @@ export default {
       toolServer.getDetailCompany(id).then((resp) => {
         const rusults = resp.Result;
         const money = rusults.RegistCapi;
-        const moneyNum = Number(rusults.RegistCapi);
+        const moneyNum = parseFloat(rusults.RegistCapi);
         this.applyData.company.companyType = '0'; // 境内
         this.applyData.company.shareholderNum = rusults.Partners.length; // 股东人数
         if (money.indexOf('美元') !== -1) {
@@ -134,43 +137,50 @@ export default {
       this.getCompanyInfo(item.No);
     },
     checkCompany(rule, value, callback) {
+      let result = '';
       if (!value) {
-        return callback(new Error('公司名称不能为空'));
+        result = callback(new Error('公司名称不能为空'));
       }
       if (this.errorMsg.status !== '200') {
-        return callback(new Error(this.errorMsg.msg));
+        result = callback(new Error(this.errorMsg.msg));
+      } else {
+        result = callback();
       }
-      return true;
+      return result;
     },
     checkEmail(rule, value, callback) {
+      let result = '';
       const msg = validate.isEmailAvailable(value);
       if (msg === 'ok') {
         toolServer.checkEmailExist(value).then((resp) => {
-          if (resp.code === '200') {
-            return callback(new Error(resp.msg)); // 该邮箱已存在，请直接<a href="/login/">登录</a>
+          if (resp.code.code === 200) {
+            result = callback(new Error(resp.code.msg)); // 该邮箱已存在，请直接<a href="/login/">登录</a>
+          } else {
+            result = callback();
           }
-          return true;
         });
       }
-      return callback(new Error(msg));
+      return result;
     },
     checkTel(rule, value, callback) {
+      let result = '';
       const msg = validate.isPhoneAvailable(value);
       if (msg === 'ok') {
         toolServer.checkPhoneExist(value).then((resp) => {
-          if (resp.code === '200') {
-            return callback(new Error(resp.msg)); // 手机号已存在
+          if (resp.code.code === 200) {
+            result = callback(new Error(resp.code.msg)); // 手机号已存在
+          } else {
+            result = callback();
           }
-          return true;
         });
       }
-      return callback(new Error(msg));
+      return result;
     },
     applyLogin(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           Apply.apply(this.applyData).then((resp) => {
-            if (resp.data.code === '200') {
+            if (resp.data.code.code === 200) {
               this.$router.push({ name: 'Login' });
             } else {
               this.$message.error(resp.data.msg);

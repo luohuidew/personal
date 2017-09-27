@@ -58,7 +58,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .footer{width:100%;height:260px;background:#2A313F;}
-.footwrap{padding:55px 15.6%;}
+.footwrap{padding:55px 15.6% 0;}
 .padding-space{padding: 0 40px}
 .pure-u-1{width:24%;display:inline-block;zoom:1;vertical-align:top;min-width:130px;}
 .pure-u-2{margin-top:10px;}

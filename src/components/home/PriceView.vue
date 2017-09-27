@@ -57,10 +57,12 @@
         </el-col>
       </el-row>
     </div>
+    <hm-footer></hm-footer>
   </div>
 </template>
 <script>
 import hmHeader from './HmHeader';
+import HmFooter from './HmFooter';
 
 export default {
   name: 'price-view',
@@ -72,21 +74,20 @@ export default {
   methods: {
   },
   components: {
-    hmHeader,
+    hmHeader, HmFooter,
   },
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.price-view{padding:80px 15.6% 0;height:1000px;background: url('../../assets/priceviewbg.png');}
+.price-view{padding:80px 15.6% 0;height:900px;background: url('../../assets/priceviewbg.png');}
 .title1{font-size: 36px;color: #212859;letter-spacing: -1.39px;line-height: 55px;text-align: center;padding-top:80px;}
 .pure-g{padding:0 10%;margin-top:90px;}
 .cont-wrap{width:100%;background:#fff;border-radius: 4px;color:#7D7F86;}
 .cont-top{padding:50px 0 44px 44px;}
 .cont-wrap ul{background: #F3F8FA;color:#72787B;}
 .cont-wrap ul li{line-height:50px;padding-left:30px;}
-.li-line-even{background:#FBFBFB}
 .cont-foot{margin-top:50px;background:#9C9EB3;height:60px;line-height:60px;text-align: center;font-size: 20px;color: #FFFFFF;letter-spacing: 1.66px;border-radius: 0 0 4px 4px;}
 .cont-top .text-line-1, .cont-top .text-line-2{padding:10px 0;}
 .cont-top .text-line-1 .text{font-size: 18px;color: #7D7F86;letter-spacing: 3.27px;line-height: 36px;height:36px;overflow:hidden;float:left;display:inline-block;zoom:1;width:50px;padding:0 10px;text-align:justify;}

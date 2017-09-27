@@ -46,17 +46,9 @@ export default {
         if (t > 0 && !that.$route.path.includes('price_view')) {
           headDom.className = 'header stack';
           imgSrc.src = that.imgUrl2;
-          // imgSrc.style.display = 'none';
-          // imgSrc.style.opacity = 0;
-          // imgSrc2.style.display = '';
-          // imgSrc2.style.opacity = 1;
         } else if (t === 0 && !that.$route.path.includes('price_view')) {
           headDom.className = 'header';
           imgSrc.src = that.imgUrl;
-          // imgSrc.style.display = '';
-          // imgSrc.style.opacity = 1;
-          // imgSrc2.style.display = 'none';
-          // imgSrc2.style.opacity = 0;
         }
       };
     },
