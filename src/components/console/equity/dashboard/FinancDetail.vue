@@ -33,7 +33,7 @@
             <el-table-column  prop="financedDate" label="融资时间"></el-table-column>
             <el-table-column  prop="equity.shareholderName" label="投资方"></el-table-column>
             <el-table-column label="操作">
-              <template scope="scope"><el-button @click="delete(scope.row)">删除</el-button></template>
+              <template scope="scope"><el-button @click="deleteid(scope.row)">删除</el-button></template>
             </el-table-column>
           </el-table>
         </div>
@@ -230,9 +230,20 @@ export default {
       });
       this.initData();
     },
-    delete(row) {
-      financServer.deleteFinanc(row.id);
-      this.initData();
+    deleteid(row) {
+      this.$confirm('是否确认删除此条股东信息?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }).then(() => {
+        financServer.deleteFinanc(row.id);
+        this.initData();
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除',
+        });
+      });
     },
     handleClose() {
       this.resetForm('financAddForm');

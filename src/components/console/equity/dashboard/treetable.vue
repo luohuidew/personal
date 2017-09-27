@@ -16,10 +16,10 @@
             </el-table-column>
             <el-table-column prop="registeredCapital"></el-table-column>
             <el-table-column>
-              <template scope="scope">{{scope.row.registeredCapital | stockScalefilter(companyMap.totalRegisteredCapital)}}</template>
+              <template scope="scope">{{scope.row.registeredCapital | stockScalefilter(totalRegisteredCapital)}}</template>
             </el-table-column>
             <el-table-column>
-              <template scope="scope"><el-button @click="delete(scope.row)">删除</el-button></template>
+              <template scope="scope"><el-button @click="deleteid(scope.row)">删除</el-button></template>
             </el-table-column>
           </el-table>
         </template>
@@ -34,10 +34,10 @@
       </el-table-column>
       <el-table-column prop="registeredCapital" label="注册资本"></el-table-column>
       <el-table-column label="股份比例">
-        <template scope="scope">{{scope.row.registeredCapital | stockScalefilter(companyMap.totalRegisteredCapital)}}</template>
+        <template scope="scope">{{scope.row.registeredCapital | stockScalefilter(totalRegisteredCapital)}}</template>
       </el-table-column>
       <el-table-column label="操作">
-        <template scope="scope"><el-button @click="delete(scope.row)">删除</el-button></template>
+        <template scope="scope"><el-button @click="deleteid(scope.row)">删除</el-button></template>
       </el-table-column>
     </el-table>
   </div>
@@ -53,19 +53,19 @@ export default {
     return {
       treeDataMap: [],
       roundType: ROUND_TYPE,
-      companyMap: '',
+      totalRegisteredCapital: '',
     };
   },
   props: ['treelistdata'],
   created() {
     this.treeDataMap = this.treelistdata;
     companyServer.getCompanyInfoById().then((r) => {
-      this.companyMap = r;
+      this.totalRegisteredCapital = r.totalRegisteredCapital;
     });
   },
   methods: {
-    delete(row) {
-      stockServer.deleteStock(row.id);
+    deleteid(row) {
+      this.$emit('deleteFinanc', row.id);
     },
   },
   filters: {
