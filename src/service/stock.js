@@ -1,14 +1,14 @@
 import api from './http';
 
 const companyMap = JSON.parse(sessionStorage.getItem('_COMPANY_KEY'));
-const companyId = companyMap ? companyMap.companyInfo.companyId : '';
+const id = companyMap ? companyMap.companyInfo.companyId : '';
 
 export default {
-  getStockGroupByCompanyId(totalMoney, id = companyId) {
-    return api.get(`/equity/findAllWithGroup/${id}`).then(resp => resp.data);
+  getStockGroupByCompanyId() {
+    return api.post('/equity/findAllWithGroup', { companyId: id }).then(resp => resp.data);
   },
-  getStockListByCompanyId(totalMoney, id = companyId) {
-    return api.get(`/equity/findAll/${id}`).then(resp => resp.data);
+  getStockListByCompanyId() {
+    return api.post('/equity/findAll', { companyId: id }).then(resp => resp.data);
   },
   addStock(params) {
     return api.put('/equity/add', params);
@@ -25,8 +25,8 @@ export default {
     const rate = Math.round((number / totals) * 100000) / 1000.00;
     return `${rate}%`;
   },
-  deleteStock(id) {
-    return api.del(`/equity/deleteById/${id}`);
+  deleteStock(stockid) {
+    return api.del(`/equity/deleteById/${stockid}`);
   },
   addStockList(params) {
     return api.put('/equity/addList', params);

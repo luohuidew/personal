@@ -9,7 +9,8 @@
             <el-table-column>
               <template scope="scope">
                 <ul class="round-wrap">
-                  <li v-for="item in roundType" v-bind:class="{active: checkRound(item.id, scope.row.rounds)}">{{item.text}}</li>
+                  <!-- <li v-for="item in roundType" v-bind:class="{active: checkRound(item.id, scope.row.rounds)}" :key="item.id">{{item.text}}</li> -->
+                  <li v-for="item in roundType" v-bind:class="{active: [scope.row.rounds].includes(item.id)}" :key="item.id">{{item.text}}</li>
                 </ul>
               </template>
             </el-table-column>
@@ -27,7 +28,7 @@
       <el-table-column label="投资轮次">
         <template scope="scope">
           <ul class="round-wrap">
-            <li v-for="item in roundType" v-bind:class="{active: checkRound(item.id, scope.row.rounds)}">{{item.text}}</li>
+            <li v-for="item in roundType" v-bind:class="{active: scope.row.rounds.includes(item.id)}" :key="item.id">{{item.text}}</li>
           </ul>
         </template>
       </el-table-column>
@@ -50,7 +51,6 @@ export default {
   name: 'tree-table',
   data() {
     return {
-      // totalMoney: '140000',
       treeDataMap: [],
       roundType: ROUND_TYPE,
       companyMap: '',
@@ -66,10 +66,6 @@ export default {
   methods: {
     delete(row) {
       stockServer.deleteStock(row.id);
-    },
-    checkRound(r, rounds) {
-      const roundList = rounds.split(',');
-      return roundList.includes(r);
     },
   },
   filters: {

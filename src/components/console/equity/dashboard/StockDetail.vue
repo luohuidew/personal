@@ -178,7 +178,7 @@ export default {
       this.stocklistdata.forEach((value) => {
         this.eChartList.xAxiasMap.push(`
         ${value.shareholderAbbreviation}
-        /${value.rate}
+        /${stockServer.getPercent(value.registeredCapital, this.totalMoney)}
         `);
         this.eChartList.yAxiasMap.push(value.registeredCapital);
       });
@@ -209,7 +209,8 @@ export default {
     getStockList() {
       companyServer.getCompanyInfoById().then((r) => {
         this.totalMoney = r.totalRegisteredCapital;
-        stockServer.getStockGroupByCompanyId(this.totalMoney).then((resp) => {
+        stockServer.getStockGroupByCompanyId().then((resp) => {
+          console.log(resp);
           this.stocklistdata = resp;
           this.isloading = true;
           this.createEchart();
