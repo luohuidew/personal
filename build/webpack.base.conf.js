@@ -12,7 +12,8 @@ function resolve (dir) {
 module.exports = {
   entry: {
     index: './src/index.js',
-    home: './src/home.js'
+    home: './src/home.js',
+    sign: './src/sign.js'
   },
   output: {
     path: config.build.assetsRoot,
