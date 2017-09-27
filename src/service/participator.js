@@ -29,4 +29,12 @@ export default {
   sendEmail(params) {
     return api.post('/userInfo/sendEmail', params);
   },
+  // 参与方注册
+  registerParticipator(params) {
+    return api.post('/register', params);
+  },
+  // 通过companyCode获取公司信息
+  getCompanyInfoByCode(code) {
+    return api.get(`/companyInfoByCode/${code}`);
+  },
 };

@@ -10,11 +10,11 @@
         <div class="con-tit">注册CapTable账号</div>
         <el-form :model="registerData" :rules="rules" ref="registerData">
           <el-form-item prop="email" required>
-            <el-input type="text" class="inputClass" v-model.trim="registerData.email" disabled placeholder="name@example.com"></el-input>
+            <el-input type="text" class="inputClass" v-model.trim="registerData.email" placeholder="name@example.com"></el-input>
           </el-form-item>
           <el-form-item prop="emailCode" required>
             <el-input type="text" v-model.trim="registerData.emailCode" placeholder="验证码"></el-input>
-            <a class="sendEmail" @click="sendCode">发送验证码至该邮箱</a>
+            <a class="sendEmail" @click="getImgCode">发送验证码至该邮箱</a>
           </el-form-item>
           <el-form-item prop="password" required>
             <el-input type="password" v-model.trim="registerData.password" placeholder="密码"></el-input>
@@ -27,10 +27,10 @@
           </el-form-item>
           <el-form :inline="true" class="demo-form-inline">
             <el-form-item>
-              <router-link class="return backLt" :to="{ path: '/invitation_index' }">&lt;返回</router-link>
+              <span class="return backLt" @click="indexLink">&lt;返回</span>
             </el-form-item>
             <el-form-item>
-              <router-link class="return backRt" :to="{ path: '/invitation_login' }">其他已有账号</router-link>接受邀请
+              <span class="return backRt" @click="loginLink">其他已有账号</span>接受邀请
             </el-form-item>
           </el-form>
         </el-form>
@@ -44,7 +44,7 @@
           <el-input v-model="dialogCodeData.inputCode" placeholder="验证码"></el-input>
         </el-form-item>
         <el-form-item>
-          <img :src="dialogCodeData.imgUrl" style="height: 40px;margin-top:20px;" role="button">
+          <img :src="dialogCodeData.imgUrl" style="height: 40px;" role="button">
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -58,9 +58,11 @@
 // import canvasbg from '../../lib/canvasbg';
 import validate from '../../utils/validation';
 import commonService from '../../service/common';
+import pService from '../../service/participator';
+import userService from '../../service/user';
 
 export default {
-  name: '',
+  name: 'InvitationRegister',
   data() {
     return {
       dialogCode: false,
@@ -70,6 +72,7 @@ export default {
       },
       registerData: {
         email: undefined,
+        emailCode: undefined,
         password: undefined,
         rePassword: undefined,
       },
@@ -94,10 +97,17 @@ export default {
   },
   methods: {
     initData() {
-      this.registerData.email = '1015902252@qq.com'; // 死数据，之后通过code获取
+      this.registerData.companyCode = this.$route.params.code;
+      pService.getCompanyInfoByCode(this.registerData.companyCode).then((resp) => {
+        if (resp.code.code === 200) {
+          this.registerData.email = resp.data.email;
+        }
+      }, (resp) => {
+        this.$message.error(resp.code.msg);
+      });
     },
-    sendCode() {
-      // TODO:打开输入验证码弹框
+    getImgCode() {
+      // TODO:打开输入验证码弹框，返回图片地址
       commonService.getImgCode(this.registerData.email).then((resp) => {
         this.dialogCode = true;
         this.dialogCodeData.imgUrl = resp;
@@ -105,28 +115,67 @@ export default {
     },
     checkImgCode() {
       commonService.checkImgCode(this.registerData.email, this.dialogCodeData.inputCode)
-      .then(() => {
+      .then((resp) => {
         // TODO:填写验证码正确则发送验证码到该邮箱
-        commonService.sendMsg(this.registerData.email).then(() => {
-          this.dialogCode = false;
-        });
+        if (resp.code.code === 200) {
+          commonService.sendMsg(this.registerData.email).then((result) => {
+            if (result.code.code === 200) {
+              // 发送验证码到邮箱成功
+              this.dialogCode = false;
+            }
+          }, (result) => {
+            // 发送验证码到邮箱失败
+            this.$message.error(result.code.msg);
+          });
+        }
+      }, (resp) => {
+        // 填写的验证码与图片不符合
+        this.$message.error(resp.code.msg);
       });
     },
     registerBtn(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           // TODO：完成注册并登录
+          pService.registerParticipator(this.registerData).then((resp) => {
+            if (resp.code.code === 200) {
+              this.user.username = this.registerData.email;
+              this.user.password = this.registerData.password;
+              userService.login(this.user);
+            }
+          }, (resp) => {
+            this.$message.error(resp.code.msg);
+          });
         }
       });
     },
-    // 校验信息
+    // ********************* 跳转 *************************
+    loginLink() {
+      this.$router.push({
+        name: 'InvitationLogin',
+        params: { code: this.registerData.companyCode },
+      });
+    },
+    indexLink() {
+      this.$router.push({
+        name: 'InvitationIndex',
+        params: { code: this.registerData.companyCode },
+      });
+    },
+    // ********************* 校验信息 *************************
     // 邮箱验证
     validateEmail(rule, value, callback) {
       const result = validate.isEmailAvailable(value);
       if (result !== 'ok') {
         callback(new Error(result));
       } else {
-        callback();
+        commonService.checkEmailExist(value).then((resp) => {
+          if (resp.code.code === -1) {
+            callback();
+          }
+        }, (resp) => {
+          callback(new Error(resp.code.msg));
+        });
       }
     },
     // 密码验证
@@ -205,6 +254,9 @@ export default {
   right: 10px;
   cursor: pointer;
 }
+span{
+  cursor: pointer;
+}
 .btn{
   background-color: #546AAC;
   color: #fff;
@@ -222,7 +274,7 @@ export default {
   filter:alpha(opacity=80);
 }
 .backLt{
-  margin-right: 185px;
+  margin-right: 195px;
   color: #555;
 }
 .backRt{
