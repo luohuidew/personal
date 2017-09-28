@@ -237,10 +237,11 @@
             ref="popover1"
             placement="right-start"
             title=""
-            width="140"
-            trigger="hover">
+            width="150"
+            trigger="hover"
+            @show="showPopover1">
             <div>
-              <img src="../../../assets/signEWM.png" alt="二维码图片"> <br>
+              <img :src="targetFullUrl" alt="二维码图片"> <br>
               <p style="font-size: 12px;color: #3A85BF;text-align: center">使用手机扫描以上二维码 <br>在手机上完成签名</p>
             </div>
           </el-popover>
@@ -288,6 +289,8 @@ import validate from '../../../utils/validation';
 import personalInfo from '../../../service/personalInfo';
 import { QINIU_BUCKET_DOMAIN, QINIU_SERVER, ID_TYPE } from '../../../data/constants';
 
+// http://localhost:8000/sign.html?token=eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMjMiLCJhdWRpZW5jZSI6IndlYiIsImNyZWF0ZWQiOjE1MDUxODI5OTY2NDAsImV4cCI6MTUwNTc4Nzc5Nn0.vxX-zMaCBTAtWa2hVJLY9muAvRWy2kAEusRnhAoQ9hfq7-FpGhTZcAKwgfFkAZxjgDWNEgeuPvYRk3HCPJvAyQ
+// & p=
 export default {
   name: 'user-personal-info',
   data() {
@@ -296,6 +299,7 @@ export default {
       handImageUrl1: '',
       handImageUrl2: '',
       handImageUrl3: '',
+      targetUrl: undefined,
       formLabelWidth: '80px',
       formLabelWidth2: '120px',
       yzmText: '发送验证码',
@@ -401,6 +405,11 @@ export default {
   created() {
     this.initData();
     this.getQiNiuToken();
+  },
+  computed: {
+    targetFullUrl() {
+      return `http://pan.baidu.com/share/qrcode?w=140&url=${this.targetUrl}`;
+    },
   },
   methods: {
     initData() {
@@ -650,6 +659,12 @@ export default {
       common.getQiNiuToken().then((resp) => {
         this.uploadData.token = resp;
       });
+    },
+    showPopover1() {
+//      todo 生成一个name，发起websocket请求,之后才生成targetUrl
+      const name = 'xxxxx';
+      const token = user.getToken();
+      this.targetUrl = `http://${window.location.host}/sign.html?p=${name}&token=${token}`;
     },
     /* upload */
     beforeAvatarUpload(file) {
