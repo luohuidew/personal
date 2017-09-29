@@ -30,9 +30,9 @@
 </template>
 
 <script>
-import canvasbg from '../../lib/canvasbg';
-import validate from '../../utils/validation';
-import user from '../../service/user';
+import canvasbg from '@/lib/canvasbg';
+import validate from '@/utils/validation';
+import user from '@/service/user';
 
 export default {
   name: 'login',

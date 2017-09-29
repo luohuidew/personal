@@ -1,6 +1,6 @@
-import api from './http';
-import user from './user';
-import bus from '../utils/bus';
+import api from '@/service/http';
+import user from '@/service/user';
+import bus from '@/utils/bus';
 
 const COMPANY_KEY = '_COMPANY_KEY';
 
@@ -33,7 +33,7 @@ export default {
    * */
   getStoredCompany: () => JSON.parse(sessionStorage.getItem(COMPANY_KEY)),
   setStoreCompany: (obj) => {
-    sessionStorage.setItem('_COMPANY_KEY', JSON.stringify(obj));
+    sessionStorage.setItem(COMPANY_KEY, JSON.stringify(obj));
     bus.$emit('COMPANY_CHANGED');
   },
 };

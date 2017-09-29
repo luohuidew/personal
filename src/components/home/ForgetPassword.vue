@@ -45,10 +45,10 @@
 </template>
 
 <script>
-import canvasbg from '../../lib/canvasbg';
-import validate from '../../utils/validation';
-import toolServer from '../../service/common';
-import forgetPassServer from '../../service/forgetPassword';
+import canvasbg from '@/lib/canvasbg';
+import validate from '@/utils/validation';
+import toolServer from '@/service/common';
+import forgetPassServer from '@/service/forgetPassword';
 
 export default {
   name: 'forget-password',

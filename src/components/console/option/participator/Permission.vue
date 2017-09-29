@@ -37,8 +37,8 @@
   </div>
 </template>
 <script>
-import pService from '../../../../service/participator';
-import companyService from '../../../../service/company';
+import pService from '@/service/participator';
+import companyService from '@/service/company';
 
 export default {
   name: 'OptionPermission',
@@ -147,8 +147,12 @@ export default {
       this.permission.companyId = companyService.getStoredCompany().companyInfo.companyId;
       this.typeTest = this.$route.params.type;
       pService.getParticipatorLicenseList(this.permission).then((resp) => {
-        this.licenseList = resp.licenseList;
-        this.dataProcessing(this.licenseList);
+        if (resp.code.code === 200) {
+          this.licenseList = resp.data.licenseList;
+          this.dataProcessing(this.licenseList);
+        }
+      }, (resp) => {
+        this.$message.error(resp.code.msg);
       });
     },
     // 保存权限

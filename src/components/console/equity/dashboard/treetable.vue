@@ -47,10 +47,10 @@
   </div>
 </template>
 <script>
-import stockServer from '../../../../service/stock';
-import companyServer from '../../../../service/company';
-import filters from '../../../../utils/filters';
-import { ROUND_TYPE } from '../../../../data/constants';
+import stockServer from '@/service/stock';
+import companyServer from '@/service/company';
+import filters from '@/utils/filters';
+import { ROUND_TYPE } from '@/data/constants';
 
 export default {
   name: 'tree-table',

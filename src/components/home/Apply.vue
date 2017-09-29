@@ -32,10 +32,10 @@
 </template>
 
 <script>
-import canvasbg from '../../lib/canvasbg';
-import validate from '../../utils/validation';
-import Apply from '../../service/apply';
-import toolServer from '../../service/common';
+import canvasbg from '@/lib/canvasbg';
+import validate from '@/utils/validation';
+import Apply from '@/service/apply';
+import toolServer from '@/service/common';
 
 export default {
   name: 'apply',
