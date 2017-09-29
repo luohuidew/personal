@@ -22,8 +22,8 @@
 </template>
 
 <script>
-import company from '../../service/company';
-import bus from '../../utils/bus';
+import company from '@/service/company';
+import bus from '@/utils/bus';
 
 export default {
   name: 'con-sidebar',

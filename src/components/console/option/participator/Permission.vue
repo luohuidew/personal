@@ -37,8 +37,8 @@
   </div>
 </template>
 <script>
-import pService from '../../../../service/participator';
-import companyService from '../../../../service/company';
+import pService from '@/service/participator';
+import companyService from '@/service/company';
 
 export default {
   name: 'OptionPermission',

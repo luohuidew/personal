@@ -1,5 +1,5 @@
-import api from './http';
-import user from '../service/user';
+import api from '@/service/http';
+import user from '@/service/user';
 
 export default {
   getUserInfoByUid() {

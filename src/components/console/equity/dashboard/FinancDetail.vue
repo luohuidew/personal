@@ -70,10 +70,10 @@
 </template>
 <script>
 import echarts from 'echarts';
-import financServer from '../../../../service/financ';
-import stockServer from '../../../../service/stock';
-import filters from '../../../../utils/filters';
-import { ROUND_TYPE } from '../../../../data/constants';
+import financServer from '@/service/financ';
+import stockServer from '@/service/stock';
+import filters from '@/utils/filters';
+import { ROUND_TYPE } from '@/data/constants';
 
 export default {
   name: 'stock-detail',

@@ -1,4 +1,4 @@
-import api from './http';
+import api from '@/service/http';
 
 export default {
   forgetPassword(params) {

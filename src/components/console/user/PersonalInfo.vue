@@ -282,15 +282,13 @@
 </template>
 
 <script>
-import filters from '../../../utils/filters';
-import common from '../../../service/common';
-import user from '../../../service/user';
-import validate from '../../../utils/validation';
-import personalInfo from '../../../service/personalInfo';
-import { QINIU_BUCKET_DOMAIN, QINIU_SERVER, ID_TYPE } from '../../../data/constants';
+import filters from '@/utils/filters';
+import common from '@/service/common';
+import user from '@/service/user';
+import validate from '@/utils/validation';
+import personalInfo from '@/service/personalInfo';
+import { QINIU_BUCKET_DOMAIN, QINIU_SERVER, ID_TYPE } from '@/data/constants';
 
-// http://localhost:8000/sign.html?token=eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMjMiLCJhdWRpZW5jZSI6IndlYiIsImNyZWF0ZWQiOjE1MDUxODI5OTY2NDAsImV4cCI6MTUwNTc4Nzc5Nn0.vxX-zMaCBTAtWa2hVJLY9muAvRWy2kAEusRnhAoQ9hfq7-FpGhTZcAKwgfFkAZxjgDWNEgeuPvYRk3HCPJvAyQ
-// & p=
 export default {
   name: 'user-personal-info',
   data() {

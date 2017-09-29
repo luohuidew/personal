@@ -56,10 +56,10 @@
 
 <script scoped>
 // import canvasbg from '../../lib/canvasbg';
-import validate from '../../utils/validation';
-import commonService from '../../service/common';
-import pService from '../../service/participator';
-import userService from '../../service/user';
+import validate from '@/utils/validation';
+import commonService from '@/service/common';
+import pService from '@/service/participator';
+import userService from '@/service/user';
 
 export default {
   name: 'InvitationRegister',

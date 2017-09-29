@@ -1,4 +1,4 @@
-import api from './http';
+import api from '@/service/http';
 
 const TOKEN = '_TOKEN';
 const USER_KEY = '_USER_KEY';

@@ -60,11 +60,11 @@
 </template>
 <script>
 import echarts from 'echarts';
-import treelistTable from './treetable';
-import { SHAREHOLDER_TYPE, ROUND_TYPE } from '../../../../data/constants';
-import stockServer from '../../../../service/stock';
-import filters from '../../../../utils/filters';
-import companyServer from '../../../../service/company';
+import treelistTable from '@/components/console/equity/dashboard/treetable';
+import { SHAREHOLDER_TYPE, ROUND_TYPE } from '@/data/constants';
+import stockServer from '@/service/stock';
+import filters from '@/utils/filters';
+import companyServer from '@/service/company';
 
 export default {
   name: 'stock-detail',

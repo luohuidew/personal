@@ -1,5 +1,5 @@
 import axios from 'axios';
-import api from './http';
+import api from '@/service/http';
 
 const userKey = 'f5e6d93974cd4effb849f7441ad4ad5d';
 export default {
