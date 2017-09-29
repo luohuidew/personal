@@ -14,7 +14,9 @@
                 </ul>
               </template>
             </el-table-column>
-            <el-table-column prop="registeredCapital"></el-table-column>
+            <el-table-column>
+              <template scope="scope">{{scope.row.registeredCapital | moneyFormat}}</template>
+            </el-table-column>
             <el-table-column>
               <template scope="scope">{{scope.row.registeredCapital | stockScalefilter(totalRegisteredCapital)}}</template>
             </el-table-column>
@@ -32,7 +34,9 @@
           </ul>
         </template>
       </el-table-column>
-      <el-table-column prop="registeredCapital" label="注册资本"></el-table-column>
+      <el-table-column label="注册资本">
+        <template scope="scope">{{scope.row.registeredCapital | moneyFormat}}</template>
+      </el-table-column>
       <el-table-column label="股份比例">
         <template scope="scope">{{scope.row.registeredCapital | stockScalefilter(totalRegisteredCapital)}}</template>
       </el-table-column>
@@ -45,6 +49,7 @@
 <script>
 import stockServer from '../../../../service/stock';
 import companyServer from '../../../../service/company';
+import filters from '../../../../utils/filters';
 import { ROUND_TYPE } from '../../../../data/constants';
 
 export default {
@@ -71,6 +76,9 @@ export default {
   filters: {
     stockScalefilter(arg1, arg2) {
       return stockServer.getPercent(arg1, arg2);
+    },
+    moneyFormat(arg1 = 0) {
+      return filters.moneyFilter(arg1, false);
     },
   },
 };

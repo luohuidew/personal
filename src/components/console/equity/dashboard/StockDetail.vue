@@ -63,6 +63,7 @@ import echarts from 'echarts';
 import treelistTable from './treetable';
 import { SHAREHOLDER_TYPE, ROUND_TYPE } from '../../../../data/constants';
 import stockServer from '../../../../service/stock';
+import filters from '../../../../utils/filters';
 import companyServer from '../../../../service/company';
 
 export default {
@@ -110,7 +111,7 @@ export default {
   created() {
     const companyMap = JSON.parse(sessionStorage.getItem('_COMPANY_KEY'));
     this.companyId = companyMap.companyInfo.companyId;
-    this.getStockList();
+    this.getStockList(); // 初始化
     this.stockAddMap.companyId = this.companyId;
   },
   mounted() {
@@ -124,6 +125,13 @@ export default {
       }
     },
     onEchart() {
+      const len = this.eChartList.yAxiasMap.length;
+      let maxNum = 0;
+      this.eChartList.yAxiasMap.forEach((v) => {
+        if (maxNum < v) {
+          maxNum = v;
+        }
+      });
       // 基于准备好的dom，初始化echarts实例
       const myChart = echarts.init(this.myChartDiv);
       // 绘制图表
@@ -134,7 +142,13 @@ export default {
           color: '#666666',
         },
         tooltip: {
-          formatter: '{b0}<br /> {c0}',
+          formatter: (params) => {
+            const item = params.name;
+            const value = params.value;
+            const title = item.split('/')[0];
+            const rate = item.split('/')[1];
+            return `${title}<br /><br />注册资本：${value}万元<br />股份比例：${rate}`;
+          },
           backgroundColor: '#4F6BBF',
           padding: [10, 10, 10, 10],
         },
@@ -161,26 +175,30 @@ export default {
         yAxis: {
           show: false,
         },
-        series: [{
+        series: [{ // For shadow
+          type: 'bar',
+          silent: true,
+          itemStyle: {
+            normal: { color: 'rgba(0,0,0,0.05)' },
+          },
+          barGap: '-100%',
+          barCategoryGap: '40%',
+          data: new Array(len).fill(maxNum),
+          animation: false,
+          barWidth: '20',
+        }, {
           type: 'bar',
           data: this.eChartList.yAxiasMap,
-          itemstyle: {
-            /* normal: {
-              color: '#4F6BBF',
-            }, */
-          },
-          barWidth: '10%',
+          barWidth: '20',
           barMinHeight: '10',
         }],
       });
     },
     xyEchartData() {
       this.stocklistdata.forEach((value) => {
-        this.eChartList.xAxiasMap.push(`
-        ${value.shareholderAbbreviation}
-        /${stockServer.getPercent(value.registeredCapital, this.totalMoney)}
-        `);
-        this.eChartList.yAxiasMap.push(value.registeredCapital);
+        this.eChartList.xAxiasMap.push(`${value.shareholderAbbreviation}
+        /${stockServer.getPercent(value.registeredCapital, this.totalMoney)}`);
+        this.eChartList.yAxiasMap.push(filters.moneyFilter(value.registeredCapital, true, true));
       });
     },
     checkForm(formName) {

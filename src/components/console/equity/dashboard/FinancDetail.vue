@@ -29,7 +29,9 @@
                 </ul>
               </template>
             </el-table-column>
-            <el-table-column  prop="financedAccount" label="融资金额"></el-table-column>
+            <el-table-column label="融资金额">
+              <template scope="scope">{{scope.row.financedAccount | moneyFormat}}</template>
+            </el-table-column>
             <el-table-column  prop="financedDate" label="融资时间"></el-table-column>
             <el-table-column  prop="equity.shareholderName" label="投资方"></el-table-column>
             <el-table-column label="操作">
@@ -70,6 +72,7 @@
 import echarts from 'echarts';
 import financServer from '../../../../service/financ';
 import stockServer from '../../../../service/stock';
+import filters from '../../../../utils/filters';
 import { ROUND_TYPE } from '../../../../data/constants';
 
 export default {
@@ -119,7 +122,6 @@ export default {
       this.getShareholderList();
     },
     createEchart() {
-      this.xyEchartData();
       this.myChartDiv = document.getElementById('financChart');
       if (this.myChartDiv) {
         this.onEchart();
@@ -141,36 +143,33 @@ export default {
         // },
         tooltip: {
           show: true,
-          formatter: '{b0}<br /> {c0}',
+          formatter: '融资日期：{b0}<br /> 融资金额：{c0}',
           backgroundColor: '#4F6BBF',
           padding: [10, 10, 10, 10],
         },
         grid: {
-          top: '20',
+          top: '36',
           left: '20',
-          right: '20',
-          bottom: '20',
+          right: '60',
+          bottom: '10',
           containLabel: true,
         },
         xAxis: {
           data: this.eChartList.xAxiasMap,
-          splitLine: {
-            show: false,
-          },
+          boundaryGap: false,
           axisLine: {
             lineStyle: {
               color: '#ffffff',
               width: 1,
             },
           },
-          axisTick: {
-            show: false,
-          },
         },
         yAxis: {
           splitLine: {
             show: false,
           },
+          name: '万元',
+          scale: true,
           axisLine: {
             lineStyle: {
               color: '#ffffff',
@@ -181,8 +180,9 @@ export default {
         series: [{
           type: 'line',
           data: this.eChartList.yAxiasMap,
-          symbol: 'circle',
-          symbolSize: 4,
+          symbol: 'emptyCircle',
+          symbolSize: 10,
+          symbolOffset: ['10%', '10%'],
           itemStyle: {
             normal: {
               color: 'rgba(124,150,224,0.60)',
@@ -202,12 +202,6 @@ export default {
             sampling: 'average',
           },
         }],
-      });
-    },
-    xyEchartData() {
-      this.financlistdata.forEach((value) => {
-        this.eChartList.xAxiasMap.push(value.financedDate);
-        this.eChartList.yAxiasMap.push(value.financedAccount);
       });
     },
     checkForm(formName) {
@@ -231,7 +225,7 @@ export default {
       this.initData();
     },
     deleteid(row) {
-      this.$confirm('是否确认删除此条股东信息?', '提示', {
+      this.$confirm('是否确认删除此条融资信息?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',
@@ -260,8 +254,19 @@ export default {
     getFinancList() {
       financServer.getFinancListByCompanyId().then((resp) => {
         this.financlistdata = resp;
+      });
+      financServer.getFinancHistoryByCompanyId().then((resp) => {
+        resp.forEach((value) => {
+          this.eChartList.xAxiasMap.push(value.financedDate);
+          this.eChartList.yAxiasMap.push(filters.moneyFilter(value.financedAccount, true, true));
+        });
         this.createEchart();
       });
+    },
+  },
+  filters: {
+    moneyFormat(arg1 = 0) {
+      return filters.moneyFilter(arg1, false);
     },
   },
 };
