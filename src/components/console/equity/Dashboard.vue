@@ -400,26 +400,7 @@ export default {
       return filters.constantsFilter(arg1, arg2);
     },
     moneyFormat(arg1 = 0) {
-      let num = 0;
-      if (Number(arg1) > 9999) {
-        num = Number(arg1) / 10000;
-      }
-      let t = '';
-      if (Number.isInteger(num)) {
-        const l = `${num}`.split('').reverse();
-        // const r = num.split('.')[1];
-        l.forEach((v, i) => {
-          t += l[i] + ((i + 1) % 3 === 0 && (i + 1) !== l.length ? ',' : '');
-        });
-        return t.split('').reverse().join('');
-      }
-      num = Number(num).toFixed(2);
-      const l = `${num}`.split('.')[0].split('').reverse();
-      const r = num.split('.')[1];
-      l.forEach((v, i) => {
-        t += l[i] + ((i + 1) % 3 === 0 && (i + 1) !== l.length ? ',' : '');
-      });
-      return `${t.split('').reverse().join('')}.${r}`;
+      return filters.moneyFilter(arg1);
     },
     stockScalefilter(arg1, arg2) {
       return stockServer.getPercent(arg1, arg2);
