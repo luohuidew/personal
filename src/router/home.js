@@ -8,9 +8,9 @@ import Login from '@/components/home/Login';
 import ForgetPassword from '@/components/home/ForgetPassword';
 
 // 邮件邀请
-import InvitationIndex from '../components/home/InvitationIndex';
-import InvitationRegister from '../components/home/InvitationRegister';
-import InvitationLogin from '../components/home/InvitationLogin';
+import InvitationIndex from '@/components/home/InvitationIndex';
+import InvitationRegister from '@/components/home/InvitationRegister';
+import InvitationLogin from '@/components/home/InvitationLogin';
 
 Vue.use(Router);
 
