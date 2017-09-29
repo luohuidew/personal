@@ -259,7 +259,6 @@ export default {
         resp.forEach((value) => {
           this.eChartList.xAxiasMap.push(value.financedDate);
           this.eChartList.yAxiasMap.push(filters.moneyFilter(value.financedAccount, true, true));
-          console.log(this.eChartList);
         });
         this.createEchart();
       });

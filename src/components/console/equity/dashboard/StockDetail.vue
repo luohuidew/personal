@@ -143,7 +143,6 @@ export default {
         },
         tooltip: {
           formatter: (params) => {
-            console.log(params);
             const item = params.name;
             const value = params.value;
             const title = item.split('/')[0];
