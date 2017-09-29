@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import pService from '../../service/participator';
+import pService from '@/service/participator';
 
 export default {
   name: 'InvitationIndex',
