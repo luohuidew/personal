@@ -4,7 +4,7 @@
       <div class="option-list bgcolor">
         <div class="main-title clearfix">
           <span class="title">
-            <el-input placeholder="搜索姓名/邮箱/员工ID" icon="search" v-model="searchMsg.inputMsg" @click="searchBtn(1)"></el-input>
+            <el-input placeholder="搜索姓名/邮箱/员工ID" icon="search" v-model="searchMsg.inputMsg" @click="searchBtn(1)" @keyup.enter.native="searchBtn(1)"></el-input>
           </span>
           <el-button class="addbtn" type="primary" @click="dialogAddPerson = true">添加参与方</el-button>
           <el-button class="addbtn" type="info">批量导入</el-button>
@@ -28,7 +28,7 @@
                     <el-dropdown-item v-if="scope.row.status === '0'" id="invitation">邀请</el-dropdown-item>
                     <el-dropdown-item v-if="scope.row.status === '1'" id="invitation">重新邀请</el-dropdown-item>
                     <el-dropdown-item v-if="scope.row.authority === 'ROLR_USER'" id="permissionSet">权限设置</el-dropdown-item>
-                    <el-dropdown-item id="delete">删除</el-dropdown-item>
+                    <el-dropdown-item v-if="scope.row.authority === 'ROLR_USER'" id="delete">删除</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </template>
@@ -68,16 +68,16 @@
         <el-form-item label="邮箱" prop="email" :label-width="formLabelWidth">
           <el-input v-model="person.email"></el-input>
         </el-form-item>
-        <el-form-item label="员工ID" :label-width="formLabelWidth">
+        <el-form-item label="员工ID" prop="workId" :label-width="formLabelWidth">
           <el-input v-model="person.workId"></el-input>
         </el-form-item>
-        <el-form-item label="部门" :label-width="formLabelWidth">
+        <el-form-item label="部门" prop="department" :label-width="formLabelWidth">
           <el-input v-model="person.department"></el-input>
         </el-form-item>
-        <el-form-item label="职位" :label-width="formLabelWidth">
+        <el-form-item label="职位" prop="position" :label-width="formLabelWidth">
           <el-input v-model="person.position"></el-input>
         </el-form-item>
-        <el-form-item label="" :label-width="formLabelWidth">
+        <el-form-item label="" prop="sentEmail" :label-width="formLabelWidth">
           <el-checkbox v-model="person.sentEmail">发送邮件邀请</el-checkbox>
         </el-form-item>
       </el-form>
@@ -165,7 +165,7 @@ export default {
       account: [], // table数据展示
       dialogEditData: [], // 编辑弹出框信息
       person: {
-        companyId: undefined, // 公司id
+        // companyId: undefined, // 公司id
         username: undefined, // 参与方
         idType: '0', // 证件类型
         idNumber: undefined, // 证件号
@@ -211,7 +211,8 @@ export default {
       this.$refs.person.validate((valid) => {
         if (valid) {
           pService.addParticipator(this.person).then(() => {
-            this.$message({ message: '添加成功', type: 'success' });
+            // this.$message({ message: '添加成功', type: 'success' });
+            this.$refs.person.resetFields();
             this.dialogAddPerson = false;
             this.searchBtn(1);
           });
@@ -264,11 +265,12 @@ export default {
       if (!this.searchMsg.inputMsg) {
         this.searchMsg.inputMsg = undefined;
       }
-      pService.findAllParticipators(this.person.companyId,
+      pService.findAllParticipators(this.searchMsg.companyId,
       this.searchMsg.inputMsg, pageIndex, this.pagination.pageSize)
       .then((resp) => {
         this.account = resp.data;
         this.pagination.totalNum = resp.pagination.totalNum;
+        this.pagination.currentPage = resp.pagination.currentPage;
       });
     },
     // 发送邮件邀请
@@ -353,7 +355,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.option-cont{margin:20px 0 0;}
+/*.option-cont{margin:20px 0 0;}*/
 .option-list{min-height:500px;padding:30px 30px 0 30px;}
 .main-title .title{float:left;display: inline;font-size: 16px;color: #666666;letter-spacing:1px;font-weight:bold;line-height:36px;}
 .main-title .addbtn{float:right;display: inline;font-size: 14px;color: #FFFFFF;letter-spacing: 1px;margin: 0 5px;border-radius: 2px;}
