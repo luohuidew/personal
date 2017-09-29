@@ -223,11 +223,11 @@
 </template>
 
 <script>
-import stockServer from '../../../service/stock';
-import financServer from '../../../service/financ';
-import companyServer from '../../../service/company';
-import filters from '../../../utils/filters';
-import { SHAREHOLDER_TYPE, ROUND_TYPE } from '../../../data/constants';
+import stockServer from '@/service/stock';
+import financServer from '@/service/financ';
+import companyServer from '@/service/company';
+import filters from '@/utils/filters';
+import { SHAREHOLDER_TYPE, ROUND_TYPE } from '@/data/constants';
 
 export default {
   name: 'equity-dashboard',

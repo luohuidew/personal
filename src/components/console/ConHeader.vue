@@ -13,9 +13,9 @@
 </template>
 
 <script>
-import user from '../../service/user';
-import company from '../../service/company';
-import bus from '../../utils/bus';
+import user from '@/service/user';
+import company from '@/service/company';
+import bus from '@/utils/bus';
 
 export default {
   name: 'con-header',
@@ -47,9 +47,9 @@ export default {
     },
     getCompanyInfo() {
       const store = company.getStoredCompany();
-      if (store && store.companyList) {
+      if (store && store.companyInfo) {
         this.selectedCompany = true;
-        this.company_name = store.companyList.companyName;
+        this.company_name = store.companyInfo.companyName;
       }
     },
   },

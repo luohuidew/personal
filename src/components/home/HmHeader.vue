@@ -15,8 +15,8 @@
   </div>
 </template>
 <script>
-import logImgurl from '../../assets/index-logo.png';
-import logImgurl2 from '../../assets/index-logo2.png';
+import logImgurl from '@/assets/index-logo.png';
+import logImgurl2 from '@/assets/index-logo2.png';
 
 export default {
   name: 'hm-header',

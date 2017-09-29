@@ -134,10 +134,11 @@
 </template>
 
 <script>
-import pService from '../../../service/participator';
-import companyService from '../../../service/company';
-import { ID_TYPE, PAGINATION_SIZE, PAGINATION_SIZES, PAGINATION_LAYOUT } from '../../../data/constants';
-import validate from '../../../utils/validation';
+import pService from '@/service/participator';
+import companyService from '@/service/company';
+import validate from '@/utils/validation';
+import { ID_TYPE, PAGINATION_SIZE, PAGINATION_SIZES, PAGINATION_LAYOUT } from '@/data/constants';
+
 
 export default {
   name: 'option-participator',

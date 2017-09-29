@@ -1,11 +1,11 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
-import Main from '../components/home/Main';
-import PriceView from '../components/home/PriceView';
-import Apply from '../components/home/Apply';
-import Login from '../components/home/Login';
-import ForgetPassword from '../components/home/ForgetPassword';
+import Main from '@/components/home/Main';
+import PriceView from '@/components/home/PriceView';
+import Apply from '@/components/home/Apply';
+import Login from '@/components/home/Login';
+import ForgetPassword from '@/components/home/ForgetPassword';
 
 // 邮件邀请
 import InvitationIndex from '../components/home/InvitationIndex';

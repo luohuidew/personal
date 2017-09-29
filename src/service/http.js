@@ -1,7 +1,7 @@
 // created by lyx @ 2017-09-09
 
 import axios from 'axios';
-import user from './user';
+import user from '@/service/user';
 import { MessageBox, Message } from 'element-ui';
 
 const axiosIns = axios.create({

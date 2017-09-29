@@ -11,7 +11,7 @@
         <span class="author" v-if="item.authority == 'ROLE_ADMIN'">管理员</span>
         <span class="author" v-if="item.authority == 'ROLE_USER'">参与者</span>
         <span class="wrz" v-if="item.authentication == 0" @click="authority(item)">未认证</span>
-        <span class="wrz" v-if="item.authentication == 1">认证中</span>
+        <span class="rzz" v-if="item.authentication == 1">认证中</span>
         <span class="wfk" v-if="item.pay == 1">未付款</span>
       </p>
       <div class="e-content" @click="selectCompany(item)">
@@ -29,15 +29,15 @@
         <el-form-item label="简称" :label-width="formLabelWidth" prop="companyAbbreviation">
           <el-input v-model="form.companyAbbreviation" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="公司类型" :label-width="formLabelWidth" prop="companyType">
-          <el-select v-model="form.companyType" disabled placeholder="请输入企业全称">
-            <el-option v-for="item in companyTypes" :label="item.text" :value="item.id" :key="item.id"></el-option>
-          </el-select>
+        <el-form-item v-show="form.companyType" label="公司类型" :label-width="formLabelWidth" prop="companyType">
+          <div>
+            {{form.companyType| filter('COMPENY_TYPE')}}
+          </div>
         </el-form-item>
-        <el-form-item label="资本币种" :label-width="formLabelWidth"  prop="currency">
-          <el-select v-model="form.currency" disabled placeholder="请输入企业全称">
-            <el-option v-for="item in moneyTypes" :label="item.text" :value="item.id" :key="item.id"></el-option>
-          </el-select>
+        <el-form-item v-show="form.companyType" label="资本币种" :label-width="formLabelWidth"  prop="currency">
+          <div>
+            {{form.currency| filter('MONEY_TYPE')}}
+          </div>
         </el-form-item>
         <el-form-item label="营业执照" :label-width="formLabelWidth" required>
           <el-upload
@@ -165,8 +165,19 @@ export default {
       });
     },
     selectCompany(cItem) {
-      this.storeSelectedCompany(cItem);
-      this.$router.push({ name: 'OptionManagementList' });
+      if (cItem.pay === 1) {
+        this.$confirm(`${cItem.companyName} 费用已到期，暂时无法体验产品功能。如果想继续使用，请点击下方的"立即付费"并前往购买相应的服务。`, '付费通知', {
+          confirmButtonText: '立即付费',
+          cancelButtonText: '稍后尝试',
+          type: 'warning',
+        }).then(() => {
+          this.storeSelectedCompany(cItem);
+          this.$router.push({ name: 'UserMyOrder' });
+        });
+      } else {
+        this.storeSelectedCompany(cItem);
+        this.$router.push({ name: 'OptionManagementList' });
+      }
     },
     storeSelectedCompany(cItem) {
       const obj = {
@@ -205,8 +216,8 @@ export default {
       this.form = {
         companyName: '',
         companyAbbreviation: '',
-        companyType: '0',
-        currency: 'RMB',
+        companyType: '',
+        currency: '',
       };
       this.$refs.form.resetFields();
       this.handleRemove();
@@ -400,10 +411,9 @@ export default {
     margin-right: 20px;
     color: #2E76E0;
     letter-spacing: 0.8px;
-    cursor: pointer;
   }
 
-  .e-title span.wrz, .e-title span.wfk{
+  .e-title span.wrz, .e-title span.wfk,.e-title span.rzz {
     float: right;
     margin-right: 10px;
     font-size: 14px;
@@ -413,6 +423,12 @@ export default {
   }
   .e-title span.wrz:hover,.e-title span.wfk:hover{
     color: #BC5231;
+  }
+
+  .e-title span.rzz {
+    text-decoration: none;
+    cursor: auto;
+    color: #2E76E0;
   }
 
   .e-content:hover {

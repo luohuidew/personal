@@ -1,4 +1,4 @@
-import api from './http';
+import api from '@/service/http';
 
 const companyMap = JSON.parse(sessionStorage.getItem('_COMPANY_KEY'));
 const id = companyMap ? companyMap.companyInfo.companyId : '';
