@@ -270,6 +270,7 @@ export default {
       .then((resp) => {
         this.account = resp.data;
         this.pagination.totalNum = resp.pagination.totalNum;
+        this.pagination.currentPage = resp.pagination.currentPage;
       });
     },
     // 发送邮件邀请
