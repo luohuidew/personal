@@ -7,7 +7,7 @@
         <p>创造价值互联</p>
         <div class="par1-links">
           <div>
-            <a href="javascript:void(0);" class="a-1"><span>申请试用</span></a>
+            <router-link class="a-1" to="/apply" target = "_blank"><span>申请试用</span></router-link>
             <a href="javascript:void(0);" class="a-2"><i></i><span>播放视频</span></a>
           </div>
         </div>
@@ -56,17 +56,16 @@
         <h3 class="small-head"><i>.</i><span>产品展示</span><i>.</i></h3>
         <h2 class="mid-head">一站式股权管理</h2>
         <div class="slide-main">
-          <!-- <div class="left-btn"><img src="../../assets/index-left.png"/></div> -->
           <template>
             <el-tabs v-model="activeName" @tab-click="handleClick">
               <el-tab-pane label="权益管理" name="a0">
-                <div><img src="../../assets/index-equity.png"/></div>
+                <div class="imgbox"><img src="../../assets/index-equity.png"/></div>
               </el-tab-pane>
               <el-tab-pane label="期权管理" name="a1">
-                <div><img src="../../assets/index-option.png"/></div>
+                <div class="imgbox"><img src="../../assets/index-option.png"/></div>
               </el-tab-pane>
               <el-tab-pane label="文档管理" name="a2">
-                <div><img src="../../assets/index-equity.png"/></div>
+                <div class="imgbox"><img src="../../assets/index-file.png"/></div>
               </el-tab-pane>
             </el-tabs>
           </template>
@@ -74,12 +73,6 @@
             <el-carousel-item v-for="item in 3" :key="item">
             </el-carousel-item>
           </el-carousel>
-          <!-- <el-carousel :v-model="0" :autoplay="false" arrow="always" @change="link" :initial-index="returnItem">
-            <el-carousel-item v-for="(val, key) in slideImgs" :key="key">
-              <img :src="val"/>
-            </el-carousel-item>
-          </el-carousel> -->
-          <!-- <div class="right-btn"><img src="../../assets/index-right.png"/></div> -->
         </div>
       </section>
       <!--产品优势-->
@@ -103,7 +96,7 @@
           <el-col :span="14"><img src="../../assets/index-bottom.png"/></el-col>
           <el-col :span="10" class="des">
             <p>快来定制期权激励计划</p>
-            <a href="javascript:void(0)">申请试用</a>
+            <router-link to="/apply" target = "_blank">申请试用</router-link>
           </el-col>
         </el-row>
       </section>
@@ -358,6 +351,10 @@ img{
   position: relative;
   width: 45%;
   margin: 0 2%;
+}
+.slide-main .imgbox img {
+  width:865px;
+  height: 487px;
 }
 .left-btn {
   left: -13%;

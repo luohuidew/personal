@@ -433,8 +433,8 @@ export default {
 .step-line{position:absolute;display:inline-block;width:0;top:12px;left:5px;bottom: 0;border: 1px solid #F4F4F4;}
 .step-main{padding-left:20px;}
 .step-title{font-size: 14px;}
-.step-description{font-size: 16px;color: #999;padding:10px 10px 0 0;}
-.step-description .bold{font-weight: bold;color: #666;}
+.step-description{font-size: 14px;color: #999;padding:10px 10px 0 0;line-height:24px;}
+.step-description .bold{font-size:16px;font-weight: bold;color: #666;}
 .dialog-table-wrap{padding:30px 0 30px 30px;}
 .dialog-footer{display:block;text-align:right;}
 .dialog-footer .el-button{border-radius:4px;}
