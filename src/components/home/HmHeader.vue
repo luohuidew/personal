@@ -7,7 +7,7 @@
         <ul>
           <li><router-link class="text-link" to="/">首页</router-link></li>
           <li><router-link class="text-link" to="/price_view">价格概览</router-link></li>
-          <li><router-link class="yellow-btn" to="/apply">申请试用</router-link></li>
+          <li><router-link class="yellow-btn" to="/apply" target = "_blank">申请试用</router-link></li>
           <li><router-link class="grey-btn" to="/login">登录</router-link></li>
         </ul>
       </div>

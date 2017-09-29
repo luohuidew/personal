@@ -85,17 +85,24 @@ export default {
 .title1{font-size: 36px;color: #212859;letter-spacing: -1.39px;line-height: 55px;text-align: center;padding-top:80px;}
 .pure-g{padding:0 10%;margin-top:90px;}
 .cont-wrap{width:100%;background:#fff;border-radius: 4px;color:#7D7F86;}
-.cont-top{padding:50px 0 44px 44px;}
+.cont-top{padding:16% 0 14% 10%;}
 .cont-wrap ul{background: #F3F8FA;color:#72787B;}
-.cont-wrap ul li{line-height:50px;padding-left:30px;}
+.cont-wrap ul li{line-height:50px;padding-left:9%;font-size:14px;}
 .cont-foot{margin-top:50px;background:#9C9EB3;height:60px;line-height:60px;text-align: center;font-size: 20px;color: #FFFFFF;letter-spacing: 1.66px;border-radius: 0 0 4px 4px;}
 .cont-top .text-line-1, .cont-top .text-line-2{padding:10px 0;}
 .cont-top .text-line-1 .text{font-size: 18px;color: #7D7F86;letter-spacing: 3.27px;line-height: 36px;height:36px;overflow:hidden;float:left;display:inline-block;zoom:1;width:50px;padding:0 10px;text-align:justify;}
-.cont-top .text-line-1 .text:after{content:'哈哈';width: 100%;display: inline-block;overflow: hidden;height: 0;font-size:0;line-height:0;} 
+.cont-top .text-line-1 .text:after{content:'';width: 100%;display: inline-block;overflow: hidden;height: 0;font-size:0;line-height:0;} 
 .cont-top .text-line-1 .rmb{font-size: 18px;color: #3C3D41;line-height: 36px;}
 .cont-top .text-line-1 .number{font-size: 36px;color: #3C3D41;line-height: 36px;font-weight:bold;}
 .cont-top .text-line-2 .text{font-size: 14px;color: #7D7F86;letter-spacing: 2.54px;line-height: 36px;height:36px;overflow:hidden;float:left;display:inline-block;zoom:1;width:50px;padding:0 10px;text-align:justify;}
 .cont-top .text-line-2 .text:after{content:' ';width: 100%;display: inline-block;overflow: hidden;height: 0;font-size:0;line-height:0;}  
 .cont-top .text-line-2 .rmb{font-size: 16px;color: #61636B;line-height: 36px;}
 .cont-top .text-line-2 .number{font-size: 24px;color: #61636B;line-height: 36px;font-weight:bold;}
+@media screen and (min-width: 768px) and (max-width: 1366px){
+  .cont-wrap ul li{font-size:12px;}
+  .cont-top .text-line-1 .rmb{font-size: 14px;}
+  .cont-top .text-line-1 .number{font-size: 24px;}
+  .cont-top .text-line-2 .rmb{font-size: 12px;}
+  .cont-top .text-line-2 .number{font-size: 18px;}
+}
 </style>
