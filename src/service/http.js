@@ -2,7 +2,7 @@
 
 import axios from 'axios';
 import user from '@/service/user';
-import { MessageBox, Message } from 'element-ui';
+import { MessageBox } from 'element-ui';
 
 const axiosIns = axios.create({
   timeout: 20000,
@@ -47,9 +47,6 @@ axiosIns.interceptors.response.use(
     } else if(status === 400) {
       const msg = '参数错误。';
       errorMsgBox(statusText, msg);
-    } else if(status === 404) {
-      const msg = '请求路径错误。';
-      errorMsgBox(statusText, msg);
     } else if(status === 500) {
       const msg = res.data.msg;
       errorMsgBox(statusText, msg);
@@ -63,7 +60,7 @@ axiosIns.interceptors.response.use(
     return Promise.reject(res);
   },
   error => {
-    errorMsgBox('网络异常', error);
+    errorMsgBox('请求异常', error);
     return Promise.reject(error);
   }
 );
@@ -75,7 +72,6 @@ ajaxMethod.forEach((method)=> {
     return new Promise(function (resolve, reject) {
       axiosIns[method](uri, data, config).then((response)=> {
         resolve(response);
-      }).catch((response)=> {
       })
     })
   }

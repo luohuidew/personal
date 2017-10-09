@@ -233,7 +233,7 @@ export default {
     },
     getQiNiuToken() {
       base.getQiNiuToken().then((resp) => {
-        this.uploadData.token = resp.token;
+        this.uploadData.token = resp;
       });
     },
     authority(item) {

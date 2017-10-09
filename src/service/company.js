@@ -7,7 +7,7 @@ const COMPANY_KEY = '_COMPANY_KEY';
 export default {
   getCompanyListByUid() {
     const id = user.getUser().id;
-    return api.post('/company/getMyCompanyList', { adminId: id }).then(resp => resp.data);
+    return api.post('/company/myCompanyList', { adminId: id }).then(resp => resp.data);
   },
   addCompany(params) {
     const pm = params;
