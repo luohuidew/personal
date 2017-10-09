@@ -1,5 +1,5 @@
-import { Message } from 'element-ui';
 import api from '@/service/http';
+import { MessageBox } from 'element-ui';
 
 const TOKEN = '_TOKEN';
 const USER_KEY = '_USER_KEY';
@@ -12,9 +12,11 @@ export default {
   getUser: () => JSON.parse(sessionStorage.getItem(USER_KEY)),
   login(params) {
     return api.post('/auth', params).then((resp) => {
-      if (resp.code.code !== 200) {
-        Message.error(resp.code.msg);
-        return false;
+      if (resp.code.status !== 200) {
+        MessageBox(resp.code.msg, '提示', {
+          confirmButtonText: '确定',
+        });
+        return null;
       }
       if (resp.token) {
         this.setToken(resp.token);

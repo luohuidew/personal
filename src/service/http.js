@@ -11,7 +11,7 @@ const axiosIns = axios.create({
 
 function errorMsgBox (statusText, msg) {
   MessageBox(`错误类型：${statusText}； 错误描述：${msg}`, '异常提示', {
-    confirmButtonText: '确定'
+    confirmButtonText: '确定',
   });
 }
 axiosIns.interceptors.request.use(

@@ -519,10 +519,8 @@ export default {
     },
     next() {
       common.checkPWD(this.emailForm.password).then((resp) => {
-        if (resp.code.code === 200) {
+        if (resp) {
           this.step = 2;
-        } else {
-          this.$message.warning(resp.data.msg);
         }
       });
     },
@@ -598,9 +596,9 @@ export default {
       }
       this.$refs.emailForm.validate((valid) => {
         if (valid) {
-          common.checkEmailExist(this.emailForm.email).then((resp) => {
-            if (resp.data.code === 200) {
-              this.$message.warning(resp.data.msg);
+          common.checkEmailExist(this.emailForm.email).then((exist) => {
+            if (exist) {
+              this.$message.warning('邮箱已存在');
             } else {
               common.sendMsg(this.emailForm.email);
               let init = 120;
@@ -626,13 +624,13 @@ export default {
       if (this.yzmText !== '发送验证码') {
         return;
       }
-      common.checkImgCode(this.emailForm.phone, this.emailForm.validateCodeImg).then((response) => {
-        if (response) {
+      common.checkImgCode(this.emailForm.phone, this.emailForm.validateCodeImg).then((isRight) => {
+        if (isRight) {
           this.$refs.emailForm.validate((valid) => {
             if (valid) {
-              common.checkPhoneExist(this.emailForm.phone).then((resp) => {
-                if (resp.data.code === 200) {
-                  this.$message.warning(resp.data.msg);
+              common.checkPhoneExist(this.emailForm.phone).then((exist) => {
+                if (exist) {
+                  this.$message.warning('电话已存在');
                 } else {
                   common.sendMsg(this.emailForm.phone);
                   let init = 120;
