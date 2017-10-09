@@ -203,7 +203,6 @@ export default {
             const params = this.form;
             params.businessLicense = this.backImageUrl;
             company.addCompany(params).then(() => {
-              this.$message.success('添加成功！');
               this.initData();
               this.handleClose();
               this.handleCloseAuthen();
