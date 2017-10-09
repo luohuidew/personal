@@ -1,3 +1,4 @@
+import { Message } from 'element-ui';
 import api from '@/service/http';
 
 const TOKEN = '_TOKEN';
@@ -11,6 +12,10 @@ export default {
   getUser: () => JSON.parse(sessionStorage.getItem(USER_KEY)),
   login(params) {
     return api.post('/auth', params).then((resp) => {
+      if (resp.code.code !== 200) {
+        Message.error(resp.code.msg);
+        return false;
+      }
       if (resp.token) {
         this.setToken(resp.token);
       }
